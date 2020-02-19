@@ -62,7 +62,7 @@ namespace LinkIT.Web.Controllers.Api
         // Fully updates the Device.
         public IHttpActionResult Put(Device value)
         {
-            if (value.Id == Guid.Empty)
+            if (!value.Id.HasValue)
                 return NotFound();
 
             return Ok();

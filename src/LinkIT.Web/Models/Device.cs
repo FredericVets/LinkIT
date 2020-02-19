@@ -4,7 +4,7 @@ namespace LinkIT.Web.Models
 {
     public class Device
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         public string Tag { get; set; }
 
