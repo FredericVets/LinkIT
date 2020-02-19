@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace LinkIT.Web.Controllers
+namespace LinkIT.Web.Controllers.Api
 {
     public class ValuesController : ApiController
     {
