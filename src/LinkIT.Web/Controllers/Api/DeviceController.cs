@@ -1,6 +1,8 @@
-﻿using LinkIT.Web.Models;
+﻿using LinkIT.Data.Repositories;
+using LinkIT.Web.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 
 namespace LinkIT.Web.Controllers.Api
@@ -8,12 +10,20 @@ namespace LinkIT.Web.Controllers.Api
     // See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials
     public class DeviceController : ApiController
     {
-        // GET api/device
-        public IEnumerable<Device> Get()
+        private DeviceRepository _repo;
+
+        public DeviceController()
         {
-            return new Device[]
+            // TODO : read connection string from config file.
+            _repo = new DeviceRepository("TODO");
+        }
+
+        // GET api/device
+        public IEnumerable<DeviceModel> Get()
+        {
+            return new DeviceModel[]
             {
-                new Device
+                new DeviceModel
                 {
                     Id = Guid.NewGuid(),
                     Tag = "CRD-L-07140",
@@ -21,7 +31,7 @@ namespace LinkIT.Web.Controllers.Api
                     Brand = "Dell",
                     Type = "Latitude 7390"
                 },
-                new Device
+                new DeviceModel
                 {
                     Id = Guid.NewGuid(),
                     Tag = "CRD-L-07654",
@@ -30,6 +40,16 @@ namespace LinkIT.Web.Controllers.Api
                     Type = "EliteBook 750 G6"
                 },
             };
+
+            // Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
+            return _repo.Get().Select(x => new DeviceModel
+            {
+                Id = x.Id,
+                Tag = x.Tag,
+                Owner = x.Owner,
+                Brand = x.Brand,
+                Type = x.Type
+            });
         }
 
         // example : GET api/values/5
@@ -38,7 +58,7 @@ namespace LinkIT.Web.Controllers.Api
             if (id == Guid.Empty)
                 return NotFound();
 
-            var device = new Device
+            var device = new DeviceModel
             {
                 Id = id,
                 Tag = "CRD-L-07140",
@@ -54,13 +74,13 @@ namespace LinkIT.Web.Controllers.Api
         // 2 following attributes are the default behaviour.
         // Create the new Device.
         [HttpPost]
-        public void Post(Device value)
+        public void Post(DeviceModel value)
         {
         }
 
         // PUT api/values/5
         // Fully updates the Device.
-        public IHttpActionResult Put(Device value)
+        public IHttpActionResult Put(DeviceModel value)
         {
             if (!value.Id.HasValue)
                 return NotFound();
@@ -76,7 +96,7 @@ namespace LinkIT.Web.Controllers.Api
         }
 
         // Partial update of the Device.
-        public void Patch(Device value)
+        public void Patch(DeviceModel value)
         {
         }
     }

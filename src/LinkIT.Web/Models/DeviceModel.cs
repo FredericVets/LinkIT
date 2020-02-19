@@ -2,7 +2,7 @@
 
 namespace LinkIT.Web.Models
 {
-    public class Device
+    public class DeviceModel
     {
         public Guid? Id { get; set; }
 
