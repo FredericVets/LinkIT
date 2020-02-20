@@ -3,6 +3,7 @@ using LinkIT.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Configuration;
 using System.Web.Http;
 
 namespace LinkIT.Web.Controllers.Api
@@ -14,8 +15,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		public DeviceController()
 		{
-			// TODO : read connection string from config file.
-			_repo = new DeviceRepository("TODO");
+			_repo = new DeviceRepository(WebConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString);
 		}
 
 		// GET api/device

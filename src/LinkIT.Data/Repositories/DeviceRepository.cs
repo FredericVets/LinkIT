@@ -36,10 +36,13 @@ namespace LinkIT.Data.Repositories
 
 		// To add parameters to a command, see : https://stackoverflow.com/questions/293311/whats-the-best-method-to-pass-parameters-to-sqlcommand
 		private static SqlCommand CreateSelectCommandWithConditions(
-			SqlConnection con, SqlTransaction tx, DeviceQuery query, string condition = "AND")
+			SqlConnection con,
+			SqlTransaction tx,
+			DeviceQuery query,
+			SelectCondition condition = SelectCondition.AND)
 		{
 			var sb = new StringBuilder();
-			sb.AppendFormat("SELECT * FROM {0} WHERE\n", TableNames.DEVICE_TABLE);
+			sb.AppendFormat("SELECT * FROM {0} WHERE", TableNames.DEVICE_TABLE);
 			sb.AppendLine();
 
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
@@ -47,7 +50,8 @@ namespace LinkIT.Data.Repositories
 			bool firstCondition = true;
 			if (query.Id.HasValue)
 			{
-				sb.AppendLine("Id = @Id");
+				sb.AppendFormat("{0} = @Id", ID_COLUMN);
+				sb.AppendLine();
 				cmd.Parameters.Add("@Id", SqlDbType.UniqueIdentifier).Value = query.Id.Value;
 				firstCondition = false;
 			}
@@ -55,9 +59,10 @@ namespace LinkIT.Data.Repositories
 			if (!string.IsNullOrWhiteSpace(query.Tag))
 			{
 				if (!firstCondition)
-					sb.AppendLine(condition);
+					sb.AppendLine(condition.ToString());
 
-				sb.AppendLine("Tag = @Tag");
+				sb.AppendFormat("{0} = @Tag", TAG_COLUMN);
+				sb.AppendLine();
 				cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = query.Tag;
 				firstCondition = false;
 			}
@@ -65,9 +70,10 @@ namespace LinkIT.Data.Repositories
 			if (!string.IsNullOrWhiteSpace(query.Owner))
 			{
 				if (!firstCondition)
-					sb.AppendLine(condition);
+					sb.AppendLine(condition.ToString());
 
-				sb.AppendLine("Owner = @Owner");
+				sb.AppendFormat("{0} = @Owner", OWNER_COLUMN);
+				sb.AppendLine();
 				cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = query.Owner;
 				firstCondition = false;
 			}
@@ -75,9 +81,10 @@ namespace LinkIT.Data.Repositories
 			if (!string.IsNullOrWhiteSpace(query.Brand))
 			{
 				if (!firstCondition)
-					sb.AppendLine(condition);
+					sb.AppendLine(condition.ToString());
 
-				sb.AppendLine("Brand = @Brand");
+				sb.AppendFormat("{0} = @Brand", BRAND_COLUMN);
+				sb.AppendLine();
 				cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = query.Brand;
 				firstCondition = false;
 			}
@@ -85,12 +92,15 @@ namespace LinkIT.Data.Repositories
 			if (!string.IsNullOrWhiteSpace(query.Type))
 			{
 				if (!firstCondition)
-					sb.AppendLine(condition);
+					sb.AppendLine(condition.ToString());
 
-				sb.AppendLine("Type = @Type");
+				sb.AppendFormat("{0} = @Type", TYPE_COLUMN);
+				sb.AppendLine();
 				cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = query.Type;
 				firstCondition = false;
 			}
+
+			cmd.CommandText = sb.ToString();
 
 			return cmd;
 		}
