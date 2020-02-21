@@ -151,7 +151,7 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCommandWithConditions(con, tx, query))
+					using (var cmd = CreateSelectCommandWithConditions(con, tx, query, SelectCondition.AND))
 					using (var reader = cmd.ExecuteReader())
 					{
 						while (reader.Read())
@@ -186,7 +186,15 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					string cmdText = string.Format(@"INSERT into {0} ([Id], [Tag], [Owner], [Brand], [Type]) VALUES (@Id, @Tag, @Owner, @Brand, @Type)", TableNames.DEVICE_TABLE);
+					string cmdText = string.Format(
+						@"INSERT into {0} ([{1}], [{2}], [{3}], [{4}], [{5}]) VALUES (@Id, @Tag, @Owner, @Brand, @Type)", 
+						TableNames.DEVICE_TABLE,
+						ID_COLUMN,
+						TAG_COLUMN,
+						OWNER_COLUMN,
+						BRAND_COLUMN,
+						TYPE_COLUMN);
+
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{
 						cmd.Parameters.Add("@Id", SqlDbType.UniqueIdentifier).Value = input.Id.Value;
@@ -201,6 +209,44 @@ namespace LinkIT.Data.Repositories
 					tx.Commit();
 
 					return input.Id.Value;
+				}
+			}
+		}
+
+		/// <summary>
+		/// This is a full-update. So all required fields should be supplied.
+		/// </summary>
+		/// <param name="input"></param>
+		public void Update(DeviceDto input)
+		{
+			input.ValidateRequiredFields();
+
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					string cmdText = string.Format(
+						@"UPDATE {0} SET {1}=@Tag, {2}=@Owner, {3}=@Brand, {4}=@Type WHERE {5}=@Id", 
+						TableNames.DEVICE_TABLE,
+						TAG_COLUMN,
+						OWNER_COLUMN,
+						BRAND_COLUMN,
+						TYPE_COLUMN,
+						ID_COLUMN);
+
+					using (var cmd = new SqlCommand(cmdText, con, tx))
+					{
+						cmd.Parameters.Add("@Id", SqlDbType.UniqueIdentifier).Value = input.Id.Value;
+						cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = input.Tag;
+						cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = input.Owner;
+						cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
+						cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
+
+						cmd.ExecuteNonQuery();
+					}
+
+					tx.Commit();
 				}
 			}
 		}
