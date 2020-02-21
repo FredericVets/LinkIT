@@ -107,26 +107,33 @@ namespace LinkIT.Data.Repositories
 
 		public IEnumerable<DeviceDto> GetAll()
 		{
-			using (var con = new SqlConnection(_connectionString))
-			using (var tx = con.BeginTransaction())
-			{
-				using (var cmd = CreateSelectCommand(con, tx))
-				using (var reader = cmd.ExecuteReader())
-				{
-					while (reader.Read())
-					{
-						yield return new DeviceDto
-						{
-							Id = (Guid)reader[ID_COLUMN],
-							Tag = reader[TAG_COLUMN].ToString(),
-							Owner = reader[OWNER_COLUMN].ToString(),
-							Brand = reader[BRAND_COLUMN].ToString(),
-							Type = reader[TYPE_COLUMN].ToString()
-						};
-					}
-				}
+			var result = new List<DeviceDto>();
 
-				//tx.Commit();
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					using (var cmd = CreateSelectCommand(con, tx))
+					using (var reader = cmd.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							result.Add(new DeviceDto
+							{
+								Id = (Guid)reader[ID_COLUMN],
+								Tag = reader[TAG_COLUMN].ToString(),
+								Owner = reader[OWNER_COLUMN].ToString(),
+								Brand = reader[BRAND_COLUMN].ToString(),
+								Type = reader[TYPE_COLUMN].ToString()
+							});
+						}
+
+						return result;
+					}
+
+					//tx.Commit();
+				}
 			}
 		}
 
@@ -137,26 +144,64 @@ namespace LinkIT.Data.Repositories
 
 		public IEnumerable<DeviceDto> Query(DeviceQuery query)
 		{
-			using (var con = new SqlConnection(_connectionString))
-			using (var tx = con.BeginTransaction())
-			{
-				using (var cmd = CreateSelectCommandWithConditions(con, tx, query))
-				using (var reader = cmd.ExecuteReader())
-				{
-					while (reader.Read())
-					{
-						yield return new DeviceDto
-						{
-							Id = (Guid)reader[ID_COLUMN],
-							Tag = reader[TAG_COLUMN].ToString(),
-							Owner = reader[OWNER_COLUMN].ToString(),
-							Brand = reader[BRAND_COLUMN].ToString(),
-							Type = reader[TYPE_COLUMN].ToString()
-						};
-					}
-				}
+			var result = new List<DeviceDto>();
 
-				//tx.Commit();
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					using (var cmd = CreateSelectCommandWithConditions(con, tx, query))
+					using (var reader = cmd.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							result.Add(new DeviceDto
+							{
+								Id = (Guid)reader[ID_COLUMN],
+								Tag = reader[TAG_COLUMN].ToString(),
+								Owner = reader[OWNER_COLUMN].ToString(),
+								Brand = reader[BRAND_COLUMN].ToString(),
+								Type = reader[TYPE_COLUMN].ToString()
+							});
+						}
+
+						return result;
+					}
+
+					//tx.Commit();
+				}
+			}
+		}
+
+		public Guid Insert(DeviceDto input)
+		{
+			input.ValidateRequiredFields();
+
+			// TODO : id generation server-side or on database by using Identity?
+			input.Id = Guid.NewGuid();
+
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					string cmdText = string.Format(@"INSERT into {0} ([Id], [Tag], [Owner], [Brand], [Type]) VALUES (@Id, @Tag, @Owner, @Brand, @Type)", TableNames.DEVICE_TABLE);
+					using (var cmd = new SqlCommand(cmdText, con, tx))
+					{
+						cmd.Parameters.Add("@Id", SqlDbType.UniqueIdentifier).Value = input.Id.Value;
+						cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = input.Tag;
+						cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = input.Owner;
+						cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
+						cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
+
+						cmd.ExecuteNonQuery();
+					}
+
+					tx.Commit();
+
+					return input.Id.Value;
+				}
 			}
 		}
 	}
