@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkIT.Data.DTO", "LinkIT.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkIT.Data", "LinkIT.Data\LinkIT.Data.csproj", "{CAF7189D-D1FE-4DEE-A156-20D980D54135}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkIT.Data.IntegrationTests", "LinkIT.Data.IntegrationTests\LinkIT.Data.IntegrationTests.csproj", "{D4F2EFA2-781A-4B70-B7AA-BF0D754B8C5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{CAF7189D-D1FE-4DEE-A156-20D980D54135}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAF7189D-D1FE-4DEE-A156-20D980D54135}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAF7189D-D1FE-4DEE-A156-20D980D54135}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4F2EFA2-781A-4B70-B7AA-BF0D754B8C5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4F2EFA2-781A-4B70-B7AA-BF0D754B8C5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4F2EFA2-781A-4B70-B7AA-BF0D754B8C5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4F2EFA2-781A-4B70-B7AA-BF0D754B8C5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

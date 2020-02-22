@@ -105,58 +105,178 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
-		public IEnumerable<DeviceDto> GetAll()
+		public DeviceDto GetById(Guid id)
 		{
-			using (var con = new SqlConnection(_connectionString))
-			using (var tx = con.BeginTransaction())
-			{
-				using (var cmd = CreateSelectCommand(con, tx))
-				using (var reader = cmd.ExecuteReader())
-				{
-					while (reader.Read())
-					{
-						yield return new DeviceDto
-						{
-							Id = (Guid)reader[ID_COLUMN],
-							Tag = reader[TAG_COLUMN].ToString(),
-							Owner = reader[OWNER_COLUMN].ToString(),
-							Brand = reader[BRAND_COLUMN].ToString(),
-							Type = reader[TYPE_COLUMN].ToString()
-						};
-					}
-				}
+			var result = Query(new DeviceQuery { Id = id }).ToList();
 
-				//tx.Commit();
-			}
+			if (result.Count == 0)
+				throw new InvalidOperationException(string.Format("No device found for id : '{0}'.", id));
+
+			return result.Single();
 		}
 
-		public DeviceDto GetById(Guid deviceId)
+		public IEnumerable<DeviceDto> GetAll()
 		{
-			return Query(new DeviceQuery { Id = deviceId }).Single();
+			var result = new List<DeviceDto>();
+
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					using (var cmd = CreateSelectCommand(con, tx))
+					using (var reader = cmd.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							result.Add(new DeviceDto
+							{
+								Id = (Guid)reader[ID_COLUMN],
+								Tag = reader[TAG_COLUMN].ToString(),
+								Owner = reader[OWNER_COLUMN].ToString(),
+								Brand = reader[BRAND_COLUMN].ToString(),
+								Type = reader[TYPE_COLUMN].ToString()
+							});
+						}
+
+						return result;
+					}
+
+					//tx.Commit();
+				}
+			}
 		}
 
 		public IEnumerable<DeviceDto> Query(DeviceQuery query)
 		{
-			using (var con = new SqlConnection(_connectionString))
-			using (var tx = con.BeginTransaction())
-			{
-				using (var cmd = CreateSelectCommandWithConditions(con, tx, query))
-				using (var reader = cmd.ExecuteReader())
-				{
-					while (reader.Read())
-					{
-						yield return new DeviceDto
-						{
-							Id = (Guid)reader[ID_COLUMN],
-							Tag = reader[TAG_COLUMN].ToString(),
-							Owner = reader[OWNER_COLUMN].ToString(),
-							Brand = reader[BRAND_COLUMN].ToString(),
-							Type = reader[TYPE_COLUMN].ToString()
-						};
-					}
-				}
+			var result = new List<DeviceDto>();
 
-				//tx.Commit();
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					using (var cmd = CreateSelectCommandWithConditions(con, tx, query, SelectCondition.AND))
+					using (var reader = cmd.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							result.Add(new DeviceDto
+							{
+								Id = (Guid)reader[ID_COLUMN],
+								Tag = reader[TAG_COLUMN].ToString(),
+								Owner = reader[OWNER_COLUMN].ToString(),
+								Brand = reader[BRAND_COLUMN].ToString(),
+								Type = reader[TYPE_COLUMN].ToString()
+							});
+						}
+
+						return result;
+					}
+
+					//tx.Commit();
+				}
+			}
+		}
+
+		public Guid Insert(DeviceDto input)
+		{
+			input.ValidateRequiredFields();
+
+			// TODO : id generation server-side or on database by using Identity?
+			input.Id = Guid.NewGuid();
+
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					string cmdText = string.Format(
+						@"INSERT into {0} ([{1}], [{2}], [{3}], [{4}], [{5}]) VALUES (@Id, @Tag, @Owner, @Brand, @Type)", 
+						TableNames.DEVICE_TABLE,
+						ID_COLUMN,
+						TAG_COLUMN,
+						OWNER_COLUMN,
+						BRAND_COLUMN,
+						TYPE_COLUMN);
+
+					using (var cmd = new SqlCommand(cmdText, con, tx))
+					{
+						cmd.Parameters.Add("@Id", SqlDbType.UniqueIdentifier).Value = input.Id.Value;
+						cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = input.Tag;
+						cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = input.Owner;
+						cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
+						cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
+
+						cmd.ExecuteNonQuery();
+					}
+
+					tx.Commit();
+
+					return input.Id.Value;
+				}
+			}
+		}
+
+		/// <summary>
+		/// This is a full-update. So all required fields should be supplied.
+		/// </summary>
+		/// <param name="input"></param>
+		public void Update(DeviceDto input)
+		{
+			input.ValidateRequiredFields();
+
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					string cmdText = string.Format(
+						@"UPDATE {0} SET {1}=@Tag, {2}=@Owner, {3}=@Brand, {4}=@Type WHERE {5}=@Id", 
+						TableNames.DEVICE_TABLE,
+						TAG_COLUMN,
+						OWNER_COLUMN,
+						BRAND_COLUMN,
+						TYPE_COLUMN,
+						ID_COLUMN);
+
+					using (var cmd = new SqlCommand(cmdText, con, tx))
+					{
+						cmd.Parameters.Add("@Id", SqlDbType.UniqueIdentifier).Value = input.Id.Value;
+						cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = input.Tag;
+						cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = input.Owner;
+						cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
+						cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
+
+						cmd.ExecuteNonQuery();
+					}
+
+					tx.Commit();
+				}
+			}
+		}
+
+		public void Delete(Guid id)
+		{
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					string cmdText = string.Format(
+						@"DELETE FROM {0} WHERE {1}=@Id",
+						TableNames.DEVICE_TABLE,
+						ID_COLUMN);
+
+					using (var cmd = new SqlCommand(cmdText, con, tx))
+					{
+						cmd.Parameters.Add("@Id", SqlDbType.UniqueIdentifier).Value = id;
+
+						cmd.ExecuteNonQuery();
+					}
+
+					tx.Commit();
+				}
 			}
 		}
 	}
