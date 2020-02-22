@@ -9,11 +9,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 	[TestClass]
 	public class WhenInsertingANewDevice
 	{
-		// Subject Under Test.
-		private DeviceRepository _sut;
-
 		private DeviceDto _expected;
-		private DeviceDto _actual;
+		private DeviceRepository _sut;
 
 		[TestInitialize]
 		public void Setup()
@@ -24,10 +21,10 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			_expected = new DeviceDto
 			{
 				Id = Guid.NewGuid(),
-				Brand = "Some brand",
-				Type = "Some type",
-				Owner = "John Doe",
-				Tag = "Random"
+				Brand = "HP",
+				Type = "AwesomeBook",
+				Owner = "Unknown",
+				Tag = "CRD-X-01234"
 			};
 
 			_sut.Insert(_expected);
@@ -36,9 +33,16 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestMethod]
 		public void ThenTheDataIsInserted()
 		{
-			_actual = _sut.GetById(_expected.Id.Value);
+			var actual = _sut.GetById(_expected.Id.Value);
 
-			Assert.AreEqual(_expected, _actual);
+			Assert.IsNotNull(actual);
+			Assert.AreEqual(_expected, actual);
+		}
+
+		[TestCleanup]
+		public void Cleanup()
+		{
+			_sut.Delete(_expected.Id.Value);
 		}
 	}
 }

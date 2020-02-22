@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepositoryTests\DeviceRepo\WhenDeletingADevice.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenUpdatingADevice.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenInsertingANewDevice.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenGettingById.cs" />

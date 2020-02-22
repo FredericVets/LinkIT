@@ -2,6 +2,7 @@
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -11,26 +12,59 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 	[TestClass]
 	public class WhenQueryingTheDevicesWithTwoConditions
 	{
-		private IEnumerable<DeviceDto> _result;
+		private List<DeviceDto> _expected;
+		private DeviceRepository _sut;
 
 		[TestInitialize]
 		public void Setup()
 		{
 			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
-			var repo = new DeviceRepository(conStr);
+			_sut = new DeviceRepository(conStr);
 
-			_result = repo.Query(new DeviceQuery
+			_expected = new List<DeviceDto>()
 			{
-				Tag = "CRD-L-04321",
-				Owner = "u6543210"
-			});
+				new DeviceDto
+				{
+					Id = Guid.NewGuid(),
+					Brand = "Dell",
+					Type = "AwesomeBook",
+					Owner = "Unknown",
+					Tag = "CRD-X-01234"
+				},
+				new DeviceDto
+				{
+					Id = Guid.NewGuid(),
+					Brand = "Dell",
+					Type = "Latitude",
+					Owner = "Unknown",
+					Tag = "CRD-X-43210"
+				}
+			};
+
+			_expected.ForEach(x => _sut.Insert(x));
 		}
 
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			Assert.IsNotNull(_result);
-			Assert.AreEqual(1, _result.Count());
+			var actual = _sut.Query(new DeviceQuery 
+			{ 
+				Owner = "Unknown",
+				Brand = "Dell"
+			});
+
+			Assert.AreEqual(2, actual.Count());
+			foreach (var expectedDto in _expected)
+			{
+				var actualDto = actual.Single(x => x.Id == expectedDto.Id);
+				Assert.AreEqual(expectedDto, actualDto);
+			}
+		}
+
+		[TestCleanup]
+		public void CleanUp()
+		{
+			_expected.ForEach(x => _sut.Delete(x.Id.Value));
 		}
 	}
 }

@@ -105,6 +105,16 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
+		public DeviceDto GetById(Guid id)
+		{
+			var result = Query(new DeviceQuery { Id = id }).ToList();
+
+			if (result.Count == 0)
+				throw new InvalidOperationException(string.Format("No device found for id : '{0}'.", id));
+
+			return result.Single();
+		}
+
 		public IEnumerable<DeviceDto> GetAll()
 		{
 			var result = new List<DeviceDto>();
@@ -135,11 +145,6 @@ namespace LinkIT.Data.Repositories
 					//tx.Commit();
 				}
 			}
-		}
-
-		public DeviceDto GetById(Guid deviceId)
-		{
-			return Query(new DeviceQuery { Id = deviceId }).Single();
 		}
 
 		public IEnumerable<DeviceDto> Query(DeviceQuery query)
@@ -242,6 +247,30 @@ namespace LinkIT.Data.Repositories
 						cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = input.Owner;
 						cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
 						cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
+
+						cmd.ExecuteNonQuery();
+					}
+
+					tx.Commit();
+				}
+			}
+		}
+
+		public void Delete(Guid id)
+		{
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					string cmdText = string.Format(
+						@"DELETE FROM {0} WHERE {1}=@Id",
+						TableNames.DEVICE_TABLE,
+						ID_COLUMN);
+
+					using (var cmd = new SqlCommand(cmdText, con, tx))
+					{
+						cmd.Parameters.Add("@Id", SqlDbType.UniqueIdentifier).Value = id;
 
 						cmd.ExecuteNonQuery();
 					}

@@ -1,21 +1,16 @@
-﻿using System;
-using System.Configuration;
-using LinkIT.Data.DTO;
+﻿using LinkIT.Data.DTO;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Configuration;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 {
 	[TestClass]
 	public class WhenUpdatingADevice
 	{
-		private Guid _id = new Guid("B25A5475-A799-4D19-99B0-1E0BFA4554E2");
-
-		// Subject Under Test.
-		private DeviceRepository _sut;
-
 		private DeviceDto _expected;
-		private DeviceDto _actual;
+		private DeviceRepository _sut;
 
 		[TestInitialize]
 		public void Setup()
@@ -23,20 +18,34 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
 			_sut = new DeviceRepository(conStr);
 
-			_expected = _sut.GetById(_id);
+			_expected = new DeviceDto
+			{
+				Id = Guid.NewGuid(),
+				Brand = "HP",
+				Type = "AwesomeBook",
+				Owner = "Unknown",
+				Tag = "CRD-X-01234"
+			};
 
-			_expected.Brand = "Amazing";
-			_expected.Type = "AwesomeBook";
+			_sut.Insert(_expected);
 
+			_expected.Brand = "Dell";
 			_sut.Update(_expected);
 		}
 
 		[TestMethod]
-		public void ThenTheDataIsUpdatedAsExpected()
+		public void ThenTheDataIsUpdated()
 		{
-			_actual = _sut.GetById(_id);
+			var actual = _sut.GetById(_expected.Id.Value);
 
-			Assert.AreEqual(_expected, _actual);
+			Assert.IsNotNull(actual);
+			Assert.AreEqual(_expected, actual);
+		}
+
+		[TestCleanup]
+		public void Cleanup()
+		{
+			_sut.Delete(_expected.Id.Value);
 		}
 	}
 }

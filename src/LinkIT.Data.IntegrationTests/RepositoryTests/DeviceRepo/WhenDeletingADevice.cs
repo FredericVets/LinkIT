@@ -1,13 +1,13 @@
-﻿using LinkIT.Data.DTO;
+﻿using System;
+using System.Configuration;
+using LinkIT.Data.DTO;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Configuration;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 {
 	[TestClass]
-	public class WhenGettingById
+	public class WhenDeletingADevice
 	{
 		private DeviceDto _expected;
 		private DeviceRepository _sut;
@@ -28,21 +28,18 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			};
 
 			_sut.Insert(_expected);
+
+			// Then delete it.
+			_sut.Delete(_expected.Id.Value);
 		}
 
 		[TestMethod]
-		public void ThenTheResultIsAsExpected()
+		public void ThenTheDeviceDoesntExistAnymore()
 		{
-			var actual = _sut.GetById(_expected.Id.Value);
-
-			Assert.IsNotNull(actual);
-			Assert.AreEqual(_expected, actual);
-		}
-
-		[TestCleanup]
-		public void Cleanup()
-		{
-			_sut.Delete(_expected.Id.Value);
+			Assert.ThrowsException<InvalidOperationException>(() =>
+			{
+				_sut.GetById(_expected.Id.Value);
+			});
 		}
 	}
 }
