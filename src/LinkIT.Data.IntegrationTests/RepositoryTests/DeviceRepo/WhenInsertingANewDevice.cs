@@ -24,13 +24,13 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 				Owner = "Unknown",
 				Tag = "CRD-X-01234"
 			};
-
-			_expected.Id = _sut.Insert(_expected);
 		}
 
 		[TestMethod]
 		public void ThenTheDataIsInserted()
 		{
+			_expected.Id = _sut.Insert(_expected);
+
 			var actual = _sut.Get(_expected.Id.Value);
 
 			Assert.IsNotNull(actual);

@@ -27,14 +27,13 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			};
 
 			_expected.Id = _sut.Insert(_expected);
-
-			// Then delete it.
-			_sut.Delete(_expected.Id.Value);
 		}
 
 		[TestMethod]
 		public void ThenTheDeviceDoesntExistAnymore()
 		{
+			_sut.Delete(_expected.Id.Value);
+
 			Assert.ThrowsException<InvalidOperationException>(() =>
 			{
 				_sut.Get(_expected.Id.Value);

@@ -42,7 +42,7 @@ namespace LinkIT.Web.Controllers.Api
 			};
 
 			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
-			return _repo.Get().Select(x => new DeviceModel
+			return _repo.Query().Select(x => new DeviceModel
 			{
 				Id = x.Id,
 				Tag = x.Tag,

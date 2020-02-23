@@ -26,14 +26,14 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			};
 
 			_expected.Id = _sut.Insert(_expected);
-
-			_expected.Brand = "Dell";
-			_sut.Update(_expected);
 		}
 
 		[TestMethod]
 		public void ThenTheDataIsUpdated()
 		{
+			_expected.Brand = "Dell";
+			_sut.Update(_expected);
+
 			var actual = _sut.Get(_expected.Id.Value);
 
 			Assert.IsNotNull(actual);

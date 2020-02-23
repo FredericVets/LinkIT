@@ -35,14 +35,16 @@ namespace LinkIT.Data.Repositories
 		/// </summary>
 		/// <param name="con"></param>
 		/// <param name="tx"></param>
-		/// <param name="condition"></param>
 		/// <param name="query"></param>
+		/// <param name="condition"></param>
+		/// <param name="paging"></param>
 		/// <returns></returns>
 		private static SqlCommand CreateSelectCommand(
 			SqlConnection con,
 			SqlTransaction tx,
-			WhereCondition condition,
-			DeviceQuery query = null)
+			DeviceQuery query = null,
+			WhereCondition condition = WhereCondition.AND,
+			Paging paging = null)
 		{
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
@@ -50,23 +52,12 @@ namespace LinkIT.Data.Repositories
 			sb.AppendFormat("SELECT * FROM [{0}]", TableNames.DEVICE_TABLE);
 			sb.AppendLine();
 
-			if (query == null)
-			{
-				cmd.CommandText = sb.ToString();
+			if (query != null)
+				AddWhereClause(cmd.Parameters, sb, query, condition);
 
-				return cmd;
-			}
+			if (paging != null)
+				AddPaging(cmd.Parameters, sb, paging);
 
-			AddWhereClause(cmd.Parameters, sb, query, condition);
-
-			if (query.Paging == null)
-			{
-				cmd.CommandText = sb.ToString();
-
-				return cmd;
-			}
-
-			AddPaging(cmd.Parameters, sb, query);
 			cmd.CommandText = sb.ToString();
 
 			return cmd;
@@ -130,33 +121,32 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query)
+		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, Paging paging)
 		{
-			sb.AppendFormat("ORDER BY [{0}]", query.Paging.OrderByColumnName);
+			sb.AppendFormat("ORDER BY [{0}]", paging.OrderByColumnName);
 			sb.AppendLine();
 			sb.AppendLine("OFFSET ((@PageNumber - 1) * @RowsPerPage) ROWS");
 			sb.AppendLine("FETCH NEXT @RowsPerPage ROWS ONLY");
 
-			@params.Add("@PageNumber", SqlDbType.Int).Value = query.Paging.PageNumber;
-			@params.Add("@RowsPerPage", SqlDbType.Int).Value = query.Paging.RowsPerPage;
-		}
-
-		public IEnumerable<DeviceDto> Get()
-		{
-			return Query(null);
+			@params.Add("@PageNumber", SqlDbType.Int).Value = paging.PageNumber;
+			@params.Add("@RowsPerPage", SqlDbType.Int).Value = paging.RowsPerPage;
 		}
 
 		public DeviceDto Get(long id)
 		{
-			var result = Query(new DeviceQuery { Id = id }).ToList();
+			var query = new DeviceQuery { Id = id };
+			var result = Query(query);
 
-			if (result.Count == 0)
+			if (result.Count() == 0)
 				throw new InvalidOperationException(string.Format("No device found for id : '{0}'.", id));
 
 			return result.Single();
 		}
 
-		public IEnumerable<DeviceDto> Query(DeviceQuery query, WhereCondition condition = WhereCondition.AND)
+		public IEnumerable<DeviceDto> Query(
+			DeviceQuery query = null, 
+			WhereCondition condition = WhereCondition.AND, 
+			Paging paging = null)
 		{
 			var result = new List<DeviceDto>();
 
@@ -165,7 +155,7 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCommand(con, tx, condition, query))
+					using (var cmd = CreateSelectCommand(con, tx, query, condition, paging))
 					using (var reader = cmd.ExecuteReader())
 					{
 						while (reader.Read())

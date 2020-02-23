@@ -8,7 +8,7 @@ using System.Linq;
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 {
 	[TestClass]
-	public class WhenGettingAllDevices
+	public class WhenGettingAllDevicesWithPaging
 	{
 		private List<DeviceDto> _expected;
 		private DeviceRepository _sut;
@@ -26,14 +26,28 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 					Brand = "HP",
 					Type = "AwesomeBook",
 					Owner = "Unknown",
-					Tag = "CRD-X-01234"
+					Tag = "CRD-X-11111"
 				},
 				new DeviceDto
 				{
 					Brand = "Dell",
-					Type = "Latitude",
+					Type = "Latitude 7290",
 					Owner = "Unknown",
-					Tag = "CRD-X-43210"
+					Tag = "CRD-X-22222"
+				},
+				new DeviceDto
+				{
+					Brand = "Dell",
+					Type = "Latitude 7490",
+					Owner = "Unknown",
+					Tag = "CRD-X-33333"
+				},
+				new DeviceDto
+				{
+					Brand = "Dell",
+					Type = "Latitude 5590",
+					Owner = "Unknown",
+					Tag = "CRD-X-44444"
 				}
 			};
 
@@ -43,13 +57,16 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var actual = _sut.Query().ToList();
+			var paging = new Paging(2, 2, DeviceRepository.TAG_COLUMN);
+			var actual = _sut.Query(paging: paging).ToList();
+
+			var page = _expected.OrderBy(x => x.Tag).Skip(2).ToList();
 
 			Assert.AreEqual(2, actual.Count);
-			foreach (var expectedDto in _expected)
+			foreach (var item in page)
 			{
-				var actualDto = actual.Single(x => x.Id == expectedDto.Id);
-				Assert.AreEqual(expectedDto, actualDto);
+				var actualDto = actual.Single(x => x.Id == item.Id);
+				Assert.AreEqual(item, actualDto);
 			}
 		}
 

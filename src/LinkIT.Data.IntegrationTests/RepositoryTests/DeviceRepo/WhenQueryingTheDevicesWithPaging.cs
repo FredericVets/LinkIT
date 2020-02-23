@@ -58,17 +58,14 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var query = new DeviceQuery
-			{
-				Owner = "Unknown",
-				Paging = new Paging(2, 2, DeviceRepository.TAG_COLUMN)
-			};
+			var query = new DeviceQuery	{ Owner = "Unknown" };
+			var paging = new Paging(2, 2, DeviceRepository.TAG_COLUMN);
 
-			var actual = _sut.Query(query);
+			var actual = _sut.Query(query, paging: paging).ToList();
 
 			var page = _expected.OrderBy(x => x.Tag).Skip(2).ToList();
 
-			Assert.AreEqual(2, page.Count);
+			Assert.AreEqual(2, actual.Count);
 			foreach (var item in page)
 			{
 				var actualDto = actual.Single(x => x.Id == item.Id);
