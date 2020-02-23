@@ -21,16 +21,17 @@ namespace LinkIT.Data.Repositories
 
 		public DeviceRepository(string connectionString)
 		{
-			if (string.IsNullOrEmpty(connectionString))
-				throw new ArgumentNullException();
+			if (string.IsNullOrWhiteSpace(connectionString))
+				throw new ArgumentNullException("connectionString");
 
 			_connectionString = connectionString;
 		}
 
 		/// <summary>
-		/// This will build the SqlCommand based on the query object and the specified condition (AND / OR to combine the arguments).
-		/// Has support for paging.
-		/// This is based on the new paging feature introduced in Sql Serever 2012.
+		/// This will build the SqlCommand based on the optional query object and the optional condition (AND / OR to combine 
+		/// the query arguments).
+		/// Has support for paging. This is based on the new paging feature introduced in Sql Serever 2012.
+		/// If no query or paging instance is supplied, a select without where clause will be generated.
 		/// <see cref="https://social.technet.microsoft.com/wiki/contents/articles/23811.paging-a-query-with-sql-server.aspx#Paginacao_dentro"/>
 		/// </summary>
 		/// <param name="con"></param>
@@ -144,8 +145,8 @@ namespace LinkIT.Data.Repositories
 		}
 
 		public IEnumerable<DeviceDto> Query(
-			DeviceQuery query = null, 
-			WhereCondition condition = WhereCondition.AND, 
+			DeviceQuery query = null,
+			WhereCondition condition = WhereCondition.AND,
 			Paging paging = null)
 		{
 			var result = new List<DeviceDto>();
@@ -196,6 +197,7 @@ namespace LinkIT.Data.Repositories
 						BRAND_COLUMN,
 						TYPE_COLUMN);
 
+					long newId;
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{
 						cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = input.Tag;
@@ -203,13 +205,12 @@ namespace LinkIT.Data.Repositories
 						cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
 						cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
 
-						long newId = (long)cmd.ExecuteScalar();
-						input.Id = newId;
+						newId = (long)cmd.ExecuteScalar();
 					}
 
 					tx.Commit();
 
-					return input.Id.Value;
+					return newId;
 				}
 			}
 		}
