@@ -1,7 +1,6 @@
 ﻿using LinkIT.Data.DTO;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Configuration;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
@@ -20,20 +19,19 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 
 			_expected = new DeviceDto
 			{
-				Id = Guid.NewGuid(),
 				Brand = "HP",
 				Type = "AwesomeBook",
 				Owner = "Unknown",
 				Tag = "CRD-X-01234"
 			};
 
-			_sut.Insert(_expected);
+			_expected.Id = _sut.Insert(_expected);
 		}
 
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var actual = _sut.GetById(_expected.Id.Value);
+			var actual = _sut.Get(_expected.Id.Value);
 
 			Assert.IsNotNull(actual);
 			Assert.AreEqual(_expected, actual);

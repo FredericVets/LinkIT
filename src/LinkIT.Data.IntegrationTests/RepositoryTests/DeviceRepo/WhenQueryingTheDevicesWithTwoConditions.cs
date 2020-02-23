@@ -2,7 +2,6 @@
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -25,7 +24,6 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			{
 				new DeviceDto
 				{
-					Id = Guid.NewGuid(),
 					Brand = "Dell",
 					Type = "AwesomeBook",
 					Owner = "Unknown",
@@ -33,7 +31,6 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 				},
 				new DeviceDto
 				{
-					Id = Guid.NewGuid(),
 					Brand = "Dell",
 					Type = "Latitude",
 					Owner = "Unknown",
@@ -41,7 +38,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 				}
 			};
 
-			_expected.ForEach(x => _sut.Insert(x));
+			_expected.ForEach(x => x.Id = _sut.Insert(x));
 		}
 
 		[TestMethod]

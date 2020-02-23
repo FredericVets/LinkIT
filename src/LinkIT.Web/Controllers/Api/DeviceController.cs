@@ -25,7 +25,7 @@ namespace LinkIT.Web.Controllers.Api
 			{
 				new DeviceModel
 				{
-					Id = Guid.NewGuid(),
+					Id = 1,
 					Tag = "CRD-L-07140",
 					Owner = "u0122713",
 					Brand = "Dell",
@@ -33,7 +33,7 @@ namespace LinkIT.Web.Controllers.Api
 				},
 				new DeviceModel
 				{
-					Id = Guid.NewGuid(),
+					Id = 2,
 					Tag = "CRD-L-07654",
 					Owner = "u0122713",
 					Brand = "HP",
@@ -42,7 +42,7 @@ namespace LinkIT.Web.Controllers.Api
 			};
 
 			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
-			return _repo.GetAll().Select(x => new DeviceModel
+			return _repo.Get().Select(x => new DeviceModel
 			{
 				Id = x.Id,
 				Tag = x.Tag,
@@ -53,9 +53,9 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		// example : GET api/values/5
-		public IHttpActionResult Get(Guid id)
+		public IHttpActionResult Get(long id)
 		{
-			if (id == Guid.Empty)
+			if (id == -1)
 				return NotFound();
 
 			var device = new DeviceModel
@@ -91,7 +91,7 @@ namespace LinkIT.Web.Controllers.Api
 		// DELETE api/values/5
 		// You can also use the void return type.
 		// Then the client will receive status code 204 as result of a DELETE request.
-		public void Delete(Guid id)
+		public void Delete(long id)
 		{
 		}
 

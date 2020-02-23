@@ -5,7 +5,7 @@ namespace LinkIT.Data.DTO
 {
 	public class DeviceDto : IEquatable<DeviceDto>
 	{
-		public Guid? Id { get; set; }
+		public long? Id { get; set; }
 
 		public string Tag { get; set; }
 
@@ -15,10 +15,11 @@ namespace LinkIT.Data.DTO
 
 		public string Type { get; set; }
 
-		public void ValidateRequiredFields()
+		public void ValidateRequiredFields(bool forInsert = false)
 		{
-			if (!Id.HasValue)
-				throw new ArgumentNullException("Id is required");
+			if (!forInsert)
+				if (!Id.HasValue)
+					throw new ArgumentNullException("Id is required");
 
 			if (string.IsNullOrWhiteSpace(Tag))
 				throw new ArgumentNullException("Tag is required");
@@ -42,7 +43,7 @@ namespace LinkIT.Data.DTO
 		public bool Equals(DeviceDto other)
 		{
 			return other != null &&
-				   EqualityComparer<Guid?>.Default.Equals(Id, other.Id) &&
+				   EqualityComparer<long?>.Default.Equals(Id, other.Id) &&
 				   Tag == other.Tag &&
 				   Owner == other.Owner &&
 				   Brand == other.Brand &&

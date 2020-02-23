@@ -20,14 +20,13 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 
 			_expected = new DeviceDto
 			{
-				Id = Guid.NewGuid(),
 				Brand = "HP",
 				Type = "AwesomeBook",
 				Owner = "Unknown",
 				Tag = "CRD-X-01234"
 			};
 
-			_sut.Insert(_expected);
+			_expected.Id = _sut.Insert(_expected);
 
 			// Then delete it.
 			_sut.Delete(_expected.Id.Value);
@@ -38,7 +37,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		{
 			Assert.ThrowsException<InvalidOperationException>(() =>
 			{
-				_sut.GetById(_expected.Id.Value);
+				_sut.Get(_expected.Id.Value);
 			});
 		}
 	}

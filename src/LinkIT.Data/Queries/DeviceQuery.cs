@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace LinkIT.Data.Queries
+﻿namespace LinkIT.Data.Queries
 {
     public class DeviceQuery
     {
-        public Guid? Id { get; set; }
+        public long? Id { get; set; }
 
         public string Tag { get; set; }
 
