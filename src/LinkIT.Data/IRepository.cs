@@ -11,7 +11,7 @@ namespace LinkIT.Data
 
 		T Get(long id);
 
-		IEnumerable<T> Query(U query, SelectCondition condition);
+		IEnumerable<T> Query(U query, WhereCondition condition);
 
 		long Insert(T input);
 

@@ -11,11 +11,11 @@ namespace LinkIT.Data.Repositories
 {
 	public class DeviceRepository : IRepository<DeviceDto, DeviceQuery>
 	{
-		private const string ID_COLUMN = "Id";
-		private const string TAG_COLUMN = "Tag";
-		private const string OWNER_COLUMN = "Owner";
-		private const string BRAND_COLUMN = "Brand";
-		private const string TYPE_COLUMN = "Type";
+		public const string ID_COLUMN = "Id";
+		public const string TAG_COLUMN = "Tag";
+		public const string OWNER_COLUMN = "Owner";
+		public const string BRAND_COLUMN = "Brand";
+		public const string TYPE_COLUMN = "Type";
 
 		private string _connectionString;
 
@@ -27,29 +27,61 @@ namespace LinkIT.Data.Repositories
 			_connectionString = connectionString;
 		}
 
-		// To add parameters to a command, see : https://stackoverflow.com/questions/293311/whats-the-best-method-to-pass-parameters-to-sqlcommand
+		/// <summary>
+		/// This will build the SqlCommand based on the query object and the specified condition (AND / OR to combine the arguments).
+		/// Has support for paging.
+		/// This is based on the new paging feature introduced in Sql Serever 2012.
+		/// <see cref="https://social.technet.microsoft.com/wiki/contents/articles/23811.paging-a-query-with-sql-server.aspx#Paginacao_dentro"/>
+		/// </summary>
+		/// <param name="con"></param>
+		/// <param name="tx"></param>
+		/// <param name="condition"></param>
+		/// <param name="query"></param>
+		/// <returns></returns>
 		private static SqlCommand CreateSelectCommand(
 			SqlConnection con,
 			SqlTransaction tx,
-			SelectCondition condition,
+			WhereCondition condition,
 			DeviceQuery query = null)
 		{
+			var cmd = new SqlCommand { Connection = con, Transaction = tx };
+
 			var sb = new StringBuilder();
-			sb.AppendFormat("SELECT * FROM {0}", TableNames.DEVICE_TABLE);
+			sb.AppendFormat("SELECT * FROM [{0}]", TableNames.DEVICE_TABLE);
+			sb.AppendLine();
 
 			if (query == null)
-				return new SqlCommand(sb.ToString(), con, tx);
+			{
+				cmd.CommandText = sb.ToString();
 
-			sb.AppendLine();
+				return cmd;
+			}
+
+			AddWhereClause(cmd.Parameters, sb, query, condition);
+
+			if (query.Paging == null)
+			{
+				cmd.CommandText = sb.ToString();
+
+				return cmd;
+			}
+
+			AddPaging(cmd.Parameters, sb, query);
+			cmd.CommandText = sb.ToString();
+
+			return cmd;
+		}
+
+		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query, WhereCondition condition)
+		{
 			sb.AppendLine("WHERE");
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
 			bool firstCondition = true;
 			if (query.Id.HasValue)
 			{
-				sb.AppendFormat("{0} = @Id", ID_COLUMN);
+				sb.AppendFormat("[{0}] = @Id", ID_COLUMN);
 				sb.AppendLine();
-				cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = query.Id.Value;
+				@params.Add("@Id", SqlDbType.BigInt).Value = query.Id.Value;
 				firstCondition = false;
 			}
 
@@ -58,9 +90,9 @@ namespace LinkIT.Data.Repositories
 				if (!firstCondition)
 					sb.AppendLine(condition.ToString());
 
-				sb.AppendFormat("{0} = @Tag", TAG_COLUMN);
+				sb.AppendFormat("[{0}] = @Tag", TAG_COLUMN);
 				sb.AppendLine();
-				cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = query.Tag;
+				@params.Add("@Tag", SqlDbType.NVarChar).Value = query.Tag;
 				firstCondition = false;
 			}
 
@@ -69,9 +101,9 @@ namespace LinkIT.Data.Repositories
 				if (!firstCondition)
 					sb.AppendLine(condition.ToString());
 
-				sb.AppendFormat("{0} = @Owner", OWNER_COLUMN);
+				sb.AppendFormat("[{0}] = @Owner", OWNER_COLUMN);
 				sb.AppendLine();
-				cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = query.Owner;
+				@params.Add("@Owner", SqlDbType.NVarChar).Value = query.Owner;
 				firstCondition = false;
 			}
 
@@ -80,9 +112,9 @@ namespace LinkIT.Data.Repositories
 				if (!firstCondition)
 					sb.AppendLine(condition.ToString());
 
-				sb.AppendFormat("{0} = @Brand", BRAND_COLUMN);
+				sb.AppendFormat("[{0}] = @Brand", BRAND_COLUMN);
 				sb.AppendLine();
-				cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = query.Brand;
+				@params.Add("@Brand", SqlDbType.NVarChar).Value = query.Brand;
 				firstCondition = false;
 			}
 
@@ -91,15 +123,22 @@ namespace LinkIT.Data.Repositories
 				if (!firstCondition)
 					sb.AppendLine(condition.ToString());
 
-				sb.AppendFormat("{0} = @Type", TYPE_COLUMN);
+				sb.AppendFormat("[{0}] = @Type", TYPE_COLUMN);
 				sb.AppendLine();
-				cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = query.Type;
+				@params.Add("@Type", SqlDbType.NVarChar).Value = query.Type;
 				firstCondition = false;
 			}
+		}
 
-			cmd.CommandText = sb.ToString();
+		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query)
+		{
+			sb.AppendFormat("ORDER BY [{0}]", query.Paging.OrderByColumnName);
+			sb.AppendLine();
+			sb.AppendLine("OFFSET ((@PageNumber - 1) * @RowsPerPage) ROWS");
+			sb.AppendLine("FETCH NEXT @RowsPerPage ROWS ONLY");
 
-			return cmd;
+			@params.Add("@PageNumber", SqlDbType.Int).Value = query.Paging.PageNumber;
+			@params.Add("@RowsPerPage", SqlDbType.Int).Value = query.Paging.RowsPerPage;
 		}
 
 		public IEnumerable<DeviceDto> Get()
@@ -117,7 +156,7 @@ namespace LinkIT.Data.Repositories
 			return result.Single();
 		}
 
-		public IEnumerable<DeviceDto> Query(DeviceQuery query, SelectCondition condition = SelectCondition.AND)
+		public IEnumerable<DeviceDto> Query(DeviceQuery query, WhereCondition condition = WhereCondition.AND)
 		{
 			var result = new List<DeviceDto>();
 
@@ -159,7 +198,7 @@ namespace LinkIT.Data.Repositories
 				using (var tx = con.BeginTransaction())
 				{
 					string cmdText = string.Format(
-						@"INSERT into {0} ([{1}], [{2}], [{3}], [{4}]) VALUES (@Tag, @Owner, @Brand, @Type)
+						@"INSERT into [{0}] ([{1}], [{2}], [{3}], [{4}]) VALUES (@Tag, @Owner, @Brand, @Type)
 						SELECT CONVERT(bigint, SCOPE_IDENTITY())",
 						TableNames.DEVICE_TABLE,
 						TAG_COLUMN,
@@ -199,7 +238,7 @@ namespace LinkIT.Data.Repositories
 				using (var tx = con.BeginTransaction())
 				{
 					string cmdText = string.Format(
-						@"UPDATE {0} SET {1}=@Tag, {2}=@Owner, {3}=@Brand, {4}=@Type WHERE {5}=@Id",
+						@"UPDATE [{0}] SET [{1}]=@Tag, [{2}]=@Owner, [{3}]=@Brand, [{4}]=@Type WHERE [{5}]=@Id",
 						TableNames.DEVICE_TABLE,
 						TAG_COLUMN,
 						OWNER_COLUMN,
@@ -231,7 +270,7 @@ namespace LinkIT.Data.Repositories
 				using (var tx = con.BeginTransaction())
 				{
 					string cmdText = string.Format(
-						@"DELETE FROM {0} WHERE {1}=@Id",
+						@"DELETE FROM [{0}] WHERE [{1}]=@Id",
 						TableNames.DEVICE_TABLE,
 						ID_COLUMN);
 
