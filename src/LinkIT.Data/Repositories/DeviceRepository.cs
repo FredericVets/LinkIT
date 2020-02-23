@@ -9,7 +9,7 @@ using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
-	public class DeviceRepository
+	public class DeviceRepository : IRepository<DeviceDto, DeviceQuery>
 	{
 		private const string ID_COLUMN = "Id";
 		private const string TAG_COLUMN = "Tag";
@@ -31,8 +31,8 @@ namespace LinkIT.Data.Repositories
 		private static SqlCommand CreateSelectCommand(
 			SqlConnection con,
 			SqlTransaction tx,
-			DeviceQuery query = null,
-			SelectCondition condition = SelectCondition.AND)
+			SelectCondition condition,
+			DeviceQuery query = null)
 		{
 			var sb = new StringBuilder();
 			sb.AppendFormat("SELECT * FROM {0}", TableNames.DEVICE_TABLE);
@@ -117,7 +117,7 @@ namespace LinkIT.Data.Repositories
 			return result.Single();
 		}
 
-		public IEnumerable<DeviceDto> Query(DeviceQuery query)
+		public IEnumerable<DeviceDto> Query(DeviceQuery query, SelectCondition condition = SelectCondition.AND)
 		{
 			var result = new List<DeviceDto>();
 
@@ -126,7 +126,7 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCommand(con, tx, query))
+					using (var cmd = CreateSelectCommand(con, tx, condition, query))
 					using (var reader = cmd.ExecuteReader())
 					{
 						while (reader.Read())

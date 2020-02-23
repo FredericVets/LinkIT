@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace LinkIT.Data.DTO
 {
-	public class DeviceDto : IEquatable<DeviceDto>
+	public class DeviceDto : Dto, IEquatable<DeviceDto>
 	{
-		public long? Id { get; set; }
-
 		public string Tag { get; set; }
 
 		public string Owner { get; set; }

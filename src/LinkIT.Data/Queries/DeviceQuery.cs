@@ -1,9 +1,7 @@
 ﻿namespace LinkIT.Data.Queries
 {
-    public class DeviceQuery
+    public class DeviceQuery : Query
     {
-        public long? Id { get; set; }
-
         public string Tag { get; set; }
 
         public string Owner { get; set; }
