@@ -1,6 +1,6 @@
-﻿using LinkIT.Data.Repositories;
+﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Repositories;
 using LinkIT.Web.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Configuration;
@@ -9,11 +9,11 @@ using System.Web.Http;
 namespace LinkIT.Web.Controllers.Api
 {
 	// See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials
-	public class DeviceController : ApiController
+	public class DevicesController : ApiController
 	{
 		private DeviceRepository _repo;
 
-		public DeviceController()
+		public DevicesController()
 		{
 			_repo = new DeviceRepository(WebConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString);
 		}
@@ -21,71 +21,61 @@ namespace LinkIT.Web.Controllers.Api
 		// GET api/device
 		public IEnumerable<DeviceModel> Get()
 		{
-			return new DeviceModel[]
-			{
-				new DeviceModel
-				{
-					Id = 1,
-					Tag = "CRD-L-07140",
-					Owner = "u0122713",
-					Brand = "Dell",
-					Type = "Latitude 7390"
-				},
-				new DeviceModel
-				{
-					Id = 2,
-					Tag = "CRD-L-07654",
-					Owner = "u0122713",
-					Brand = "HP",
-					Type = "EliteBook 750 G6"
-				},
-			};
-
 			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
 			return _repo.Query().Select(x => new DeviceModel
 			{
 				Id = x.Id,
-				Tag = x.Tag,
-				Owner = x.Owner,
 				Brand = x.Brand,
-				Type = x.Type
+				Type = x.Type,
+				Owner = x.Owner,
+				Tag = x.Tag
 			});
 		}
 
 		// example : GET api/values/5
-		public IHttpActionResult Get(long id)
+		public DeviceModel Get(long id)
 		{
-			if (id == -1)
-				return NotFound();
+			var dto = _repo.Get(id);
 
-			var device = new DeviceModel
+			return new DeviceModel
 			{
-				Id = id,
-				Tag = "CRD-L-07140",
-				Owner = "u0122713",
-				Brand = "Dell",
-				Type = "Latitude 7390"
+				Id = dto.Id,
+				Brand = dto.Brand,
+				Type = dto.Type,
+				Owner = dto.Owner,
+				Tag = dto.Tag
 			};
-
-			return Ok(device);
 		}
 
-		// POST api/values
-		// 2 following attributes are the default behaviour.
-		// Create the new Device.
-		[HttpPost]
-		public void Post(DeviceModel value)
+		public DeviceModel Post(DeviceModel model)
 		{
+			var dto = new DeviceDto
+			{
+				Brand = model.Brand,
+				Type = model.Type,
+				Owner = model.Owner,
+				Tag = model.Tag
+			};
+
+			model.Id = _repo.Insert(dto);
+
+			return model;
 		}
 
 		// PUT api/values/5
 		// Fully updates the Device.
-		public IHttpActionResult Put(DeviceModel value)
+		public void Put(long id, DeviceModel model)
 		{
-			if (!value.Id.HasValue)
-				return NotFound();
+			var dto = new DeviceDto
+			{
+				Id = id,
+				Brand = model.Brand,
+				Type = model.Type,
+				Owner = model.Owner,
+				Tag = model.Tag
+			};
 
-			return Ok();
+			_repo.Update(dto);
 		}
 
 		// DELETE api/values/5
@@ -93,6 +83,7 @@ namespace LinkIT.Web.Controllers.Api
 		// Then the client will receive status code 204 as result of a DELETE request.
 		public void Delete(long id)
 		{
+			_repo.Delete(id);
 		}
 
 		// Partial update of the Device.
