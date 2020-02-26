@@ -1,6 +1,8 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Models;
+using LinkIT.Web.Models.Filters;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -20,18 +22,53 @@ namespace LinkIT.Web.Controllers.Api
 			_repo = new DeviceRepository(WebConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString);
 		}
 
-		// GET api/device
-		public IEnumerable<DeviceModel> Get()
+		private static HttpResponseMessage CreateResponseFor(HttpRequestMessage request, ICollection<DeviceDto> dtoData)
 		{
-			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
-			return _repo.Query().Select(x => new DeviceModel
+			if (dtoData.Count == 0)
+				return request.CreateResponse(HttpStatusCode.NoContent);
+
+			var modelResult = dtoData.Select(x => new DeviceModel
 			{
 				Id = x.Id,
 				Brand = x.Brand,
 				Type = x.Type,
 				Owner = x.Owner,
 				Tag = x.Tag
-			});
+			}).ToList();
+
+			return request.CreateResponse(HttpStatusCode.OK, modelResult);
+		}
+
+		/// <summary>
+		/// If no results are found that match the filter, a 204 (No Content) status code is sent.
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <returns></returns>
+		public HttpResponseMessage Get([FromUri]DeviceFilter filter = null)
+		{
+			IList<DeviceDto> dtoResult;
+
+			// TODO : fix if no arguments are supplied.
+			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
+			if (filter == null)
+			{
+				dtoResult = _repo.Query().ToList();
+
+				return CreateResponseFor(Request, dtoResult);
+			}
+
+			// Apply filter.
+			var query = new DeviceQuery
+			{
+				Brand = filter.Brand,
+				Type = filter.Type,
+				Owner = filter.Owner,
+				Tag = filter.Tag
+			};
+
+			dtoResult = _repo.Query(query).ToList();
+
+			return CreateResponseFor(Request, dtoResult);
 		}
 
 		// example : GET api/values/5
@@ -70,6 +107,8 @@ namespace LinkIT.Web.Controllers.Api
 				Owner = x.Owner,
 				Tag = x.Tag
 			});
+
+			_repo.Update(dtos);
 		}
 
 		// PUT api/values/5
