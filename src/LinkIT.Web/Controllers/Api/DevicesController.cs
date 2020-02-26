@@ -3,6 +3,8 @@ using LinkIT.Data.Repositories;
 using LinkIT.Web.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Configuration;
 using System.Web.Http;
 
@@ -33,21 +35,17 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		// example : GET api/values/5
-		public DeviceModel Get(long id)
+		public IHttpActionResult Get(long id)
 		{
+			if (!_repo.Exists(id))
+				return NotFound();
+
 			var dto = _repo.Get(id);
 
-			return new DeviceModel
-			{
-				Id = dto.Id,
-				Brand = dto.Brand,
-				Type = dto.Type,
-				Owner = dto.Owner,
-				Tag = dto.Tag
-			};
+			return Ok(dto);
 		}
 
-		public DeviceModel Post(DeviceModel model)
+		public IHttpActionResult Post(DeviceModel model)
 		{
 			var dto = new DeviceDto
 			{
@@ -59,13 +57,28 @@ namespace LinkIT.Web.Controllers.Api
 
 			model.Id = _repo.Insert(dto);
 
-			return model;
+			return Created(string.Format("api/{0}", model.Id), model);
+		}
+
+		public void Put(IEnumerable<DeviceModel> data)
+		{
+			var dtos = data.Select(x => new DeviceDto
+			{
+				Id = x.Id,
+				Brand = x.Brand,
+				Type = x.Type,
+				Owner = x.Owner,
+				Tag = x.Tag
+			});
 		}
 
 		// PUT api/values/5
 		// Fully updates the Device.
-		public void Put(long id, DeviceModel model)
+		public IHttpActionResult Put(long id, DeviceModel model)
 		{
+			if (!_repo.Exists(id))
+				return NotFound();
+
 			var dto = new DeviceDto
 			{
 				Id = id,
@@ -76,19 +89,18 @@ namespace LinkIT.Web.Controllers.Api
 			};
 
 			_repo.Update(dto);
+
+			return Ok(dto);
 		}
 
-		// DELETE api/values/5
-		// You can also use the void return type.
-		// Then the client will receive status code 204 as result of a DELETE request.
-		public void Delete(long id)
+		public HttpResponseMessage Delete(long id)
 		{
+			if (!_repo.Exists(id))
+				return Request.CreateResponse(HttpStatusCode.NotFound);
+
 			_repo.Delete(id);
-		}
 
-		// Partial update of the Device.
-		public void Patch(DeviceModel value)
-		{
+			return Request.CreateResponse(HttpStatusCode.NoContent);
 		}
 	}
 }

@@ -7,13 +7,17 @@ namespace LinkIT.Data
 		where T : Dto
 		where U : Query
 	{
+		bool Exists(long id);
+
 		T Get(long id);
 
 		IEnumerable<T> Query(U query = null, WhereCondition condition = WhereCondition.AND, Paging paging = null);
 
-		long Insert(T input);
+		long Insert(T item);
 
-		void Update(T input);
+		void Update(T item);
+
+		void Update(IEnumerable<T> data);
 
 		void Delete(long id);
 	}

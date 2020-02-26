@@ -64,6 +64,25 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
+		private static SqlCommand CreateSelectCountCommand(
+			SqlConnection con,
+			SqlTransaction tx,
+			DeviceQuery query = null)
+		{
+			var cmd = new SqlCommand { Connection = con, Transaction = tx };
+			
+			var sb = new StringBuilder();
+			sb.AppendFormat("SELECT COUNT(*) FROM [{0}]", TableNames.DEVICE_TABLE);
+			sb.AppendLine();
+
+			if (query != null)
+				AddWhereClause(cmd.Parameters, sb, query, WhereCondition.AND);
+
+			cmd.CommandText = sb.ToString();
+
+			return cmd;
+		}
+
 		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query, WhereCondition condition)
 		{
 			sb.AppendLine("WHERE");
@@ -133,12 +152,34 @@ namespace LinkIT.Data.Repositories
 			@params.Add("@RowsPerPage", SqlDbType.Int).Value = paging.RowsPerPage;
 		}
 
+		public bool Exists(long id)
+		{
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					using (var cmd = CreateSelectCountCommand(
+						con,
+						tx,
+						new DeviceQuery { Id = id }))
+					{
+						int count = (int)cmd.ExecuteScalar();
+
+						return count == 1;
+					}
+
+					//tx.Commit();
+				}
+			}
+		}
+
 		public DeviceDto Get(long id)
 		{
 			var query = new DeviceQuery { Id = id };
 			var result = Query(query);
 
-			if (result.Count() == 0)
+			if (result.Count() != 1)
 				throw new InvalidOperationException(string.Format("No device found for id : '{0}'.", id));
 
 			return result.Single();
@@ -179,9 +220,9 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public long Insert(DeviceDto input)
+		public long Insert(DeviceDto item)
 		{
-			input.ValidateRequiredFields(forInsert: true);
+			item.ValidateRequiredFields(forInsert: true);
 
 			using (var con = new SqlConnection(_connectionString))
 			{
@@ -200,10 +241,10 @@ namespace LinkIT.Data.Repositories
 					long newId;
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{
-						cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = input.Tag;
-						cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = input.Owner;
-						cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
-						cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
+						cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = item.Tag;
+						cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = item.Owner;
+						cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = item.Brand;
+						cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = item.Type;
 
 						newId = (long)cmd.ExecuteScalar();
 					}
@@ -218,10 +259,16 @@ namespace LinkIT.Data.Repositories
 		/// <summary>
 		/// This is a full-update. So all required fields should be supplied.
 		/// </summary>
-		/// <param name="input"></param>
-		public void Update(DeviceDto input)
+		/// <param name="item"></param>
+		public void Update(DeviceDto item)
 		{
-			input.ValidateRequiredFields();
+			Update(new[] { item });
+		}
+
+		public void Update(IEnumerable<DeviceDto> data)
+		{
+			foreach (var item in data)
+				item.ValidateRequiredFields();
 
 			using (var con = new SqlConnection(_connectionString))
 			{
@@ -237,15 +284,18 @@ namespace LinkIT.Data.Repositories
 						TYPE_COLUMN,
 						ID_COLUMN);
 
-					using (var cmd = new SqlCommand(cmdText, con, tx))
+					foreach (var item in data)
 					{
-						cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = input.Id.Value;
-						cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = input.Tag;
-						cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = input.Owner;
-						cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
-						cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
+						using (var cmd = new SqlCommand(cmdText, con, tx))
+						{
+							cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = item.Id.Value;
+							cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = item.Tag;
+							cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = item.Owner;
+							cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = item.Brand;
+							cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = item.Type;
 
-						cmd.ExecuteNonQuery();
+							cmd.ExecuteNonQuery();
+						}
 					}
 
 					tx.Commit();
