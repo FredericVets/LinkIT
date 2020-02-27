@@ -163,6 +163,7 @@
     </Compile>
     <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Models\Filters\DeviceFilter.cs" />
+    <Compile Include="Models\Paging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

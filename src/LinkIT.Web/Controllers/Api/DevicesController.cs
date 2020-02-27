@@ -22,19 +22,36 @@ namespace LinkIT.Web.Controllers.Api
 			_repo = new DeviceRepository(WebConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString);
 		}
 
+		private static DeviceModel MapToModel(DeviceDto input)
+		{
+			return new DeviceModel
+			{
+				Id = input.Id,
+				Brand = input.Brand,
+				Type = input.Type,
+				Owner = input.Owner,
+				Tag = input.Tag
+			};
+		}
+
+		private static DeviceDto MapToDto(DeviceModel input)
+		{
+			return new DeviceDto
+			{
+				Id = input.Id,
+				Brand = input.Brand,
+				Type = input.Type,
+				Owner = input.Owner,
+				Tag = input.Tag
+			};
+		}
+
 		private static HttpResponseMessage CreateResponseFor(HttpRequestMessage request, ICollection<DeviceDto> dtoData)
 		{
 			if (dtoData.Count == 0)
 				return request.CreateResponse(HttpStatusCode.NoContent);
 
-			var modelResult = dtoData.Select(x => new DeviceModel
-			{
-				Id = x.Id,
-				Brand = x.Brand,
-				Type = x.Type,
-				Owner = x.Owner,
-				Tag = x.Tag
-			}).ToList();
+			var modelResult = dtoData.Select(MapToModel).ToList();
 
 			return request.CreateResponse(HttpStatusCode.OK, modelResult);
 		}
@@ -44,13 +61,14 @@ namespace LinkIT.Web.Controllers.Api
 		/// </summary>
 		/// <param name="filter"></param>
 		/// <returns></returns>
-		public HttpResponseMessage Get([FromUri]DeviceFilter filter = null)
+		public HttpResponseMessage Get(
+			[FromUri]DeviceFilter filter,
+			[FromUri]Paging paging)
 		{
 			IList<DeviceDto> dtoResult;
 
-			// TODO : fix if no arguments are supplied.
 			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
-			if (filter == null)
+			if (filter.IsEmpty())
 			{
 				dtoResult = _repo.Query().ToList();
 
@@ -78,58 +96,49 @@ namespace LinkIT.Web.Controllers.Api
 				return NotFound();
 
 			var dto = _repo.Get(id);
+			var model = MapToModel(dto);
 
-			return Ok(dto);
+			return Ok(model);
 		}
 
 		public IHttpActionResult Post(DeviceModel model)
 		{
-			var dto = new DeviceDto
-			{
-				Brand = model.Brand,
-				Type = model.Type,
-				Owner = model.Owner,
-				Tag = model.Tag
-			};
-
+			var dto = MapToDto(model);
 			model.Id = _repo.Insert(dto);
 
-			return Created(string.Format("api/{0}", model.Id), model);
+			return Created($"api/{model.Id}", model);
 		}
 
-		public void Put(IEnumerable<DeviceModel> data)
+		// Fully updates the devices.
+		public IHttpActionResult Put(IEnumerable<DeviceModel> models)
 		{
-			var dtos = data.Select(x => new DeviceDto
-			{
-				Id = x.Id,
-				Brand = x.Brand,
-				Type = x.Type,
-				Owner = x.Owner,
-				Tag = x.Tag
-			});
+			if (models.Count() > 50)
+				return BadRequest("Maximum 50 elements can be modified in one request.");
 
+			foreach (var model in models)
+			{
+				if (!_repo.Exists(model.Id.Value))
+					return BadRequest($"No device found for id : {model.Id.Value}");
+			}
+
+			var dtos = models.Select(MapToDto);
 			_repo.Update(dtos);
+
+			return Ok(models);
 		}
 
 		// PUT api/values/5
-		// Fully updates the Device.
+		// Fully updates the device.
 		public IHttpActionResult Put(long id, DeviceModel model)
 		{
 			if (!_repo.Exists(id))
 				return NotFound();
 
-			var dto = new DeviceDto
-			{
-				Id = id,
-				Brand = model.Brand,
-				Type = model.Type,
-				Owner = model.Owner,
-				Tag = model.Tag
-			};
-
+			model.Id = id;
+			var dto = MapToDto(model);
 			_repo.Update(dto);
 
-			return Ok(dto);
+			return Ok(model);
 		}
 
 		public HttpResponseMessage Delete(long id)

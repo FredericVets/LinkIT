@@ -9,5 +9,13 @@
 		public string Brand { get; set; }
 
 		public string Type { get; set; }
+
+		public bool IsEmpty()
+		{
+			return string.IsNullOrWhiteSpace(Tag) &&
+				string.IsNullOrWhiteSpace(Owner) &&
+				string.IsNullOrWhiteSpace(Brand) &&
+				string.IsNullOrWhiteSpace(Type);
+		}
 	}
 }
