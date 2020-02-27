@@ -58,8 +58,11 @@ namespace LinkIT.Web.Controllers.Api
 
 		/// <summary>
 		/// If no results are found that match the filter, a 204 (No Content) status code is sent.
+		/// If multiple fields of the filter are supplied, only results will be returned that match all the fields.
+		/// Supports paging. If not supplied, default values will be used.
 		/// </summary>
 		/// <param name="filter"></param>
+		/// <param name="paging"></param>
 		/// <returns></returns>
 		public HttpResponseMessage Get(
 			[FromUri]DeviceFilter filter,
@@ -117,6 +120,9 @@ namespace LinkIT.Web.Controllers.Api
 
 			foreach (var model in models)
 			{
+				if (!model.Id.HasValue)
+					return BadRequest("No id specified for device.");
+
 				if (!_repo.Exists(model.Id.Value))
 					return BadRequest($"No device found for id : {model.Id.Value}");
 			}
