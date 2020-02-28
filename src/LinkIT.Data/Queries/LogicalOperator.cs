@@ -1,4 +1,4 @@
-﻿namespace LinkIT.Data
+﻿namespace LinkIT.Data.Queries
 {
 	public enum LogicalOperator
 	{

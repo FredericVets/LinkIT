@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace LinkIT.Web.Models.Api
 {
@@ -9,17 +6,17 @@ namespace LinkIT.Web.Models.Api
 	{
 		public PagedResultModel(
 			IEnumerable<T> result,
-			PagingModel paging,
+			PageInfoModel pageInfo,
 			long totalCount)
 		{
 			Result = result;
-			Paging = paging;
+			PageInfo = pageInfo;
 			TotalCount = totalCount;
 		}
 
 		public IEnumerable<T> Result { get; }
 
-		public PagingModel Paging { get; }
+		public PageInfoModel PageInfo { get; }
 
 		public long TotalCount { get; }
 	}

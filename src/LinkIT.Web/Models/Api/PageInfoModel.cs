@@ -2,9 +2,9 @@
 
 namespace LinkIT.Web.Models.Api
 {
-	public class PagingModel
+	public class PageInfoModel
 	{
-		public PagingModel()
+		public PageInfoModel()
 		{
 			// The defaults.
 			PageNumber = 1;

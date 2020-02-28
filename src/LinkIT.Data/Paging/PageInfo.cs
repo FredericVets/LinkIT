@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace LinkIT.Data
+namespace LinkIT.Data.Paging
 {
-	public class Paging
+	public class PageInfo
 	{
-		public Paging(
-			int pageNumber, 
-			int rowsPerPage, 
-			string orderByColumnName, 
+		public PageInfo(
+			int pageNumber,
+			int rowsPerPage,
+			string orderByColumnName,
 			Sorting orderBySorting = Sorting.ASCENDING)
 		{
 			if (string.IsNullOrWhiteSpace(orderByColumnName))

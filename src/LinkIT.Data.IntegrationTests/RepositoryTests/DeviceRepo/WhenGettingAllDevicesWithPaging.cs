@@ -1,4 +1,5 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Paging;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
@@ -57,11 +58,12 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var paging = new Paging(2, 2, DeviceRepository.TAG_COLUMN, Sorting.ASCENDING);
-			var actual = _sut.PagedQuery(paging);
+			var pageInfo = new PageInfo(2, 2, DeviceRepository.TAG_COLUMN, Sorting.ASCENDING);
+			var actual = _sut.PagedQuery(pageInfo);
 
 			var page = _expected.OrderBy(x => x.Tag).Skip(2).ToList();
 
+			Assert.AreEqual(pageInfo, actual.PageInfo);
 			Assert.AreEqual(4, actual.TotalCount);
 			Assert.AreEqual(2, actual.Result.Count());
 			foreach (var item in page)

@@ -1,5 +1,5 @@
-﻿using LinkIT.Data;
-using LinkIT.Data.DTO;
+﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Models.Api;
@@ -47,17 +47,17 @@ namespace LinkIT.Web.Controllers.Api
 			};
 		}
 
-		private static Paging MapToPaging(PagingModel input)
+		private static PageInfo MapToPageInfo(PageInfoModel input)
 		{
-			return new Paging(
+			return new PageInfo(
 				input.PageNumber,
 				input.RowsPerPage,
 				input.OrderBy);
 		}
 
-		private static PagingModel MapToPagingModel(Paging input)
+		private static PageInfoModel MapToModel(PageInfo input)
 		{
-			return new PagingModel
+			return new PageInfoModel
 			{
 				PageNumber = input.PageNumber,
 				RowsPerPage = input.RowsPerPage,
@@ -73,7 +73,7 @@ namespace LinkIT.Web.Controllers.Api
 			var models = pagedResult.Result.Select(MapToModel).ToList();
 			var result = new PagedResultModel<DeviceModel>(
 				models,
-				MapToPagingModel(pagedResult.Paging),
+				MapToModel(pagedResult.PageInfo),
 				pagedResult.TotalCount);
 
 			return request.CreateResponse(HttpStatusCode.OK, result);
@@ -101,11 +101,11 @@ namespace LinkIT.Web.Controllers.Api
 		/// <returns></returns>
 		public HttpResponseMessage Get(
 			[FromUri]DeviceFilterModel filter,
-			[FromUri]PagingModel pagingModel)
+			[FromUri]PageInfoModel pageinfo)
 		{
 			// TODO : supply mechanism to supply order by direction of the paging!
 			PagedResult<DeviceDto> pagedResult;
-			var paging = MapToPaging(pagingModel);
+			var paging = MapToPageInfo(pageinfo);
 
 			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
 			if (filter.IsEmpty())
@@ -131,6 +131,9 @@ namespace LinkIT.Web.Controllers.Api
 
 		public IHttpActionResult Post(DeviceModel model)
 		{
+			if (model.Id.HasValue)
+				return BadRequest("Id can not be specified.");
+
 			var dto = MapToDto(model);
 			long id = _repo.Insert(dto);
 

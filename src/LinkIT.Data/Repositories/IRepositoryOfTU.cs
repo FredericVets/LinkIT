@@ -1,7 +1,9 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Paging;
+using LinkIT.Data.Queries;
 using System.Collections.Generic;
 
-namespace LinkIT.Data
+namespace LinkIT.Data.Repositories
 {
 	public interface IRepository<T, U>
 		where T : Dto
@@ -15,7 +17,7 @@ namespace LinkIT.Data
 
 		IEnumerable<T> Query(U query = null);
 
-		PagedResult<T> PagedQuery(Paging paging, U query = null);
+		PagedResult<T> PagedQuery(PageInfo paging, U query = null);
 
 		long Insert(T item);
 

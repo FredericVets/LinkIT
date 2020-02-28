@@ -1,4 +1,5 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using System;
 using System.Collections.Generic;
@@ -69,7 +70,7 @@ namespace LinkIT.Data.Repositories
 			SqlConnection con,
 			SqlTransaction tx,
 			DeviceQuery query = null,
-			Paging paging = null)
+			PageInfo pageInfo = null)
 		{
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
@@ -79,8 +80,8 @@ namespace LinkIT.Data.Repositories
 			if (query != null)
 				AddWhereClause(cmd.Parameters, sb, query);
 
-			if (paging != null)
-				AddPaging(cmd.Parameters, sb, paging);
+			if (pageInfo != null)
+				AddPaging(cmd.Parameters, sb, pageInfo);
 
 			cmd.CommandText = sb.ToString();
 
@@ -189,10 +190,10 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, Paging paging)
+		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, PageInfo pageInfo)
 		{
-			sb.Append($"ORDER BY [{paging.OrderByColumnName}] ");
-			if (paging.OrderBySorting == Sorting.ASCENDING)
+			sb.Append($"ORDER BY [{pageInfo.OrderByColumnName}] ");
+			if (pageInfo.OrderBySorting == Sorting.ASCENDING)
 			{
 				sb.AppendLine("ASC");
 			}
@@ -204,8 +205,8 @@ namespace LinkIT.Data.Repositories
 			sb.AppendLine("OFFSET ((@PageNumber - 1) * @RowsPerPage) ROWS");
 			sb.AppendLine("FETCH NEXT @RowsPerPage ROWS ONLY");
 
-			@params.Add("@PageNumber", SqlDbType.Int).Value = paging.PageNumber;
-			@params.Add("@RowsPerPage", SqlDbType.Int).Value = paging.RowsPerPage;
+			@params.Add("@PageNumber", SqlDbType.Int).Value = pageInfo.PageNumber;
+			@params.Add("@RowsPerPage", SqlDbType.Int).Value = pageInfo.RowsPerPage;
 		}
 
 		public bool Exists(long id)
@@ -276,7 +277,7 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public PagedResult<DeviceDto> PagedQuery(Paging paging, DeviceQuery query = null)
+		public PagedResult<DeviceDto> PagedQuery(PageInfo pageInfo, DeviceQuery query = null)
 		{
 			using (var con = new SqlConnection(_connectionString))
 			{
@@ -289,12 +290,12 @@ namespace LinkIT.Data.Repositories
 						totalCount = Convert.ToInt64(cmd.ExecuteScalar());
 					}
 
-					using (var cmd = CreateSelectCommandFor(con, tx, query, paging))
+					using (var cmd = CreateSelectCommandFor(con, tx, query, pageInfo))
 					using (var reader = cmd.ExecuteReader())
 					{
 						var result = ReadDtosFrom(reader).ToList();
 
-						return new PagedResult<DeviceDto>(result, paging, totalCount);
+						return new PagedResult<DeviceDto>(result, pageInfo, totalCount);
 					}
 
 					//tx.Commit();
