@@ -13,25 +13,6 @@ namespace LinkIT.Data.DTO
 
 		public string Type { get; set; }
 
-		public void ValidateRequiredFields(bool forInsert = false)
-		{
-			if (!forInsert)
-				if (!Id.HasValue)
-					throw new ArgumentNullException("Id is required");
-
-			if (string.IsNullOrWhiteSpace(Tag))
-				throw new ArgumentNullException("Tag is required");
-
-			if (string.IsNullOrWhiteSpace(Owner))
-				throw new ArgumentNullException("Owner is required");
-
-			if (string.IsNullOrWhiteSpace(Brand))
-				throw new ArgumentNullException("Brand is required");
-
-			if (string.IsNullOrWhiteSpace(Type))
-				throw new ArgumentNullException("Type is required");
-		}
-
 		// Auto-generated equality methods.
 		public override bool Equals(object obj)
 		{

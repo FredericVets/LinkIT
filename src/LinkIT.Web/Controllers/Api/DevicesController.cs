@@ -15,7 +15,7 @@ namespace LinkIT.Web.Controllers.Api
 	// See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials
 	public class DevicesController : ApiController
 	{
-		private DeviceRepository _repo;
+		private IDeviceRepository _repo;
 
 		public DevicesController()
 		{
@@ -107,7 +107,11 @@ namespace LinkIT.Web.Controllers.Api
 		public IHttpActionResult Post(DeviceModel model)
 		{
 			var dto = MapToDto(model);
-			model.Id = _repo.Insert(dto);
+			long id = _repo.Insert(dto);
+
+			// Refetch the data.
+			dto = _repo.Get(id);
+			model = MapToModel(dto);
 
 			return Created($"api/{model.Id}", model);
 		}
@@ -130,6 +134,12 @@ namespace LinkIT.Web.Controllers.Api
 			var dtos = models.Select(MapToDto);
 			_repo.Update(dtos);
 
+			// Refetch the data.
+			long[] ids = models.Select(x => x.Id.Value).ToArray();
+			dtos = _repo.Get(ids);
+
+			models = dtos.Select(MapToModel).ToList();
+
 			return Ok(models);
 		}
 
@@ -143,6 +153,10 @@ namespace LinkIT.Web.Controllers.Api
 			model.Id = id;
 			var dto = MapToDto(model);
 			_repo.Update(dto);
+
+			// Refetch the data.
+			dto = _repo.Get(id);
+			model = MapToModel(dto);
 
 			return Ok(model);
 		}

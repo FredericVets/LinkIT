@@ -4,6 +4,7 @@
 	{
 		public Paging()
 		{
+			// The defaults.
 			PageNumber = 1;
 			RowsPerPage = 50;
 			OrderBy = "Id";

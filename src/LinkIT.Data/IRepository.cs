@@ -3,13 +3,15 @@ using System.Collections.Generic;
 
 namespace LinkIT.Data
 {
-	interface IRepository<T, U>
+	public interface IRepository<T, U>
 		where T : Dto
 		where U : Query
 	{
 		bool Exists(long id);
 
 		T Get(long id);
+
+		IEnumerable<T> Get(IEnumerable<long> ids);
 
 		IEnumerable<T> Query(U query = null, WhereCondition condition = WhereCondition.AND, Paging paging = null);
 
