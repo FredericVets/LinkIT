@@ -95,7 +95,7 @@ namespace LinkIT.Data.Repositories
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
 			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT COUNT(*) FROM [{TableNames.DEVICE_TABLE}]");
+			sb.AppendLine($"SELECT COUNT({ID_COLUMN}) FROM [{TableNames.DEVICE_TABLE}]");
 
 			if (query != null)
 				AddWhereClause(cmd.Parameters, sb, query);
@@ -309,7 +309,7 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					string cmdText = $@"INSERT into [{TableNames.DEVICE_TABLE}] ([{TAG_COLUMN}], [{OWNER_COLUMN}], [{BRAND_COLUMN}], [{TYPE_COLUMN}]) 
+					string cmdText = $@"INSERT INTO [{TableNames.DEVICE_TABLE}] ([{TAG_COLUMN}], [{OWNER_COLUMN}], [{BRAND_COLUMN}], [{TYPE_COLUMN}]) 
 						VALUES (@Tag, @Owner, @Brand, @Type)
 						SELECT CONVERT(bigint, SCOPE_IDENTITY())";
 
