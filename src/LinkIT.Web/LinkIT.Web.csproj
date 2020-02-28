@@ -162,9 +162,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\DeviceModel.cs" />
-    <Compile Include="Models\Filters\DeviceFilter.cs" />
-    <Compile Include="Models\Paging.cs" />
+    <Compile Include="Models\Api\DeviceModel.cs" />
+    <Compile Include="Models\Api\Filters\DeviceFilter.cs" />
+    <Compile Include="Models\Api\Paging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

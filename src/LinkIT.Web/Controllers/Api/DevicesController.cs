@@ -1,8 +1,8 @@
 ﻿using LinkIT.Data.DTO;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
-using LinkIT.Web.Models;
-using LinkIT.Web.Models.Filters;
+using LinkIT.Web.Models.Api;
+using LinkIT.Web.Models.Api.Filters;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -124,7 +124,7 @@ namespace LinkIT.Web.Controllers.Api
 					return BadRequest("No id specified for device.");
 
 				if (!_repo.Exists(model.Id.Value))
-					return BadRequest($"No device found for id : {model.Id.Value}");
+					return BadRequest($"No device found for id : {model.Id.Value}.");
 			}
 
 			var dtos = models.Select(MapToDto);

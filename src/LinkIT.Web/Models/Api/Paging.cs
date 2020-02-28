@@ -1,4 +1,4 @@
-﻿namespace LinkIT.Web.Models
+﻿namespace LinkIT.Web.Models.Api
 {
 	public class Paging
 	{

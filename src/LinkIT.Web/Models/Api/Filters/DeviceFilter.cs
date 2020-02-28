@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LinkIT.Web.Models.Filters
+namespace LinkIT.Web.Models.Api.Filters
 {
 	public class DeviceFilter
 	{

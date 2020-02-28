@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace LinkIT.Web.Models
+namespace LinkIT.Web.Models.Api
 {
 	public class DeviceModel
 	{
