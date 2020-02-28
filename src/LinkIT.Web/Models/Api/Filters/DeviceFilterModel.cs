@@ -2,7 +2,7 @@
 
 namespace LinkIT.Web.Models.Api.Filters
 {
-	public class DeviceFilter
+	public class DeviceFilterModel
 	{
 		[MaxLength(20)]
 		public string Tag { get; set; }

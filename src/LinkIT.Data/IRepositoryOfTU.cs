@@ -13,7 +13,9 @@ namespace LinkIT.Data
 
 		IEnumerable<T> Get(IEnumerable<long> ids);
 
-		IEnumerable<T> Query(U query = null, Paging paging = null);
+		IEnumerable<T> Query(U query = null);
+
+		PagedResult<T> PagedQuery(Paging paging, U query = null);
 
 		long Insert(T item);
 

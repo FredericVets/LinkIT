@@ -67,7 +67,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IRepository.cs" />
+    <Compile Include="IRepositoryOfTU.cs" />
+    <Compile Include="Sorting.cs" />
+    <Compile Include="PagedResultOfT.cs" />
     <Compile Include="Paging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\DeviceQuery.cs" />

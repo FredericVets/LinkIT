@@ -163,8 +163,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Api\DeviceModel.cs" />
-    <Compile Include="Models\Api\Filters\DeviceFilter.cs" />
-    <Compile Include="Models\Api\Paging.cs" />
+    <Compile Include="Models\Api\Filters\DeviceFilterModel.cs" />
+    <Compile Include="Models\Api\PagedResultModelOfT.cs" />
+    <Compile Include="Models\Api\PagingModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using LinkIT.Data.DTO;
+﻿using LinkIT.Data;
+using LinkIT.Data.DTO;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Models.Api;
@@ -46,50 +47,36 @@ namespace LinkIT.Web.Controllers.Api
 			};
 		}
 
-		private static HttpResponseMessage CreateResponseFor(HttpRequestMessage request, ICollection<DeviceDto> dtoData)
+		private static Paging MapToPaging(PagingModel input)
 		{
-			if (dtoData.Count == 0)
-				return request.CreateResponse(HttpStatusCode.NoContent);
-
-			var modelResult = dtoData.Select(MapToModel).ToList();
-
-			return request.CreateResponse(HttpStatusCode.OK, modelResult);
+			return new Paging(
+				input.PageNumber,
+				input.RowsPerPage,
+				input.OrderBy);
 		}
 
-		/// <summary>
-		/// If no results are found that match the filter, a 204 (No Content) status code is sent.
-		/// If multiple fields of the filter are supplied, only results will be returned that match all the fields.
-		/// Supports paging. If not supplied, default values will be used.
-		/// </summary>
-		/// <param name="filter"></param>
-		/// <param name="paging"></param>
-		/// <returns></returns>
-		public HttpResponseMessage Get(
-			[FromUri]DeviceFilter filter,
-			[FromUri]Paging paging)
+		private static PagingModel MapToPagingModel(Paging input)
 		{
-			IList<DeviceDto> dtoResult;
-
-			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
-			if (filter.IsEmpty())
+			return new PagingModel
 			{
-				dtoResult = _repo.Query().ToList();
-
-				return CreateResponseFor(Request, dtoResult);
-			}
-
-			// Apply filter.
-			var query = new DeviceQuery
-			{
-				Brand = filter.Brand,
-				Type = filter.Type,
-				Owner = filter.Owner,
-				Tag = filter.Tag
+				PageNumber = input.PageNumber,
+				RowsPerPage = input.RowsPerPage,
+				OrderBy = input.OrderByColumnName
 			};
+		}
 
-			dtoResult = _repo.Query(query).ToList();
+		private static HttpResponseMessage CreateResponseFor(HttpRequestMessage request, PagedResult<DeviceDto> pagedResult)
+		{
+			if (pagedResult.IsEmpty())
+				return request.CreateResponse(HttpStatusCode.NoContent);
 
-			return CreateResponseFor(Request, dtoResult);
+			var models = pagedResult.Result.Select(MapToModel).ToList();
+			var result = new PagedResultModel<DeviceModel>(
+				models,
+				MapToPagingModel(pagedResult.Paging),
+				pagedResult.TotalCount);
+
+			return request.CreateResponse(HttpStatusCode.OK, result);
 		}
 
 		// example : GET api/values/5
@@ -102,6 +89,44 @@ namespace LinkIT.Web.Controllers.Api
 			var model = MapToModel(dto);
 
 			return Ok(model);
+		}
+
+		/// <summary>
+		/// If no results are found that match the filter, a 204 (No Content) status code is sent.
+		/// If multiple fields of the filter are supplied, only results will be returned that match all the fields.
+		/// Supports paging. If not supplied, default values will be used.
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <param name="paging"></param>
+		/// <returns></returns>
+		public HttpResponseMessage Get(
+			[FromUri]DeviceFilterModel filter,
+			[FromUri]PagingModel pagingModel)
+		{
+			// TODO : supply mechanism to supply order by direction of the paging!
+			PagedResult<DeviceDto> pagedResult;
+			var paging = MapToPaging(pagingModel);
+
+			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
+			if (filter.IsEmpty())
+			{
+				pagedResult = _repo.PagedQuery(paging);
+
+				return CreateResponseFor(Request, pagedResult);
+			}
+
+			// Apply filter.
+			var query = new DeviceQuery
+			{
+				Brand = filter.Brand,
+				Type = filter.Type,
+				Owner = filter.Owner,
+				Tag = filter.Tag
+			};
+
+			pagedResult = _repo.PagedQuery(paging, query);
+
+			return CreateResponseFor(Request, pagedResult);
 		}
 
 		public IHttpActionResult Post(DeviceModel model)

@@ -1,8 +1,8 @@
 ﻿namespace LinkIT.Web.Models.Api
 {
-	public class Paging
+	public class PagingModel
 	{
-		public Paging()
+		public PagingModel()
 		{
 			// The defaults.
 			PageNumber = 1;
@@ -15,7 +15,5 @@
 		public int RowsPerPage { get; set; }
 
 		public string OrderBy { get; set; }
-
-		public int TotalResult { get; set; }
 	}
 }

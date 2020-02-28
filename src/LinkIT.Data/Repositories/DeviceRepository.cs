@@ -191,7 +191,16 @@ namespace LinkIT.Data.Repositories
 
 		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, Paging paging)
 		{
-			sb.AppendLine($"ORDER BY [{paging.OrderByColumnName}]");
+			sb.Append($"ORDER BY [{paging.OrderByColumnName}] ");
+			if (paging.OrderBySorting == Sorting.ASCENDING)
+			{
+				sb.AppendLine("ASC");
+			}
+			else
+			{
+				sb.AppendLine("DESC");
+			}
+
 			sb.AppendLine("OFFSET ((@PageNumber - 1) * @RowsPerPage) ROWS");
 			sb.AppendLine("FETCH NEXT @RowsPerPage ROWS ONLY");
 
@@ -211,7 +220,7 @@ namespace LinkIT.Data.Repositories
 						tx,
 						new DeviceQuery { Id = id }))
 					{
-						int count = (int)cmd.ExecuteScalar();
+						long count = Convert.ToInt64(cmd.ExecuteScalar());
 
 						return count == 1;
 					}
@@ -233,8 +242,6 @@ namespace LinkIT.Data.Repositories
 
 		public IEnumerable<DeviceDto> Get(IEnumerable<long> ids)
 		{
-			var result = new List<DeviceDto>();
-
 			using (var con = new SqlConnection(_connectionString))
 			{
 				con.Open();
@@ -251,21 +258,43 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public IEnumerable<DeviceDto> Query(
-			DeviceQuery query = null,
-			Paging paging = null)
+		public IEnumerable<DeviceDto> Query(DeviceQuery query = null)
 		{
-			var result = new List<DeviceDto>();
-
 			using (var con = new SqlConnection(_connectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCommandFor(con, tx, query, paging))
+					using (var cmd = CreateSelectCommandFor(con, tx, query))
 					using (var reader = cmd.ExecuteReader())
 					{
 						return ReadDtosFrom(reader).ToList();
+					}
+
+					//tx.Commit();
+				}
+			}
+		}
+
+		public PagedResult<DeviceDto> PagedQuery(Paging paging, DeviceQuery query = null)
+		{
+			using (var con = new SqlConnection(_connectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					long totalCount;
+					using (var cmd = CreateSelectCountCommandFor(con, tx, query))
+					{
+						totalCount = Convert.ToInt64(cmd.ExecuteScalar());
+					}
+
+					using (var cmd = CreateSelectCommandFor(con, tx, query, paging))
+					using (var reader = cmd.ExecuteReader())
+					{
+						var result = ReadDtosFrom(reader).ToList();
+
+						return new PagedResult<DeviceDto>(result, paging, totalCount);
 					}
 
 					//tx.Commit();
