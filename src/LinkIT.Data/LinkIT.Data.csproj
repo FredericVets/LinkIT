@@ -74,7 +74,7 @@
     <Compile Include="Query.cs" />
     <Compile Include="Repositories\DeviceRepository.cs" />
     <Compile Include="Repositories\IDeviceRepository.cs" />
-    <Compile Include="WhereCondition.cs" />
+    <Compile Include="LogicalOperator.cs" />
     <Compile Include="TableNames.cs" />
   </ItemGroup>
   <ItemGroup>

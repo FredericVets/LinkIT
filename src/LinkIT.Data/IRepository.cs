@@ -13,7 +13,7 @@ namespace LinkIT.Data
 
 		IEnumerable<T> Get(IEnumerable<long> ids);
 
-		IEnumerable<T> Query(U query = null, WhereCondition condition = WhereCondition.AND, Paging paging = null);
+		IEnumerable<T> Query(U query = null, Paging paging = null);
 
 		long Insert(T item);
 

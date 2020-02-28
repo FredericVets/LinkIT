@@ -54,8 +54,8 @@ namespace LinkIT.Data.Repositories
 		}
 
 		/// <summary>
-		/// This will build the SqlCommand based on the optional query object and the optional condition (AND / OR to combine 
-		/// the query arguments).
+		/// This will build the SqlCommand based on the optional query object. The specified Logical operator will be 
+		/// used to combine the query arguments.
 		/// Has support for paging. This is based on the new paging feature introduced in Sql Serever 2012.
 		/// If no query or paging instance is supplied, a select without where clause will be generated.
 		/// <see cref="https://social.technet.microsoft.com/wiki/contents/articles/23811.paging-a-query-with-sql-server.aspx#Paginacao_dentro"/>
@@ -63,14 +63,12 @@ namespace LinkIT.Data.Repositories
 		/// <param name="con"></param>
 		/// <param name="tx"></param>
 		/// <param name="query"></param>
-		/// <param name="condition"></param>
 		/// <param name="paging"></param>
 		/// <returns></returns>
 		private static SqlCommand CreateSelectCommandFor(
 			SqlConnection con,
 			SqlTransaction tx,
 			DeviceQuery query = null,
-			WhereCondition condition = WhereCondition.AND,
 			Paging paging = null)
 		{
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
@@ -79,7 +77,7 @@ namespace LinkIT.Data.Repositories
 			sb.AppendLine($"SELECT * FROM [{TableNames.DEVICE_TABLE}]");
 
 			if (query != null)
-				AddWhereClause(cmd.Parameters, sb, query, condition);
+				AddWhereClause(cmd.Parameters, sb, query);
 
 			if (paging != null)
 				AddPaging(cmd.Parameters, sb, paging);
@@ -100,7 +98,7 @@ namespace LinkIT.Data.Repositories
 			sb.AppendLine($"SELECT COUNT(*) FROM [{TableNames.DEVICE_TABLE}]");
 
 			if (query != null)
-				AddWhereClause(cmd.Parameters, sb, query, WhereCondition.AND);
+				AddWhereClause(cmd.Parameters, sb, query);
 
 			cmd.CommandText = sb.ToString();
 
@@ -138,7 +136,7 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
-		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query, WhereCondition condition)
+		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query)
 		{
 			sb.AppendLine("WHERE");
 
@@ -153,7 +151,7 @@ namespace LinkIT.Data.Repositories
 			if (!string.IsNullOrWhiteSpace(query.Tag))
 			{
 				if (!firstCondition)
-					sb.AppendLine(condition.ToString());
+					sb.AppendLine(query.LogicalOperator.ToString());
 
 				sb.AppendLine($"[{TAG_COLUMN}] = @Tag");
 				@params.Add("@Tag", SqlDbType.NVarChar).Value = query.Tag;
@@ -163,7 +161,7 @@ namespace LinkIT.Data.Repositories
 			if (!string.IsNullOrWhiteSpace(query.Owner))
 			{
 				if (!firstCondition)
-					sb.AppendLine(condition.ToString());
+					sb.AppendLine(query.LogicalOperator.ToString());
 
 				sb.AppendLine($"[{OWNER_COLUMN}] = @Owner");
 				@params.Add("@Owner", SqlDbType.NVarChar).Value = query.Owner;
@@ -173,7 +171,7 @@ namespace LinkIT.Data.Repositories
 			if (!string.IsNullOrWhiteSpace(query.Brand))
 			{
 				if (!firstCondition)
-					sb.AppendLine(condition.ToString());
+					sb.AppendLine(query.LogicalOperator.ToString());
 
 				sb.AppendLine($"[{BRAND_COLUMN}] = @Brand");
 				@params.Add("@Brand", SqlDbType.NVarChar).Value = query.Brand;
@@ -183,7 +181,7 @@ namespace LinkIT.Data.Repositories
 			if (!string.IsNullOrWhiteSpace(query.Type))
 			{
 				if (!firstCondition)
-					sb.AppendLine(condition.ToString());
+					sb.AppendLine(query.LogicalOperator.ToString());
 
 				sb.AppendLine($"[{TYPE_COLUMN}] = @Type");
 				@params.Add("@Type", SqlDbType.NVarChar).Value = query.Type;
@@ -255,7 +253,6 @@ namespace LinkIT.Data.Repositories
 
 		public IEnumerable<DeviceDto> Query(
 			DeviceQuery query = null,
-			WhereCondition condition = WhereCondition.AND,
 			Paging paging = null)
 		{
 			var result = new List<DeviceDto>();
@@ -265,7 +262,7 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCommandFor(con, tx, query, condition, paging))
+					using (var cmd = CreateSelectCommandFor(con, tx, query, paging))
 					using (var reader = cmd.ExecuteReader())
 					{
 						return ReadDtosFrom(reader).ToList();

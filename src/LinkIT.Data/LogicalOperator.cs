@@ -1,6 +1,6 @@
 ﻿namespace LinkIT.Data
 {
-	public enum WhereCondition
+	public enum LogicalOperator
 	{
 		AND,
 		OR
