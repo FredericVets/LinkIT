@@ -1,4 +1,6 @@
-﻿namespace LinkIT.Web.Models.Api
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LinkIT.Web.Models.Api
 {
 	public class PagingModel
 	{
@@ -10,10 +12,13 @@
 			OrderBy = "Id";
 		}
 
+		[Range(0, int.MaxValue)]
 		public int PageNumber { get; set; }
 
+		[Range(0, int.MaxValue)]
 		public int RowsPerPage { get; set; }
 
+		[MaxLength(30)]
 		public string OrderBy { get; set; }
 	}
 }
