@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LinkIT.Web.Models.Api
+namespace LinkIT.Web.Models.Api.Paging
 {
 	public class PageInfoModel
 	{

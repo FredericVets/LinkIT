@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LinkIT.Web.Models.Api
+namespace LinkIT.Web.Models.Api.Paging
 {
 	public class PagedResultModel<T> where T : class
 	{

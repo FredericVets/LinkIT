@@ -164,8 +164,8 @@
     </Compile>
     <Compile Include="Models\Api\DeviceModel.cs" />
     <Compile Include="Models\Api\Filters\DeviceFilterModel.cs" />
-    <Compile Include="Models\Api\PagedResultModelOfT.cs" />
-    <Compile Include="Models\Api\PageInfoModel.cs" />
+    <Compile Include="Models\Api\Paging\PagedResultModelOfT.cs" />
+    <Compile Include="Models\Api\Paging\PageInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
