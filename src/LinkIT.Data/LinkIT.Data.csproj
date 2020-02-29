@@ -67,8 +67,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Paging\OrderBy.cs" />
     <Compile Include="Repositories\IRepositoryOfTU.cs" />
-    <Compile Include="Paging\Sorting.cs" />
+    <Compile Include="Paging\Order.cs" />
     <Compile Include="Paging\PagedResultOfT.cs" />
     <Compile Include="Paging\PageInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

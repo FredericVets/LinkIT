@@ -1,6 +1,6 @@
 ﻿namespace LinkIT.Data.Paging
 {
-	public enum Sorting
+	public enum Order
 	{
 		ASCENDING,
 		DESCENDING

@@ -7,24 +7,17 @@ namespace LinkIT.Data.Paging
 		public PageInfo(
 			int pageNumber,
 			int rowsPerPage,
-			string orderByColumnName,
-			Sorting orderBySorting = Sorting.ASCENDING)
+			OrderBy orderBy)
 		{
-			if (string.IsNullOrWhiteSpace(orderByColumnName))
-				throw new ArgumentNullException("orderByColumnName");
-
 			PageNumber = pageNumber;
 			RowsPerPage = rowsPerPage;
-			OrderByColumnName = orderByColumnName;
-			OrderBySorting = orderBySorting;
+			OrderBy = orderBy;
 		}
 
 		public int PageNumber { get; }
 
 		public int RowsPerPage { get; }
 
-		public string OrderByColumnName { get; }
-
-		public Sorting OrderBySorting { get; }
+		public OrderBy OrderBy { get; }
 	}
 }

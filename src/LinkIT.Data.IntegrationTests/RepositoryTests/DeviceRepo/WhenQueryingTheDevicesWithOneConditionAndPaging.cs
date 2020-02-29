@@ -10,7 +10,7 @@ using System.Linq;
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 {
 	[TestClass]
-	public class WhenQueryingTheDevicesWithPaging
+	public class WhenQueryingTheDevicesWithOneConditionAndPaging
 	{
 		private List<DeviceDto> _expected;
 		private DeviceRepository _sut;
@@ -50,6 +50,13 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 					Type = "Latitude 5590",
 					Owner = "Unknown",
 					Tag = "CRD-X-44444"
+				},
+				new DeviceDto
+				{
+					Brand = "Dell",
+					Type = "Latitude 5590",
+					Owner = "Unknown",
+					Tag = "CRD-X-55555"
 				}
 			};
 
@@ -60,13 +67,13 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		public void ThenTheResultIsAsExpected()
 		{
 			var query = new DeviceQuery { Owner = "Unknown" };
-			var pageInfo = new PageInfo(2, 2, DeviceRepository.TAG_COLUMN, Sorting.DESCENDING);
+			var pageInfo = new PageInfo(2, 2, new OrderBy(DeviceRepository.TAG_COLUMN, Order.DESCENDING));
 			var actual = _sut.PagedQuery(pageInfo, query);
 
 			var page = _expected.OrderByDescending(x => x.Tag).Skip(2).ToList();
 
 			Assert.AreEqual(pageInfo, actual.PageInfo);
-			Assert.AreEqual(4, actual.TotalCount);
+			Assert.AreEqual(5, actual.TotalCount);
 			Assert.AreEqual(2, actual.Result.Count());
 			foreach (var item in page)
 			{
