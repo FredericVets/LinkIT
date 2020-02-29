@@ -8,7 +8,7 @@ using System.Linq;
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 {
 	[TestClass]
-	public class WhenGettingAllDevices
+	public class WhenQueryingTheDevicesWithNoCondition
 	{
 		private List<DeviceDto> _expected;
 		private DeviceRepository _sut;

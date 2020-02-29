@@ -58,7 +58,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var actual = _sut.Get(_expected.Select(x => x.Id.Value)).ToList();
+			var actual = _sut.GetById(_expected.Select(x => x.Id.Value)).ToList();
 
 			Assert.AreEqual(_expected.Count, actual.Count);
 			foreach (var item in _expected)

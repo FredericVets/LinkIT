@@ -31,7 +31,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var actual = _sut.Get(_expected.Id.Value);
+			var actual = _sut.GetById(_expected.Id.Value);
 
 			Assert.IsNotNull(actual);
 			Assert.AreEqual(_expected, actual);

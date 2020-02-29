@@ -86,7 +86,7 @@ namespace LinkIT.Web.Controllers.Api
 			if (!_repo.Exists(id))
 				return NotFound();
 
-			var dto = _repo.Get(id);
+			var dto = _repo.GetById(id);
 			var model = MapToModel(dto);
 
 			return Ok(model);
@@ -139,7 +139,7 @@ namespace LinkIT.Web.Controllers.Api
 			long id = _repo.Insert(dto);
 
 			// Refetch the data.
-			dto = _repo.Get(id);
+			dto = _repo.GetById(id);
 			model = MapToModel(dto);
 
 			return Created($"api/{model.Id}", model);
@@ -165,7 +165,7 @@ namespace LinkIT.Web.Controllers.Api
 
 			// Refetch the data.
 			long[] ids = models.Select(x => x.Id.Value).ToArray();
-			dtos = _repo.Get(ids);
+			dtos = _repo.GetById(ids);
 
 			models = dtos.Select(MapToModel).ToList();
 
@@ -184,7 +184,7 @@ namespace LinkIT.Web.Controllers.Api
 			_repo.Update(dto);
 
 			// Refetch the data.
-			dto = _repo.Get(id);
+			dto = _repo.GetById(id);
 			model = MapToModel(dto);
 
 			return Ok(model);

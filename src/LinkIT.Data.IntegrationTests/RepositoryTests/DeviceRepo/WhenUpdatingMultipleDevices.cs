@@ -69,7 +69,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			//Validate.
 			foreach (var expectedItem in _expected)
 			{
-				var actualItem = _sut.Get(expectedItem.Id.Value);
+				var actualItem = _sut.GetById(expectedItem.Id.Value);
 				Assert.AreEqual(expectedItem, actualItem);
 			}
 		}

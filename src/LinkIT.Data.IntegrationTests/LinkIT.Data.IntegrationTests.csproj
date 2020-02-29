@@ -54,7 +54,7 @@
     <Compile Include="RepositoryTests\DeviceRepo\WhenGettingByListOfIds.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenUpdatingMultipleDevices.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenCheckingForExistence.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenGettingAllDevicesWithPaging.cs" />
+    <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithNoConditionAndPaging.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithOneConditionAndPaging.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenDeletingADevice.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenUpdatingADevice.cs" />
@@ -62,7 +62,7 @@
     <Compile Include="RepositoryTests\DeviceRepo\WhenGettingById.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithOneCondition.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithTwoConditions.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenGettingAllDevices.cs" />
+    <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithNoCondition.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

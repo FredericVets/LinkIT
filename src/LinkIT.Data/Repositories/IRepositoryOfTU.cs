@@ -11,9 +11,9 @@ namespace LinkIT.Data.Repositories
 	{
 		bool Exists(long id);
 
-		T Get(long id);
+		T GetById(long id);
 
-		IEnumerable<T> Get(IEnumerable<long> ids);
+		IEnumerable<T> GetById(IEnumerable<long> ids);
 
 		IEnumerable<T> Query(U query = null);
 

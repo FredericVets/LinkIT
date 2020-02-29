@@ -36,7 +36,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 
 			Assert.ThrowsException<InvalidOperationException>(() =>
 			{
-				_sut.Get(_expected.Id.Value);
+				_sut.GetById(_expected.Id.Value);
 			});
 		}
 	}

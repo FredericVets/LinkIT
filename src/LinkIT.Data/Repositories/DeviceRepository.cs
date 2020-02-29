@@ -222,9 +222,9 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public DeviceDto Get(long id)
+		public DeviceDto GetById(long id)
 		{
-			var result = Get(new[] { id }).ToList();
+			var result = GetById(new[] { id }).ToList();
 
 			if (result.Count != 1)
 				throw new InvalidOperationException($"No device found for id : '{id}'.");
@@ -232,7 +232,7 @@ namespace LinkIT.Data.Repositories
 			return result.Single();
 		}
 
-		public IEnumerable<DeviceDto> Get(IEnumerable<long> ids)
+		public IEnumerable<DeviceDto> GetById(IEnumerable<long> ids)
 		{
 			using (var con = new SqlConnection(_connectionString))
 			{

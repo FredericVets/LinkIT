@@ -9,7 +9,7 @@ using System.Linq;
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 {
 	[TestClass]
-	public class WhenGettingAllDevicesWithPaging
+	public class WhenQueryingTheDevicesWithNoConditionAndPaging
 	{
 		private List<DeviceDto> _expected;
 		private DeviceRepository _sut;
