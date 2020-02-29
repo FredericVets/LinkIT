@@ -67,10 +67,14 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		public void ThenTheResultIsAsExpected()
 		{
 			var query = new DeviceQuery { Owner = "Unknown" };
-			var pageInfo = new PageInfo(2, 2, new OrderBy(DeviceRepository.TAG_COLUMN, Order.DESCENDING));
+			var pageInfo = new PageInfo(
+				2, 
+				2, 
+				new OrderBy(DeviceRepository.TAG_COLUMN, Order.DESCENDING));
 			var actual = _sut.PagedQuery(pageInfo, query);
 
-			var page = _expected.OrderByDescending(x => x.Tag).Skip(2).ToList();
+			// Simulate the paging on the in-memory collection.
+			var page = _expected.OrderByDescending(x => x.Tag).Skip(2).Take(2).ToList();
 
 			Assert.AreEqual(pageInfo, actual.PageInfo);
 			Assert.AreEqual(5, actual.TotalCount);

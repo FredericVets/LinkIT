@@ -5,6 +5,13 @@ using System.Text.RegularExpressions;
 
 namespace LinkIT.Data.Paging
 {
+	/// <summary>
+	/// Suppose you want to order on a field called 'name'.
+	/// This class supports the syntax +name for ascending sort, -name for descending sort.
+	/// When no indication is provided, it defaults to ascending.
+	/// So +name = name.
+	/// Handles the parsing of this format.
+	/// </summary>
 	public class OrderBy : IEquatable<OrderBy>
 	{
 		private const char ASCENDING_CHARACTER = '+';

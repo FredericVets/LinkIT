@@ -10,7 +10,7 @@ namespace LinkIT.Web.Models.Api.Paging
 			// The defaults.
 			PageNumber = 1;
 			RowsPerPage = 50;
-			OrderByField = "+Id";
+			OrderBy = "+Id";
 		}
 
 		[Range(0, int.MaxValue)]
@@ -20,9 +20,9 @@ namespace LinkIT.Web.Models.Api.Paging
 		public int RowsPerPage { get; set; }
 
 		[MaxLength(30)]
-		[RegularExpression(OrderBy.REGEX_PATTERN)]
-		public string OrderByField { get; set; }
+		[RegularExpression(Data.Paging.OrderBy.REGEX_PATTERN)]
+		public string OrderBy { get; set; }
 
-		public OrderBy GetOrderBy() => OrderBy.Parse(OrderByField);
+		public OrderBy GetOrderBy() => Data.Paging.OrderBy.Parse(OrderBy);
 	}
 }

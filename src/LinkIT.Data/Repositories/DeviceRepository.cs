@@ -192,7 +192,7 @@ namespace LinkIT.Data.Repositories
 
 		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, PageInfo pageInfo)
 		{
-			sb.AppendLine($"ORDER BY [{pageInfo.OrderBy.Name}] {pageInfo.OrderBy.ToString()}");
+			sb.AppendLine($"ORDER BY [{pageInfo.OrderBy.Name}] {pageInfo.OrderBy.Order.ForSql()}");
 			sb.AppendLine("OFFSET ((@PageNumber - 1) * @RowsPerPage) ROWS");
 			sb.AppendLine("FETCH NEXT @RowsPerPage ROWS ONLY");
 

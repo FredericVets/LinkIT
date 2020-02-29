@@ -62,7 +62,7 @@ namespace LinkIT.Web.Controllers.Api
 			{
 				PageNumber = input.PageNumber,
 				RowsPerPage = input.RowsPerPage,
-				OrderByField = input.OrderBy.ToString()
+				OrderBy = input.OrderBy.ToString()
 			};
 		}
 
@@ -104,7 +104,6 @@ namespace LinkIT.Web.Controllers.Api
 			[FromUri]DeviceFilterModel filter,
 			[FromUri]PageInfoModel pageinfo)
 		{
-			// TODO : supply mechanism to supply order by direction of the paging!
 			PagedResult<DeviceDto> pagedResult;
 			var paging = MapToPageInfo(pageinfo);
 

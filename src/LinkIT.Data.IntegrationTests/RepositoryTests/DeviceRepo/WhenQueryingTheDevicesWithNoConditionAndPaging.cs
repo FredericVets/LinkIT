@@ -65,10 +65,14 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var pageInfo = new PageInfo(2, 2, new OrderBy(DeviceRepository.TAG_COLUMN, Order.ASCENDING));
+			var pageInfo = new PageInfo(
+				2, 
+				2, 
+				new OrderBy(DeviceRepository.TAG_COLUMN, Order.ASCENDING));
 			var actual = _sut.PagedQuery(pageInfo);
 
-			var page = _expected.OrderBy(x => x.Tag).Skip(2).ToList();
+			// Simulate the paging on the in-memory collection.
+			var page = _expected.OrderBy(x => x.Tag).Skip(2).Take(2).ToList();
 
 			Assert.AreEqual(pageInfo, actual.PageInfo);
 			Assert.AreEqual(5, actual.TotalCount);
