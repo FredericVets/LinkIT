@@ -18,7 +18,7 @@ namespace LinkIT.Data.Repositories
 		public const string BRAND_COLUMN = "Brand";
 		public const string TYPE_COLUMN = "Type";
 
-		private string _connectionString;
+		private readonly string _connectionString;
 
 		public DeviceRepository(string connectionString)
 		{
