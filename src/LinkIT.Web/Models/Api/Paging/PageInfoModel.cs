@@ -20,7 +20,9 @@ namespace LinkIT.Web.Models.Api.Paging
 		public int RowsPerPage { get; set; }
 
 		[MaxLength(30)]
-		[RegularExpression(Data.Paging.OrderBy.REGEX_PATTERN)]
+		[RegularExpression(
+			Data.Paging.OrderBy.REGEX_PATTERN,
+			ErrorMessage = "Invalid format. Use '(+/-)fieldname'. '+' means ascending, '-' descending. If omitted, defaults to ascending.")]
 		public string OrderBy { get; set; }
 
 		public OrderBy GetOrderBy() => Data.Paging.OrderBy.Parse(OrderBy);

@@ -8,7 +8,7 @@ namespace LinkIT.Data.Paging
 	/// <summary>
 	/// Suppose you want to order on a field called 'name'.
 	/// This class supports the syntax +name for ascending sort, -name for descending sort.
-	/// When no indication is provided, it defaults to ascending.
+	/// When no ordering is provided, it defaults to ascending.
 	/// So +name = name.
 	/// Handles the parsing of this format.
 	/// </summary>
@@ -60,6 +60,16 @@ namespace LinkIT.Data.Paging
 			throw new InvalidOperationException($"Unknown Order enum value : {input}.");
 		}
 
+		private static bool StartsWithSortingChar(string input)
+		{
+			if (string.IsNullOrWhiteSpace(input))
+				throw new ArgumentNullException("input");
+
+			char first = input.First();
+
+			return new[] { ASCENDING_CHARACTER, DESCENDING_CHARACTER }.Contains(first);
+		}
+
 		public string Name { get; }
 
 		public Order Order { get; }
@@ -92,15 +102,14 @@ namespace LinkIT.Data.Paging
 			if (!Regex.IsMatch(input, REGEX_PATTERN))
 				return false;
 
-			char first = input.First();
-			if (new[] { ASCENDING_CHARACTER, DESCENDING_CHARACTER }.Contains(first))
+			if (StartsWithSortingChar(input))
 			{
 				result = new OrderBy(input.Substring(1), GetOrderFor(input));
+
+				return true;
 			}
-			else
-			{
-				result = new OrderBy(input, GetOrderFor(input));
-			}
+
+			result = new OrderBy(input, GetOrderFor(input));
 
 			return true;
 		}

@@ -114,7 +114,7 @@ namespace LinkIT.Data.Repositories
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
 			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT * FROM {TableNames.DEVICE_TABLE}");
+			sb.AppendLine($"SELECT * FROM [{TableNames.DEVICE_TABLE}]");
 			sb.Append($"WHERE [{ID_COLUMN}] IN (");
 
 			bool first = true;
@@ -296,6 +296,9 @@ namespace LinkIT.Data.Repositories
 
 		public long Insert(DeviceDto item)
 		{
+			if (item.Id.HasValue)
+				throw new ArgumentException("Id can not be specified.");
+
 			using (var con = new SqlConnection(_connectionString))
 			{
 				con.Open();
@@ -368,7 +371,7 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					string cmdText = $@"DELETE FROM [{TableNames.DEVICE_TABLE}] WHERE [{ID_COLUMN}]=@Id";
+					string cmdText = $"DELETE FROM [{TableNames.DEVICE_TABLE}] WHERE [{ID_COLUMN}]=@Id";
 
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{

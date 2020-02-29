@@ -10,18 +10,17 @@ namespace LinkIT.Data.UnitTests.PagingTests
 		public void ThenTheResultIsAsExpected()
 		{
 			bool success;
-			OrderBy actual;
 
-			success = OrderBy.TryParse("+blaBla876", out actual);
+			success = OrderBy.TryParse("+blaBla876", out OrderBy actual);
 			Assert.IsTrue(success);
 			Assert.AreEqual(new OrderBy("blaBla876", Order.ASCENDING), actual);
 			Assert.AreEqual("+blaBla876", actual.ToString());
 
 			// When no leading '+' or '-' character is present, the default is Order.ASCENDING.
-			success = OrderBy.TryParse("blaBla876", out actual);
+			success = OrderBy.TryParse("BlaBla876", out actual);
 			Assert.IsTrue(success);
-			Assert.AreEqual(new OrderBy("blaBla876", Order.ASCENDING), actual);
-			Assert.AreEqual("+blaBla876", actual.ToString());
+			Assert.AreEqual(new OrderBy("BlaBla876", Order.ASCENDING), actual);
+			Assert.AreEqual("+BlaBla876", actual.ToString());
 
 			success = OrderBy.TryParse("-blaBla876", out actual);
 			Assert.IsTrue(success);
@@ -29,16 +28,16 @@ namespace LinkIT.Data.UnitTests.PagingTests
 			Assert.AreEqual("-blaBla876", actual.ToString());
 
 			// Negative cases.
-			success = OrderBy.TryParse("*blaBla876;", out actual);
+			success = OrderBy.TryParse("*blaBla876;", out _);
 			Assert.IsFalse(success);
 
-			success = OrderBy.TryParse("blaBla876;", out actual);
+			success = OrderBy.TryParse("blaBla876;", out _);
 			Assert.IsFalse(success);
 
-			success = OrderBy.TryParse(null, out actual);
+			success = OrderBy.TryParse(null, out _);
 			Assert.IsFalse(success);
 
-			success = OrderBy.TryParse("", out actual);
+			success = OrderBy.TryParse("", out _);
 			Assert.IsFalse(success);
 		}
 	}
