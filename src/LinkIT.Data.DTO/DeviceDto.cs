@@ -18,15 +18,9 @@ namespace LinkIT.Data.DTO
 			return EqualityComparer<DeviceDto>.Default.Equals(left, right);
 		}
 
-		public static bool operator !=(DeviceDto left, DeviceDto right)
-		{
-			return !(left == right);
-		}
+		public static bool operator !=(DeviceDto left, DeviceDto right) => !(left == right);
 
-		public override bool Equals(object obj)
-		{
-			return Equals(obj as DeviceDto);
-		}
+		public override bool Equals(object obj) => Equals(obj as DeviceDto);
 
 		public override int GetHashCode()
 		{
