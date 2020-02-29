@@ -60,6 +60,10 @@ namespace LinkIT.Data.Paging
 			throw new InvalidOperationException($"Unknown Order enum value : {input}.");
 		}
 
+		public string Name { get; }
+
+		public Order Order { get; }
+
 		public static bool operator ==(OrderBy left, OrderBy right)
 		{
 			return EqualityComparer<OrderBy>.Default.Equals(left, right);
@@ -70,14 +74,9 @@ namespace LinkIT.Data.Paging
 			return !(left == right);
 		}
 
-		public string Name { get; }
-
-		public Order Order { get; }
-
 		public static OrderBy Parse(string input)
 		{
-			OrderBy result;
-			if (!TryParse(input, out result))
+			if (!TryParse(input, out OrderBy result))
 				throw new ArgumentException($"'{input}' is an invalid format.");
 
 			return result;

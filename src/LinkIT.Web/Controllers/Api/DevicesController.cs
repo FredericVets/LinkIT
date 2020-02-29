@@ -17,7 +17,7 @@ namespace LinkIT.Web.Controllers.Api
 	// See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials
 	public class DevicesController : ApiController
 	{
-		private IDeviceRepository _repo;
+		private readonly IDeviceRepository _repo;
 
 		public DevicesController()
 		{
