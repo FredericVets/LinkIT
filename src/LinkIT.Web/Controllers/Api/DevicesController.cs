@@ -17,11 +17,24 @@ namespace LinkIT.Web.Controllers.Api
 	// See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials
 	public class DevicesController : ApiController
 	{
+		private const int BULK_PUT_THRESHOLD = 50;
+
 		private readonly IDeviceRepository _repo;
 
 		public DevicesController()
 		{
 			_repo = new DeviceRepository(WebConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString);
+		}
+
+		private static DeviceQuery MapToQuery(DeviceFilterModel filter)
+		{
+			return new DeviceQuery
+			{
+				Brand = filter.Brand,
+				Type = filter.Type,
+				Owner = filter.Owner,
+				Tag = filter.Tag
+			};
 		}
 
 		private static DeviceModel MapToModel(DeviceDto input)
@@ -98,14 +111,14 @@ namespace LinkIT.Web.Controllers.Api
 		/// Supports paging. If not supplied, default values will be used.
 		/// </summary>
 		/// <param name="filter"></param>
-		/// <param name="paging"></param>
+		/// <param name="pageinfo"></param>
 		/// <returns></returns>
 		public HttpResponseMessage Get(
 			[FromUri]DeviceFilterModel filter,
 			[FromUri]PageInfoModel pageinfo)
 		{
-			PagedResult<DeviceDto> pagedResult;
 			var paging = MapToPageInfo(pageinfo);
+			PagedResult<DeviceDto> pagedResult;
 
 			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
 			if (filter.IsEmpty())
@@ -116,14 +129,7 @@ namespace LinkIT.Web.Controllers.Api
 			}
 
 			// Apply filter.
-			var query = new DeviceQuery
-			{
-				Brand = filter.Brand,
-				Type = filter.Type,
-				Owner = filter.Owner,
-				Tag = filter.Tag
-			};
-
+			var query = MapToQuery(filter);
 			pagedResult = _repo.PagedQuery(paging, query);
 
 			return CreateResponseFor(Request, pagedResult);
@@ -147,25 +153,25 @@ namespace LinkIT.Web.Controllers.Api
 		// Fully updates the devices.
 		public IHttpActionResult Put(IEnumerable<DeviceModel> models)
 		{
-			if (models.Count() > 50)
-				return BadRequest("Maximum 50 elements can be modified in one request.");
+			if (models.Count() > BULK_PUT_THRESHOLD)
+				return BadRequest($"Maximum {BULK_PUT_THRESHOLD} elements can be modified in one request.");
 
 			foreach (var model in models)
 			{
 				if (!model.Id.HasValue)
 					return BadRequest("No id specified for device.");
-
-				if (!_repo.Exists(model.Id.Value))
-					return BadRequest($"No device found for id : {model.Id.Value}.");
 			}
+
+			long[] ids = models.Select(x => x.Id.Value).ToArray();
+
+			if (!_repo.Exists(ids))
+				return BadRequest("Not all supplied id's exist.");
 
 			var dtos = models.Select(MapToDto);
 			_repo.Update(dtos);
 
 			// Refetch the data.
-			long[] ids = models.Select(x => x.Id.Value).ToArray();
 			dtos = _repo.GetById(ids);
-
 			models = dtos.Select(MapToModel).ToList();
 
 			return Ok(models);

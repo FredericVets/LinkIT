@@ -22,6 +22,6 @@ namespace LinkIT.Data.Paging
 
 		public long TotalCount { get; }
 
-		public bool IsEmpty() => Result.Count() == 0;
+		public bool IsEmpty() => !Result.Any();
 	}
 }

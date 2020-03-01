@@ -34,10 +34,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		{
 			_sut.Delete(_expected.Id.Value);
 
-			Assert.ThrowsException<InvalidOperationException>(() =>
-			{
-				_sut.GetById(_expected.Id.Value);
-			});
+			Assert.IsFalse(_sut.Exists(_expected.Id.Value));
 		}
 	}
 }

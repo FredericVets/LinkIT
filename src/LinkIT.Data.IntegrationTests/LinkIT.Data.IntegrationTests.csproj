@@ -51,6 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepositoryTests\DeviceRepo\WhenCheckingForExistenceWithListOfIdsAndSomeThatDontExist.cs" />
+    <Compile Include="RepositoryTests\DeviceRepo\WhenCheckingForExistenceWithListOfIds.cs" />
+    <Compile Include="RepositoryTests\DeviceRepo\WhenGettingByListOfIdsWithSomeThatDontExist.cs" />
+    <Compile Include="RepositoryTests\DeviceRepo\WhenGettingByIdThatDoesntExist.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenGettingByListOfIds.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenUpdatingMultipleDevices.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenCheckingForExistence.cs" />

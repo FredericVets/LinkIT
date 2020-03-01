@@ -1,15 +1,14 @@
-﻿using System;
+﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Repositories;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using LinkIT.Data.DTO;
-using LinkIT.Data.Repositories;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 {
 	[TestClass]
-	public class WhenGettingByListOfIds
+	public class WhenCheckingForExistenceWithListOfIds
 	{
 		private List<DeviceDto> _expected;
 		private DeviceRepository _sut;
@@ -56,17 +55,12 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		}
 
 		[TestMethod]
-		public void ThenTheResultIsAsExpected()
+		public void ThenTheDevicesExist()
 		{
 			var ids = _expected.Select(x => x.Id.Value);
-			var actual = _sut.GetById(ids).ToList();
+			bool actual = _sut.Exists(ids);
 
-			Assert.AreEqual(_expected.Count, actual.Count);
-			foreach (var item in _expected)
-			{
-				var actualDto = actual.Single(x => x.Id == item.Id);
-				Assert.AreEqual(item, actualDto);
-			}
+			Assert.IsTrue(actual);
 		}
 
 		[TestCleanup]
