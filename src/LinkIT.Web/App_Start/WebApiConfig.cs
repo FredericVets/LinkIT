@@ -11,15 +11,21 @@ namespace LinkIT.Web
 		public static void Register(HttpConfiguration config)
 		{
 			// Web API configuration and services
+			config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly;
 
-			// Web API routes
+			// Attribute based routing.
 			config.MapHttpAttributeRoutes();
 
+			// Conventions based routing.
+			/*
+			// All ids are numeric. So added a numeric constraint.
 			config.Routes.MapHttpRoute(
 				name: "DefaultApi",
 				routeTemplate: "api/{controller}/{id}",
-				defaults: new { id = RouteParameter.Optional }
+				defaults: new { id = RouteParameter.Optional },
+				constraints: new { id = @"(\d+)?" }
 			);
+			*/
 
 			// Use caml casing when formatting json.
 			var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();

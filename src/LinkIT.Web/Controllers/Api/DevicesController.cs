@@ -8,15 +8,15 @@ using LinkIT.Web.Models.Api.Paging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Configuration;
 using System.Web.Http;
 
 namespace LinkIT.Web.Controllers.Api
 {
-	// See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials
+	// See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials for introduction.
 	public class DevicesController : ApiController
 	{
+		private const string MISSING_MESSAGE_BODY = "No message body present.";
 		private const int BULK_PUT_THRESHOLD = 50;
 
 		private readonly IDeviceRepository _repo;
@@ -79,10 +79,10 @@ namespace LinkIT.Web.Controllers.Api
 			};
 		}
 
-		private static HttpResponseMessage CreateResponseFor(HttpRequestMessage request, PagedResult<DeviceDto> pagedResult)
+		private IHttpActionResult CreateResultFor(PagedResult<DeviceDto> pagedResult)
 		{
 			if (pagedResult.IsEmpty())
-				return request.CreateResponse(HttpStatusCode.NoContent);
+				return StatusCode(HttpStatusCode.NoContent);
 
 			var models = pagedResult.Result.Select(MapToModel).ToList();
 			var result = new PagedResultModel<DeviceModel>(
@@ -90,10 +90,10 @@ namespace LinkIT.Web.Controllers.Api
 				MapToModel(pagedResult.PageInfo),
 				pagedResult.TotalCount);
 
-			return request.CreateResponse(HttpStatusCode.OK, result);
+			return Ok(result);
 		}
 
-		// example : GET api/values/5
+		[Route("api/devices/{id:long:min(1)}", Name = "GetDeviceById")]
 		public IHttpActionResult Get(long id)
 		{
 			if (!_repo.Exists(id))
@@ -108,35 +108,42 @@ namespace LinkIT.Web.Controllers.Api
 		/// <summary>
 		/// If no results are found that match the filter, a 204 (No Content) status code is sent.
 		/// If multiple fields of the filter are supplied, only results will be returned that match all the fields.
-		/// Supports paging. If not supplied, default values will be used.
+		/// Uses paging on the resulting collection. If no paging info is supplied, default values will be used.
 		/// </summary>
-		/// <param name="filter"></param>
-		/// <param name="pageinfo"></param>
-		/// <returns></returns>
-		public HttpResponseMessage Get(
-			[FromUri]DeviceFilterModel filter,
-			[FromUri]PageInfoModel pageinfo)
+		/// <param name="filterModel"></param>
+		/// <param name="pageInfoModel"></param>
+		/// <returns>A paged collection of DeviceModel instances that match the filter.</returns>
+		[Route("api/devices")]
+		public IHttpActionResult Get(
+			[FromUri]DeviceFilterModel filterModel,
+			[FromUri]PageInfoModel pageInfoModel)
 		{
-			var paging = MapToPageInfo(pageinfo);
+			pageInfoModel = pageInfoModel ?? new PageInfoModel();
+			filterModel = filterModel ?? new DeviceFilterModel();
 			PagedResult<DeviceDto> pagedResult;
 
-			// Repository returns "DeviceDto" instances. Map them to "DeviceModel" instances.
-			if (filter.IsEmpty())
+			var paging = MapToPageInfo(pageInfoModel);
+
+			if (filterModel.IsEmpty())
 			{
 				pagedResult = _repo.PagedQuery(paging);
 
-				return CreateResponseFor(Request, pagedResult);
+				return CreateResultFor(pagedResult);
 			}
 
 			// Apply filter.
-			var query = MapToQuery(filter);
+			var query = MapToQuery(filterModel);
 			pagedResult = _repo.PagedQuery(paging, query);
 
-			return CreateResponseFor(Request, pagedResult);
+			return CreateResultFor(pagedResult);
 		}
 
+		[Route("api/devices")]
 		public IHttpActionResult Post(DeviceModel model)
 		{
+			if (model == null)
+				return BadRequest(MISSING_MESSAGE_BODY);
+
 			if (model.Id.HasValue)
 				return BadRequest("Id can not be specified.");
 
@@ -147,14 +154,18 @@ namespace LinkIT.Web.Controllers.Api
 			dto = _repo.GetById(id);
 			model = MapToModel(dto);
 
-			return Created($"api/{model.Id}", model);
+			return CreatedAtRoute("GetDeviceById", new { id = model.Id }, model);
 		}
 
 		// Fully updates the devices.
+		[Route("api/devices")]
 		public IHttpActionResult Put(IEnumerable<DeviceModel> models)
 		{
+			if (models == null)
+				return BadRequest(MISSING_MESSAGE_BODY);
+
 			if (models.Count() > BULK_PUT_THRESHOLD)
-				return BadRequest($"Maximum {BULK_PUT_THRESHOLD} elements can be modified in one request.");
+				return BadRequest($"Maximum {BULK_PUT_THRESHOLD} elements can be updated in one request.");
 
 			foreach (var model in models)
 			{
@@ -177,10 +188,13 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(models);
 		}
 
-		// PUT api/values/5
 		// Fully updates the device.
+		[Route("api/devices/{id:long:min(1)}")]
 		public IHttpActionResult Put(long id, DeviceModel model)
 		{
+			if (model == null)
+				return BadRequest(MISSING_MESSAGE_BODY);
+
 			if (!_repo.Exists(id))
 				return NotFound();
 
@@ -195,14 +209,15 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(model);
 		}
 
-		public HttpResponseMessage Delete(long id)
+		[Route("api/devices/{id:long:min(1)}")]
+		public IHttpActionResult Delete(long id)
 		{
 			if (!_repo.Exists(id))
-				return Request.CreateResponse(HttpStatusCode.NotFound);
+				return NotFound();
 
 			_repo.Delete(id);
 
-			return Request.CreateResponse(HttpStatusCode.NoContent);
+			return StatusCode(HttpStatusCode.NoContent);
 		}
 	}
 }
