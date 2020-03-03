@@ -18,6 +18,8 @@ namespace LinkIT.Data.Repositories
 		public const string BRAND_COLUMN = "Brand";
 		public const string TYPE_COLUMN = "Type";
 
+		public static readonly string[] COLUMNS = new[] { ID_COLUMN, TAG_COLUMN, OWNER_COLUMN, BRAND_COLUMN, TYPE_COLUMN };
+
 		private readonly string _connectionString;
 
 		public DeviceRepository(string connectionString)
@@ -311,6 +313,9 @@ namespace LinkIT.Data.Repositories
 		{
 			if (pageInfo == null)
 				throw new ArgumentNullException("pageInfo");
+
+			if (!pageInfo.OrderBy.IsValidFor(COLUMNS))
+				throw new ArgumentException($"'{pageInfo.OrderBy.Name}' is an unrecognized column.");
 
 			using (var con = new SqlConnection(_connectionString))
 			{

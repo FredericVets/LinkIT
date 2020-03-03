@@ -5,6 +5,7 @@ using LinkIT.Data.Repositories;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -61,24 +62,6 @@ namespace LinkIT.Web.Controllers.Api
 			};
 		}
 
-		private static PageInfo MapToPageInfo(PageInfoModel input)
-		{
-			return new PageInfo(
-				input.PageNumber,
-				input.RowsPerPage,
-				input.GetOrderBy());
-		}
-
-		private static PageInfoModel MapToModel(PageInfo input)
-		{
-			return new PageInfoModel
-			{
-				PageNumber = input.PageNumber,
-				RowsPerPage = input.RowsPerPage,
-				OrderBy = input.OrderBy.ToString()
-			};
-		}
-
 		private IHttpActionResult CreateResultFor(PagedResult<DeviceDto> pagedResult)
 		{
 			if (pagedResult.IsEmpty())
@@ -87,7 +70,7 @@ namespace LinkIT.Web.Controllers.Api
 			var models = pagedResult.Result.Select(MapToModel).ToList();
 			var result = new PagedResultModel<DeviceModel>(
 				models,
-				MapToModel(pagedResult.PageInfo),
+				MappingHelper.MapToModel(pagedResult.PageInfo),
 				pagedResult.TotalCount);
 
 			return Ok(result);
@@ -122,7 +105,9 @@ namespace LinkIT.Web.Controllers.Api
 			filterModel = filterModel ?? new DeviceFilterModel();
 			PagedResult<DeviceDto> pagedResult;
 
-			var paging = MapToPageInfo(pageInfoModel);
+			var paging = MappingHelper.MapToPageInfo(pageInfoModel);
+			if (!paging.OrderBy.IsValidFor(DeviceRepository.COLUMNS))
+				return BadRequest($"Unknown field : {paging.OrderBy.Name}.");
 
 			if (filterModel.IsEmpty())
 			{

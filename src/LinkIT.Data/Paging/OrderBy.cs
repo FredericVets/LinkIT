@@ -22,13 +22,11 @@ namespace LinkIT.Data.Paging
 
 		public OrderBy(string name, Order order)
 		{
-			if (string.IsNullOrWhiteSpace(name))
-				throw new ArgumentNullException("name");
+			Name = name ?? throw new ArgumentNullException("name");
 
 			if (!Regex.IsMatch(name, PLAIN_STRING_PATTERN))
 				throw new ArgumentException("name");
 
-			Name = name;
 			Order = order;
 		}
 
@@ -127,6 +125,11 @@ namespace LinkIT.Data.Paging
 			return other != null &&
 				   Name == other.Name &&
 				   Order == other.Order;
+		}
+
+		public bool IsValidFor(IEnumerable<string> names)
+		{
+			return names.Contains(Name, StringComparer.InvariantCultureIgnoreCase);
 		}
 	}
 }

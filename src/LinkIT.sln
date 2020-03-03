@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkIT.Data.IntegrationTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkIT.Data.UnitTests", "LinkIT.Data.UnitTests\LinkIT.Data.UnitTests.csproj", "{D7133F06-1902-49E3-A508-A3FAAEAA0398}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkIT.Web.UnitTests", "LinkIT.Web.UnitTests\LinkIT.Web.UnitTests.csproj", "{B7600E8F-D10D-407E-9BE7-BAE2A9D7C035}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{D7133F06-1902-49E3-A508-A3FAAEAA0398}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7133F06-1902-49E3-A508-A3FAAEAA0398}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7133F06-1902-49E3-A508-A3FAAEAA0398}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7600E8F-D10D-407E-9BE7-BAE2A9D7C035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7600E8F-D10D-407E-9BE7-BAE2A9D7C035}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7600E8F-D10D-407E-9BE7-BAE2A9D7C035}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7600E8F-D10D-407E-9BE7-BAE2A9D7C035}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
