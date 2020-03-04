@@ -3,18 +3,31 @@ using System.Web.Http;
 
 namespace LinkIT.Web.Controllers.Api
 {
+	[Route("api/values")]
 	public class ValuesController : ApiController
 	{
 		// GET api/values
 		public IEnumerable<string> Get()
 		{
-			return new string[] { "value1", "value2" };
+			// return new string[] { "value1", "value2" };
+
+			var formatters = new List<string>();
+			foreach (var item in GlobalConfiguration.Configuration.Formatters)
+				formatters.Add(item.ToString());
+
+			return formatters;
 		}
 
-		// GET api/values/5
+		// GET api/values?id=5
 		public string Get(int id)
 		{
-			return "value";
+			return $"value for id {id}";
+		}
+
+		// GET api/values?name=bla
+		public string Get(string name)
+		{
+			return $"value for name {name}";
 		}
 
 		// POST api/values

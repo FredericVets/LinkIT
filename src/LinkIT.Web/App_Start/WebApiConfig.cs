@@ -8,11 +8,17 @@ namespace LinkIT.Web
 {
 	public static class WebApiConfig
 	{
-		public static void Register(HttpConfiguration config)
+		private static void RegisterFormatters(MediaTypeFormatterCollection formatters)
 		{
-			// Web API configuration and services
-			config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly;
+			// Use caml casing when formatting json.
+			var jsonFormatter = formatters.JsonFormatter;
+			jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
+			formatters.Add(new BsonMediaTypeFormatter());
+		}
+
+		private static void RegisterRouting(HttpConfiguration config)
+		{
 			// Attribute based routing.
 			config.MapHttpAttributeRoutes();
 
@@ -26,10 +32,15 @@ namespace LinkIT.Web
 				constraints: new { id = @"(\d+)?" }
 			);
 			*/
+		}
 
-			// Use caml casing when formatting json.
-			var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
-			jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+		public static void Register(HttpConfiguration config)
+		{
+			// Web API configuration and services
+			config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly;
+
+			RegisterRouting(config);
+			RegisterFormatters(config.Formatters);
 
 			// Global Filters.
 			config.Filters.Add(new ValidateModelAttribute());
