@@ -2,7 +2,7 @@
 
 namespace LinkIT.Web
 {
-    public class FilterConfig
+    public class MVCFilterConfig
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {

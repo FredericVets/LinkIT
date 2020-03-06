@@ -1,22 +1,14 @@
-﻿using LinkIT.Web.Filters;
+﻿using LinkIT.Web.Filters.Api;
+using LinkIT.Web.Infrastructure.Api;
 using Newtonsoft.Json.Serialization;
-using System.Linq;
 using System.Net.Http.Formatting;
 using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
 
 namespace LinkIT.Web
 {
 	public static class WebApiConfig
 	{
-		private static void RegisterFormatters(MediaTypeFormatterCollection formatters)
-		{
-			// Use caml casing when formatting json.
-			var jsonFormatter = formatters.JsonFormatter;
-			jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-
-			formatters.Add(new BsonMediaTypeFormatter());
-		}
-
 		private static void RegisterRouting(HttpConfiguration config)
 		{
 			// Attribute based routing.
@@ -34,6 +26,30 @@ namespace LinkIT.Web
 			*/
 		}
 
+		private static void RegisterFormatters(MediaTypeFormatterCollection formatters)
+		{
+			// Use caml casing when formatting json.
+			var jsonFormatter = formatters.JsonFormatter;
+			jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+			formatters.Add(new BsonMediaTypeFormatter());
+		}
+
+		private static void BootStrapLog4Net()
+		{
+			log4net.Config.XmlConfigurator.Configure();
+		}
+
+		private static void RegisterGlobalFilters(HttpConfiguration config)
+		{
+			config.Filters.Add(new ValidateModelAttribute());
+		}
+
+		private static void RegisterServices(HttpConfiguration config)
+		{
+			config.Services.Add(typeof(IExceptionLogger), new Log4NetExceptionLogger());
+		}
+
 		public static void Register(HttpConfiguration config)
 		{
 			// Web API configuration and services
@@ -41,9 +57,9 @@ namespace LinkIT.Web
 
 			RegisterRouting(config);
 			RegisterFormatters(config.Formatters);
-
-			// Global Filters.
-			config.Filters.Add(new ValidateModelAttribute());
+			BootStrapLog4Net();
+			RegisterGlobalFilters(config);
+			RegisterServices(config);
 		}
 	}
 }

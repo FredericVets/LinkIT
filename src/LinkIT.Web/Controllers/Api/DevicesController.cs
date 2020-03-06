@@ -2,13 +2,15 @@
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
+using LinkIT.Web.Infrastructure.Api;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
+using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web.Configuration;
 using System.Web.Http;
 
 namespace LinkIT.Web.Controllers.Api
@@ -20,10 +22,12 @@ namespace LinkIT.Web.Controllers.Api
 		private const int BULK_PUT_THRESHOLD = 50;
 
 		private readonly IDeviceRepository _repo;
+		private readonly ILog _log;
 
 		public DevicesController()
 		{
-			_repo = new DeviceRepository(WebConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString);
+			_repo = new DeviceRepository(ConnectionString.Get());
+			_log = LogManager.GetLogger(GetType());
 		}
 
 		private static DeviceQuery MapToQuery(DeviceFilterModel filter)

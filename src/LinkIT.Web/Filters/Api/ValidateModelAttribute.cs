@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
-namespace LinkIT.Web.Filters
+namespace LinkIT.Web.Filters.Api
 {
 	public class ValidateModelAttribute : ActionFilterAttribute
 	{
