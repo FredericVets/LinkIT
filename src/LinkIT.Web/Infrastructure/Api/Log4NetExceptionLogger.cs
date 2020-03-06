@@ -17,7 +17,7 @@ namespace LinkIT.Web.Infrastructure.Api
 
 		public override void Log(ExceptionLoggerContext context)
 		{
-			_log.Fatal("An unhandled exception occurred.", context.Exception);
+			_log.Fatal($"An unhandled exception occurred in '{context.CatchBlock}'.", context.Exception);
 		}
 	}
 }

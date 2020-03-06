@@ -5,14 +5,10 @@ using System.Collections.Generic;
 
 namespace LinkIT.Data.Repositories
 {
-	public interface IRepository<T, U>
+	public interface IRepository<T, U> : IRepository
 		where T : Dto
 		where U : Query
 	{
-		bool Exists(long id);
-
-		bool Exists(IEnumerable<long> ids);
-
 		/// <summary>
 		/// Returns the Dto for that id. If not found, throws an Exception.
 		/// </summary>
@@ -51,6 +47,5 @@ namespace LinkIT.Data.Repositories
 
 		void Update(IEnumerable<T> data);
 
-		void Delete(long id);
 	}
 }

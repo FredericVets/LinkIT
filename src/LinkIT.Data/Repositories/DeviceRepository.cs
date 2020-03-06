@@ -10,9 +10,8 @@ using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
-	public class DeviceRepository : IDeviceRepository
+	public class DeviceRepository : Repository, IDeviceRepository
 	{
-		public const string ID_COLUMN = "Id";
 		public const string TAG_COLUMN = "Tag";
 		public const string OWNER_COLUMN = "Owner";
 		public const string BRAND_COLUMN = "Brand";
@@ -20,15 +19,7 @@ namespace LinkIT.Data.Repositories
 
 		public static readonly string[] COLUMNS = new[] { ID_COLUMN, TAG_COLUMN, OWNER_COLUMN, BRAND_COLUMN, TYPE_COLUMN };
 
-		private readonly string _connectionString;
-
-		public DeviceRepository(string connectionString)
-		{
-			if (string.IsNullOrWhiteSpace(connectionString))
-				throw new ArgumentNullException("connectionString");
-
-			_connectionString = connectionString;
-		}
+		public DeviceRepository(string connectionString) : base(connectionString, TableNames.DEVICE_TABLE) { }
 
 		private static void AddSqlParameters(SqlCommand cmd, DeviceDto input)
 		{
@@ -68,7 +59,7 @@ namespace LinkIT.Data.Repositories
 		/// <param name="query"></param>
 		/// <param name="paging"></param>
 		/// <returns></returns>
-		private static SqlCommand CreateSelectCommand(
+		private SqlCommand CreateSelectCommand(
 			SqlConnection con,
 			SqlTransaction tx,
 			DeviceQuery query = null,
@@ -77,7 +68,7 @@ namespace LinkIT.Data.Repositories
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
 			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT * FROM [{TableNames.DEVICE_TABLE}]");
+			sb.AppendLine($"SELECT * FROM [{TableName}]");
 
 			if (query != null)
 				AddWhereClause(cmd.Parameters, sb, query);
@@ -90,24 +81,7 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
-		private static SqlCommand CreateSelectCommand(
-			SqlConnection con,
-			SqlTransaction tx,
-			long[] ids)
-		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT * FROM [{TableNames.DEVICE_TABLE}]");
-
-			AddWhereClause(cmd.Parameters, sb, ids);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
-		}
-
-		private static SqlCommand CreateSelectCountCommand(
+		private SqlCommand CreateSelectCountCommand(
 			SqlConnection con,
 			SqlTransaction tx,
 			DeviceQuery query = null)
@@ -115,27 +89,10 @@ namespace LinkIT.Data.Repositories
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
 			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT COUNT({ID_COLUMN}) FROM [{TableNames.DEVICE_TABLE}]");
+			sb.AppendLine($"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]");
 
 			if (query != null)
 				AddWhereClause(cmd.Parameters, sb, query);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
-		}
-
-		private static SqlCommand CreateSelectCountCommand(
-			SqlConnection con,
-			SqlTransaction tx,
-			long[] ids)
-		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT COUNT({ID_COLUMN}) FROM [{TableNames.DEVICE_TABLE}]");
-
-			AddWhereClause(cmd.Parameters, sb, ids);
 
 			cmd.CommandText = sb.ToString();
 
@@ -195,26 +152,6 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, long[] ids)
-		{
-			sb.Append($"WHERE [{ID_COLUMN}] IN (");
-
-			bool first = true;
-			for (int i = 0; i < ids.Length; i++)
-			{
-				if (!first)
-					sb.Append(", ");
-
-				string identifier = $"@Id{i}";
-				sb.Append(identifier);
-				@params.Add(identifier, SqlDbType.BigInt).Value = ids[i];
-
-				first = false;
-			}
-
-			sb.AppendLine(")");
-		}
-
 		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, PageInfo pageInfo)
 		{
 			sb.AppendLine($"ORDER BY [{pageInfo.OrderBy.Name}] {pageInfo.OrderBy.Order.ForSql()}");
@@ -223,36 +160,6 @@ namespace LinkIT.Data.Repositories
 
 			@params.Add("@PageNumber", SqlDbType.Int).Value = pageInfo.PageNumber;
 			@params.Add("@RowsPerPage", SqlDbType.Int).Value = pageInfo.RowsPerPage;
-		}
-
-		public bool Exists(long id)
-		{
-			return Exists(new[] { id });
-		}
-
-		public bool Exists(IEnumerable<long> ids)
-		{
-			if (ids == null || !ids.Any())
-				throw new ArgumentNullException("ids");
-
-			// Filter out possible duplicates.
-			var distinctIds = ids.Distinct().ToArray();
-
-			using (var con = new SqlConnection(_connectionString))
-			{
-				con.Open();
-				using (var tx = con.BeginTransaction())
-				{
-					using (var cmd = CreateSelectCountCommand(con, tx, distinctIds))
-					{
-						long count = Convert.ToInt64(cmd.ExecuteScalar());
-
-						return distinctIds.Length == count;
-					}
-
-					//tx.Commit();
-				}
-			}
 		}
 
 		public DeviceDto GetById(long id)
@@ -268,7 +175,7 @@ namespace LinkIT.Data.Repositories
 			// Filter out possible duplicates.
 			var distinctIds = ids.Distinct().ToArray();
 
-			using (var con = new SqlConnection(_connectionString))
+			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -293,7 +200,7 @@ namespace LinkIT.Data.Repositories
 
 		public IEnumerable<DeviceDto> Query(DeviceQuery query = null)
 		{
-			using (var con = new SqlConnection(_connectionString))
+			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -317,7 +224,7 @@ namespace LinkIT.Data.Repositories
 			if (!pageInfo.OrderBy.IsValidFor(COLUMNS))
 				throw new ArgumentException($"'{pageInfo.OrderBy.Name}' is an unrecognized column.");
 
-			using (var con = new SqlConnection(_connectionString))
+			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -349,12 +256,12 @@ namespace LinkIT.Data.Repositories
 			if (item.Id.HasValue)
 				throw new ArgumentException("Id can not be specified.");
 
-			using (var con = new SqlConnection(_connectionString))
+			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					string cmdText = $@"INSERT INTO [{TableNames.DEVICE_TABLE}] ([{TAG_COLUMN}], [{OWNER_COLUMN}], [{BRAND_COLUMN}], [{TYPE_COLUMN}]) 
+					string cmdText = $@"INSERT INTO [{TableName}] ([{TAG_COLUMN}], [{OWNER_COLUMN}], [{BRAND_COLUMN}], [{TYPE_COLUMN}]) 
 						VALUES (@Tag, @Owner, @Brand, @Type)
 						SELECT CONVERT(bigint, SCOPE_IDENTITY())";
 
@@ -393,12 +300,12 @@ namespace LinkIT.Data.Repositories
 					throw new ArgumentException("Id is a required field.");
 			}
 
-			using (var con = new SqlConnection(_connectionString))
+			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					string cmdText = $@"UPDATE [{TableNames.DEVICE_TABLE}] 
+					string cmdText = $@"UPDATE [{TableName}] 
 								SET [{TAG_COLUMN}]=@Tag, [{OWNER_COLUMN}]=@Owner, [{BRAND_COLUMN}]=@Brand, [{TYPE_COLUMN}]=@Type 
 								WHERE [{ID_COLUMN}]=@Id";
 
@@ -410,27 +317,6 @@ namespace LinkIT.Data.Repositories
 
 							cmd.ExecuteNonQuery();
 						}
-					}
-
-					tx.Commit();
-				}
-			}
-		}
-
-		public void Delete(long id)
-		{
-			using (var con = new SqlConnection(_connectionString))
-			{
-				con.Open();
-				using (var tx = con.BeginTransaction())
-				{
-					string cmdText = $"DELETE FROM [{TableNames.DEVICE_TABLE}] WHERE [{ID_COLUMN}]=@Id";
-
-					using (var cmd = new SqlCommand(cmdText, con, tx))
-					{
-						cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = id;
-
-						cmd.ExecuteNonQuery();
 					}
 
 					tx.Commit();
