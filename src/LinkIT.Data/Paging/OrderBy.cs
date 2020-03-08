@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -12,6 +13,7 @@ namespace LinkIT.Data.Paging
 	/// So +name = name.
 	/// Handles the parsing of this format.
 	/// </summary>
+	[TypeConverter(typeof(OrderByConverter))]
 	public class OrderBy : IEquatable<OrderBy>
 	{
 		private const char ASCENDING_CHARACTER = '+';

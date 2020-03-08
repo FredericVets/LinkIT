@@ -10,7 +10,7 @@ namespace LinkIT.Web.Controllers.Api
 			return new PageInfo(
 				input.PageNumber,
 				input.RowsPerPage,
-				input.GetOrderBy());
+				input.OrderBy);
 		}
 
 		public static PageInfoModel MapToModel(PageInfo input)
@@ -19,7 +19,7 @@ namespace LinkIT.Web.Controllers.Api
 			{
 				PageNumber = input.PageNumber,
 				RowsPerPage = input.RowsPerPage,
-				OrderBy = input.OrderBy.ToString()
+				OrderBy = input.OrderBy
 			};
 		}
 	}

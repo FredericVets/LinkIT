@@ -10,7 +10,7 @@ namespace LinkIT.Web.Models.Api.Paging
 			// The defaults.
 			PageNumber = 1;
 			RowsPerPage = 50;
-			OrderBy = "+Id";
+			OrderBy = new OrderBy("Id", Order.ASCENDING);
 		}
 
 		[Range(0, int.MaxValue)]
@@ -18,13 +18,8 @@ namespace LinkIT.Web.Models.Api.Paging
 
 		[Range(0, int.MaxValue)]
 		public int RowsPerPage { get; set; }
-
-		[MaxLength(30)]
-		[RegularExpression(
-			Data.Paging.OrderBy.REGEX_PATTERN,
-			ErrorMessage = "Invalid format. Use '(+/-)fieldname'. '+' means ascending, '-' descending. If omitted, defaults to ascending.")]
-		public string OrderBy { get; set; }
-
-		public OrderBy GetOrderBy() => Data.Paging.OrderBy.Parse(OrderBy);
+		
+		// Uses a TypeConverter to convert from a string request parameter to an OrderBy instance.
+		public OrderBy OrderBy { get; set; }
 	}
 }

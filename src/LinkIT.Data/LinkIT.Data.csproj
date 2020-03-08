@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Paging\OrderBy.cs" />
+    <Compile Include="Paging\OrderByConverter.cs" />
     <Compile Include="Paging\OrderExtensions.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\IRepositoryOfTU.cs" />
