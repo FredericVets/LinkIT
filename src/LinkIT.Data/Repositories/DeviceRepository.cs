@@ -21,84 +21,6 @@ namespace LinkIT.Data.Repositories
 
 		public DeviceRepository(string connectionString) : base(connectionString, TableNames.DEVICE_TABLE) { }
 
-		private static void AddSqlParameters(SqlCommand cmd, DeviceDto input)
-		{
-			if (input.Id.HasValue)
-				cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = input.Id.Value;
-
-			cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = input.Tag;
-			cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = input.Owner;
-			cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
-			cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
-		}
-
-		private static IEnumerable<DeviceDto> ReadDtosFrom(SqlDataReader reader)
-		{
-			while (reader.Read())
-			{
-				yield return new DeviceDto
-				{
-					Id = (long)reader[ID_COLUMN],
-					Tag = reader[TAG_COLUMN].ToString(),
-					Owner = reader[OWNER_COLUMN].ToString(),
-					Brand = reader[BRAND_COLUMN].ToString(),
-					Type = reader[TYPE_COLUMN].ToString()
-				};
-			}
-		}
-
-		/// <summary>
-		/// This will build the SqlCommand based on the optional query object. The specified Logical operator will be 
-		/// used to combine the query arguments.
-		/// Has support for paging. This is based on the new paging feature introduced in Sql Serever 2012.
-		/// If no query or paging instance is supplied, a select without where clause will be generated.
-		/// <see cref="https://social.technet.microsoft.com/wiki/contents/articles/23811.paging-a-query-with-sql-server.aspx#Paginacao_dentro"/>
-		/// </summary>
-		/// <param name="con"></param>
-		/// <param name="tx"></param>
-		/// <param name="query"></param>
-		/// <param name="paging"></param>
-		/// <returns></returns>
-		private SqlCommand CreateSelectCommand(
-			SqlConnection con,
-			SqlTransaction tx,
-			DeviceQuery query = null,
-			PageInfo pageInfo = null)
-		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT * FROM [{TableName}]");
-
-			if (query != null)
-				AddWhereClause(cmd.Parameters, sb, query);
-
-			if (pageInfo != null)
-				AddPaging(cmd.Parameters, sb, pageInfo);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
-		}
-
-		private SqlCommand CreateSelectCountCommand(
-			SqlConnection con,
-			SqlTransaction tx,
-			DeviceQuery query = null)
-		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]");
-
-			if (query != null)
-				AddWhereClause(cmd.Parameters, sb, query);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
-		}
-
 		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query)
 		{
 			sb.AppendLine("WHERE");
@@ -152,14 +74,82 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, PageInfo pageInfo)
+		private static void AddSqlParameters(SqlCommand cmd, DeviceDto input)
 		{
-			sb.AppendLine($"ORDER BY [{pageInfo.OrderBy.Name}] {pageInfo.OrderBy.Order.ForSql()}");
-			sb.AppendLine("OFFSET ((@PageNumber - 1) * @RowsPerPage) ROWS");
-			sb.AppendLine("FETCH NEXT @RowsPerPage ROWS ONLY");
+			if (input.Id.HasValue)
+				cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = input.Id.Value;
 
-			@params.Add("@PageNumber", SqlDbType.Int).Value = pageInfo.PageNumber;
-			@params.Add("@RowsPerPage", SqlDbType.Int).Value = pageInfo.RowsPerPage;
+			cmd.Parameters.Add("@Tag", SqlDbType.NVarChar).Value = input.Tag;
+			cmd.Parameters.Add("@Owner", SqlDbType.NVarChar).Value = input.Owner;
+			cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = input.Brand;
+			cmd.Parameters.Add("@Type", SqlDbType.NVarChar).Value = input.Type;
+		}
+
+		private static IEnumerable<DeviceDto> ReadDtosFrom(SqlDataReader reader)
+		{
+			while (reader.Read())
+			{
+				yield return new DeviceDto
+				{
+					Id = (long)reader[ID_COLUMN],
+					Tag = reader[TAG_COLUMN].ToString(),
+					Owner = reader[OWNER_COLUMN].ToString(),
+					Brand = reader[BRAND_COLUMN].ToString(),
+					Type = reader[TYPE_COLUMN].ToString()
+				};
+			}
+		}
+
+		/// <summary>
+		/// This will build the SqlCommand based on the optional query object. The specified Logical operator will be 
+		/// used to combine the query arguments.
+		/// Has support for paging. This is based on the new paging feature introduced in Sql Serever 2012.
+		/// If no query or paging instance is supplied, a select without where clause will be generated.
+		/// <see cref="https://social.technet.microsoft.com/wiki/contents/articles/23811.paging-a-query-with-sql-server.aspx#Paginacao_dentro"/>
+		/// </summary>
+		/// <param name="con"></param>
+		/// <param name="tx"></param>
+		/// <param name="query"></param>
+		/// <param name="paging"></param>
+		/// <returns></returns>
+		private SqlCommand CreateSelectCommand(
+			SqlConnection con,
+			SqlTransaction tx,
+			DeviceQuery query = null,
+			PageInfo pageInfo = null)
+		{
+			var cmd = new SqlCommand { Connection = con, Transaction = tx };
+
+			var sb = new StringBuilder();
+			sb.AppendLine(CreateSelectStatement());
+
+			if (query != null)
+				AddWhereClause(cmd.Parameters, sb, query);
+
+			if (pageInfo != null)
+				AddPaging(cmd.Parameters, sb, pageInfo);
+
+			cmd.CommandText = sb.ToString();
+
+			return cmd;
+		}
+
+		private SqlCommand CreateSelectCountCommand(
+			SqlConnection con,
+			SqlTransaction tx,
+			DeviceQuery query = null)
+		{
+			var cmd = new SqlCommand { Connection = con, Transaction = tx };
+
+			var sb = new StringBuilder();
+			sb.AppendLine(CreateSelectCountStatement());
+
+			if (query != null)
+				AddWhereClause(cmd.Parameters, sb, query);
+
+			cmd.CommandText = sb.ToString();
+
+			return cmd;
 		}
 
 		public DeviceDto GetById(long id)

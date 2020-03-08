@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinkIT.Data.Paging;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -49,6 +50,20 @@ namespace LinkIT.Data.Repositories
 			sb.AppendLine(")");
 		}
 
+		protected static void AddPaging(SqlParameterCollection @params, StringBuilder sb, PageInfo pageInfo)
+		{
+			sb.AppendLine($"ORDER BY [{pageInfo.OrderBy.Name}] {pageInfo.OrderBy.Order.ForSql()}");
+			sb.AppendLine("OFFSET ((@PageNumber - 1) * @RowsPerPage) ROWS");
+			sb.AppendLine("FETCH NEXT @RowsPerPage ROWS ONLY");
+
+			@params.Add("@PageNumber", SqlDbType.Int).Value = pageInfo.PageNumber;
+			@params.Add("@RowsPerPage", SqlDbType.Int).Value = pageInfo.RowsPerPage;
+		}
+
+		protected string CreateSelectStatement() => $"SELECT * FROM [{TableName}]";
+
+		protected string CreateSelectCountStatement() => $"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]";
+
 		protected SqlCommand CreateSelectCommand(
 			SqlConnection con,
 			SqlTransaction tx,
@@ -57,7 +72,7 @@ namespace LinkIT.Data.Repositories
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
 			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT * FROM [{TableName}]");
+			sb.AppendLine(CreateSelectStatement());
 
 			AddWhereClause(cmd.Parameters, sb, ids);
 
@@ -74,7 +89,7 @@ namespace LinkIT.Data.Repositories
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
 			var sb = new StringBuilder();
-			sb.AppendLine($"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]");
+			sb.AppendLine(CreateSelectCountStatement());
 
 			AddWhereClause(cmd.Parameters, sb, ids);
 
