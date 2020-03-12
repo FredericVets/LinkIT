@@ -14,8 +14,11 @@ namespace LinkIT.Data.Repositories
 	public abstract class Repository : IRepository
 	{
 		public const string ID_COLUMN = "Id";
+		public const string DELETED_COLUMN = "Deleted";
 
-		public Repository(string connectionString, string tableName)
+		private readonly bool _hasSoftDelete;
+
+		public Repository(string connectionString, string tableName, bool hasSoftDelete = false)
 		{
 			if (string.IsNullOrWhiteSpace(connectionString))
 				throw new ArgumentNullException("connectionString");
@@ -24,31 +27,12 @@ namespace LinkIT.Data.Repositories
 
 			ConnectionString = connectionString;
 			TableName = tableName;
+			_hasSoftDelete = hasSoftDelete;
 		}
 
 		protected string TableName { get; }
 
 		protected string ConnectionString { get; }
-
-		protected static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, long[] ids)
-		{
-			sb.Append($"WHERE [{ID_COLUMN}] IN (");
-
-			bool first = true;
-			for (int i = 0; i < ids.Length; i++)
-			{
-				if (!first)
-					sb.Append(", ");
-
-				string identifier = $"@Id{i}";
-				sb.Append(identifier);
-				@params.Add(identifier, SqlDbType.BigInt).Value = ids[i];
-
-				first = false;
-			}
-
-			sb.AppendLine(")");
-		}
 
 		protected static void AddPaging(SqlParameterCollection @params, StringBuilder sb, PageInfo pageInfo)
 		{
@@ -58,6 +42,29 @@ namespace LinkIT.Data.Repositories
 
 			@params.Add("@PageNumber", SqlDbType.Int).Value = pageInfo.PageNumber;
 			@params.Add("@RowsPerPage", SqlDbType.Int).Value = pageInfo.RowsPerPage;
+		}
+
+		protected void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, long[] ids)
+		{
+			sb.Append($"WHERE [{ID_COLUMN}] IN (");
+
+			bool first = true;
+			for (int i = 0; i < ids.Length; i++)
+			{
+				if (!first)
+					sb.Append(", ");
+
+				string identifier = $"@{ID_COLUMN}{i}";
+				sb.Append(identifier);
+				@params.Add(identifier, SqlDbType.BigInt).Value = ids[i];
+
+				first = false;
+			}
+
+			sb.AppendLine(")");
+
+			if (_hasSoftDelete)
+				sb.AppendLine($"AND [{DELETED_COLUMN}] = 0");
 		}
 
 		protected string CreateSelectStatement() => $"SELECT * FROM [{TableName}]";
@@ -98,10 +105,7 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
-		public bool Exists(long id)
-		{
-			return Exists(new[] { id });
-		}
+		public bool Exists(long id) => Exists(new[] { id });
 
 		public bool Exists(IEnumerable<long> ids)
 		{
@@ -135,11 +139,19 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					string cmdText = $"DELETE FROM [{TableName}] WHERE [{ID_COLUMN}]=@Id";
+					string cmdText;
+					if (_hasSoftDelete)
+					{
+						cmdText = $"UPDATE [{TableName}] SET {DELETED_COLUMN} = 1 WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
+					}
+					else
+					{
+						cmdText = $"DELETE FROM [{TableName}] WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
+					}
 
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{
-						cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = id;
+						cmd.Parameters.Add($"@{ID_COLUMN}", SqlDbType.BigInt).Value = id;
 
 						cmd.ExecuteNonQuery();
 					}

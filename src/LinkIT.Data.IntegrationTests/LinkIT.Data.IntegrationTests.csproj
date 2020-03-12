@@ -67,6 +67,10 @@
     <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithOneCondition.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithTwoConditions.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithNoCondition.cs" />
+    <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithNoConditionAndPaging.cs" />
+    <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithNoCondition.cs" />
+    <Compile Include="RepositoryTests\ProductRepo\WhenUpdatingAProduct.cs" />
+    <Compile Include="RepositoryTests\ProductRepo\WhenInsertingANewProduct.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
