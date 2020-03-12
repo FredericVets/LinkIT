@@ -18,23 +18,29 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
 			_sut = new ProductRepository(conStr);
 
+			var created = DateTime.Now.AddDays(-1);
+			DateTimeProvider.SetDateTime(created);
+
 			_expected = new ProductDto
 			{
-				CreationDate = DateTime.Now.AddDays(-1),
 				CreatedBy = "user1",
-				ModificationDate = DateTime.Now,
-				ModifiedBy = "user2",
 				Brand = "HP",
 				Type = "EliteBook"
 			};
 
 			_expected.Id = _sut.Insert(_expected);
+			_expected.CreationDate = created;
 		}
 
 		[TestMethod]
 		public void ThenTheDataIsInserted()
 		{
-			_expected.Brand = "Dell";
+			var modified = DateTime.Now;
+			DateTimeProvider.SetDateTime(modified);
+
+			_expected.ModificationDate = modified;
+			_expected.ModifiedBy = "user2";
+
 			_sut.Update(_expected);
 
 			var actual = _sut.GetById(_expected.Id.Value);

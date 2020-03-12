@@ -19,9 +19,9 @@ namespace LinkIT.Data.Repositories
 		public const string BRAND_COLUMN = "Brand";
 		public const string TYPE_COLUMN = "Type";
 
-		public static readonly string[] COLUMNS = new[] 
-		{ 
-			ID_COLUMN, CREATION_DATE_COLUMN, CREATED_BY_COLUMN, MODIFICATION_DATE_COLUMN, MODIFIED_BY_COLUMN, BRAND_COLUMN, TYPE_COLUMN 
+		public static readonly string[] COLUMNS = new[]
+		{
+			ID_COLUMN, CREATION_DATE_COLUMN, CREATED_BY_COLUMN, MODIFICATION_DATE_COLUMN, MODIFIED_BY_COLUMN, BRAND_COLUMN, TYPE_COLUMN
 		};
 
 		public ProductRepository(string connectionString) : base(connectionString, TableNames.PRODUCT_TABLE) { }
@@ -48,10 +48,15 @@ namespace LinkIT.Data.Repositories
 			if (input.Id.HasValue)
 				cmd.Parameters.Add($"@{ID_COLUMN}", SqlDbType.BigInt).Value = input.Id.Value;
 
-			cmd.Parameters.Add($"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = input.CreationDate;
-			cmd.Parameters.Add($"@{CREATED_BY_COLUMN}", SqlDbType.VarChar).Value = input.CreatedBy;
-			cmd.Parameters.Add($"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = input.ModificationDate;
+			if (input.CreationDate.HasValue)
+				cmd.Parameters.Add($"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = input.CreationDate.Value;
+
+			if (!string.IsNullOrWhiteSpace(input.CreatedBy))
+				cmd.Parameters.Add($"@{CREATED_BY_COLUMN}", SqlDbType.VarChar).Value = input.CreatedBy;
+
+			cmd.Parameters.Add($"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = input.ModificationDate.Value;
 			cmd.Parameters.Add($"@{MODIFIED_BY_COLUMN}", SqlDbType.VarChar).Value = input.ModifiedBy;
+
 			cmd.Parameters.Add($"@{BRAND_COLUMN}", SqlDbType.VarChar).Value = input.Brand;
 			cmd.Parameters.Add($"@{TYPE_COLUMN}", SqlDbType.VarChar).Value = input.Type;
 		}
@@ -272,6 +277,12 @@ namespace LinkIT.Data.Repositories
 			if (item.Id.HasValue)
 				throw new ArgumentException("Id can not be specified.");
 
+			if (string.IsNullOrWhiteSpace(item.CreatedBy))
+				throw new ArgumentException("CreatedBy is required!");
+
+			item.ModifiedBy = item.CreatedBy;
+			item.ModificationDate = item.CreationDate = DateTimeProvider.Now();
+
 			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
@@ -311,7 +322,12 @@ namespace LinkIT.Data.Repositories
 			{
 				if (!item.Id.HasValue)
 					throw new ArgumentException("Id is a required field.");
+
+				if (string.IsNullOrWhiteSpace(item.ModifiedBy))
+					throw new ArgumentException("ModifiedBy is required!");
 			}
+
+			var now = DateTimeProvider.Now();
 
 			using (var con = new SqlConnection(ConnectionString))
 			{
@@ -319,12 +335,13 @@ namespace LinkIT.Data.Repositories
 				using (var tx = con.BeginTransaction())
 				{
 					string cmdText = $@"UPDATE [{TableName}] 
-								SET [{CREATION_DATE_COLUMN}]=@{CREATION_DATE_COLUMN}, [{CREATED_BY_COLUMN}]=@{CREATED_BY_COLUMN}, [{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, 
-								[{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, [{BRAND_COLUMN}]=@{BRAND_COLUMN}, [{TYPE_COLUMN}]=@{TYPE_COLUMN}
+								SET [{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, [{BRAND_COLUMN}]=@{BRAND_COLUMN}, [{TYPE_COLUMN}]=@{TYPE_COLUMN}
 								WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
 
 					foreach (var item in items)
 					{
+						item.ModificationDate = now;
+
 						using (var cmd = new SqlCommand(cmdText, con, tx))
 						{
 							AddSqlParameters(cmd, item);

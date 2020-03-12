@@ -20,10 +20,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 
 			_expected = new ProductDto
 			{
-				CreationDate = DateTime.Now.AddDays(-1),
 				CreatedBy = "user1",
-				ModificationDate = DateTime.Now,
-				ModifiedBy = "user2",
 				Brand = "HP",
 				Type = "EliteBook"
 			};
@@ -32,7 +29,12 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 		[TestMethod]
 		public void ThenTheDataIsInserted()
 		{
+			var created = DateTime.Now;
+			DateTimeProvider.SetDateTime(created);
+
 			_expected.Id = _sut.Insert(_expected);
+			_expected.CreationDate = _expected.ModificationDate = created;
+			_expected.ModifiedBy = _expected.CreatedBy;
 
 			var actual = _sut.GetById(_expected.Id.Value);
 
