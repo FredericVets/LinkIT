@@ -15,6 +15,10 @@ namespace LinkIT.Data.Repositories
 	{
 		public const string ID_COLUMN = "Id";
 		public const string DELETED_COLUMN = "Deleted";
+		public const string CREATION_DATE_COLUMN = "CreationDate";
+		public const string CREATED_BY_COLUMN = "CreatedBy";
+		public const string MODIFICATION_DATE_COLUMN = "ModificationDate";
+		public const string MODIFIED_BY_COLUMN = "ModifiedBy";
 
 		private readonly bool _hasSoftDelete;
 
@@ -30,9 +34,34 @@ namespace LinkIT.Data.Repositories
 			_hasSoftDelete = hasSoftDelete;
 		}
 
+		protected string ConnectionString { get; }
+
 		protected string TableName { get; }
 
-		protected string ConnectionString { get; }
+		protected static void AddSqlParameter<T>(
+			T value, string name, SqlDbType sqlType, SqlParameterCollection @params, bool addIfNull = false)
+		{
+			if (value == null && addIfNull)
+			{
+				@params.Add(name, sqlType).Value = DBNull.Value;
+
+				return;
+			}
+
+			if (value == null)
+				return;
+
+			@params.Add(name, sqlType).Value = value;
+		}
+
+		protected static T GetValue<T>(SqlDataReader reader, string columnName)
+		{
+			object value = reader[columnName];
+			if (value == null || value == DBNull.Value)
+				return default;
+
+			return (T)value;
+		}
 
 		protected static void AddPaging(SqlParameterCollection @params, StringBuilder sb, PageInfo pageInfo)
 		{

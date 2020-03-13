@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using LinkIT.Data.DTO;
+using LinkIT.Data.Paging;
+using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 {
 	[TestClass]
-	public class WhenQueryingTheProductsWithNoCondition
+	public class WhenQueryingTheProductsWithOneConditionAndPaging
 	{
 		private List<ProductDto> _expected;
 		private ProductRepository _sut;
@@ -60,13 +62,23 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var actual = _sut.Query().ToList();
+			var query = new ProductQuery { CreatedBy = "user1" };
+			var pageInfo = new PageInfo(
+				2,
+				2,
+				new OrderBy(ProductRepository.CREATED_BY_COLUMN, Order.DESCENDING));
+			var actual = _sut.PagedQuery(pageInfo, query);
 
-			Assert.AreEqual(5, actual.Count);
-			foreach (var expectedDto in _expected)
+			// Simulate the paging on the in-memory collection.
+			var page = _expected.OrderByDescending(x => x.CreatedBy).Skip(2).Take(2).ToList();
+
+			Assert.AreEqual(pageInfo, actual.PageInfo);
+			Assert.AreEqual(5, actual.TotalCount);
+			Assert.AreEqual(2, actual.Result.Count());
+			foreach (var item in page)
 			{
-				var actualDto = actual.Single(x => x.Id == expectedDto.Id);
-				Assert.AreEqual(expectedDto, actualDto);
+				var actualDto = actual.Result.Single(x => x.Id == item.Id);
+				Assert.AreEqual(item, actualDto);
 			}
 		}
 

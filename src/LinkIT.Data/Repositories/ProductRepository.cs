@@ -12,10 +12,6 @@ namespace LinkIT.Data.Repositories
 {
 	public class ProductRepository : Repository, IRepository<ProductDto, ProductQuery>
 	{
-		public const string CREATION_DATE_COLUMN = "CreationDate";
-		public const string CREATED_BY_COLUMN = "CreatedBy";
-		public const string MODIFICATION_DATE_COLUMN = "ModificationDate";
-		public const string MODIFIED_BY_COLUMN = "ModifiedBy";
 		public const string BRAND_COLUMN = "Brand";
 		public const string TYPE_COLUMN = "Type";
 
@@ -32,33 +28,27 @@ namespace LinkIT.Data.Repositories
 			{
 				yield return new ProductDto
 				{
-					Id = (long)reader[ID_COLUMN],
-					CreationDate = (DateTime)reader[CREATION_DATE_COLUMN],
-					CreatedBy = reader[CREATED_BY_COLUMN].ToString(),
-					ModificationDate = (DateTime)reader[MODIFICATION_DATE_COLUMN],
-					ModifiedBy = reader[MODIFIED_BY_COLUMN].ToString(),
-					Brand = reader[BRAND_COLUMN].ToString(),
-					Type = reader[TYPE_COLUMN].ToString()
+					Id = GetValue<long?>(reader, ID_COLUMN),
+					CreationDate = GetValue<DateTime?>(reader, CREATION_DATE_COLUMN),
+					CreatedBy = GetValue<string>(reader, CREATED_BY_COLUMN),
+					ModificationDate = GetValue<DateTime?>(reader, MODIFICATION_DATE_COLUMN),
+					ModifiedBy = GetValue<string>(reader, MODIFIED_BY_COLUMN),
+					Brand = GetValue<string>(reader, BRAND_COLUMN),
+					Type = GetValue<string>(reader, TYPE_COLUMN)
 				};
 			}
 		}
 
-		private static void AddSqlParameters(SqlCommand cmd, ProductDto input)
+		private static void AddSqlParameters(SqlParameterCollection @params, ProductDto input)
 		{
-			if (input.Id.HasValue)
-				cmd.Parameters.Add($"@{ID_COLUMN}", SqlDbType.BigInt).Value = input.Id.Value;
+			AddSqlParameter(input.Id, $"@{ID_COLUMN}", SqlDbType.BigInt, @params);
+			AddSqlParameter(input.CreationDate, $"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2, @params);
+			AddSqlParameter(input.CreatedBy, $"@{CREATED_BY_COLUMN}", SqlDbType.VarChar, @params);
+			AddSqlParameter(input.ModificationDate, $"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2, @params);
+			AddSqlParameter(input.ModifiedBy, $"@{MODIFIED_BY_COLUMN}", SqlDbType.VarChar, @params);
 
-			if (input.CreationDate.HasValue)
-				cmd.Parameters.Add($"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = input.CreationDate.Value;
-
-			if (!string.IsNullOrWhiteSpace(input.CreatedBy))
-				cmd.Parameters.Add($"@{CREATED_BY_COLUMN}", SqlDbType.VarChar).Value = input.CreatedBy;
-
-			cmd.Parameters.Add($"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = input.ModificationDate.Value;
-			cmd.Parameters.Add($"@{MODIFIED_BY_COLUMN}", SqlDbType.VarChar).Value = input.ModifiedBy;
-
-			cmd.Parameters.Add($"@{BRAND_COLUMN}", SqlDbType.VarChar).Value = input.Brand;
-			cmd.Parameters.Add($"@{TYPE_COLUMN}", SqlDbType.VarChar).Value = input.Type;
+			AddSqlParameter(input.Brand, $"@{BRAND_COLUMN}", SqlDbType.VarChar, @params, true);
+			AddSqlParameter(input.Type, $"@{TYPE_COLUMN}", SqlDbType.VarChar, @params, true);
 		}
 
 		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, ProductQuery query)
@@ -295,7 +285,7 @@ namespace LinkIT.Data.Repositories
 					long newId;
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{
-						AddSqlParameters(cmd, item);
+						AddSqlParameters(cmd.Parameters, item);
 
 						newId = (long)cmd.ExecuteScalar();
 					}
@@ -335,8 +325,8 @@ namespace LinkIT.Data.Repositories
 				using (var tx = con.BeginTransaction())
 				{
 					string cmdText = $@"UPDATE [{TableName}] 
-								SET [{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, [{BRAND_COLUMN}]=@{BRAND_COLUMN}, [{TYPE_COLUMN}]=@{TYPE_COLUMN}
-								WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
+						SET [{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, [{BRAND_COLUMN}]=@{BRAND_COLUMN}, [{TYPE_COLUMN}]=@{TYPE_COLUMN}
+						WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
 
 					foreach (var item in items)
 					{
@@ -344,7 +334,7 @@ namespace LinkIT.Data.Repositories
 
 						using (var cmd = new SqlCommand(cmdText, con, tx))
 						{
-							AddSqlParameters(cmd, item);
+							AddSqlParameters(cmd.Parameters, item);
 
 							cmd.ExecuteNonQuery();
 						}

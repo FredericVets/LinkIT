@@ -10,91 +10,117 @@ using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
-	public class DeviceRepository : Repository, IDeviceRepository
+	public class SpecialOwnerRepository : Repository, IRepository<SpecialOwnerDto, SpecialOwnerQuery>
 	{
-		public const string TAG_COLUMN = "Tag";
-		public const string OWNER_COLUMN = "Owner";
-		public const string BRAND_COLUMN = "Brand";
-		public const string TYPE_COLUMN = "Type";
+		public const string NAME_COLUMN = "Name";
+		public const string REMARK_COLUMN = "Remark";
 
-		public static readonly string[] COLUMNS = new[] { ID_COLUMN, TAG_COLUMN, OWNER_COLUMN, BRAND_COLUMN, TYPE_COLUMN };
+		public static readonly string[] COLUMNS = new[]
+		{
+			ID_COLUMN, CREATION_DATE_COLUMN, CREATED_BY_COLUMN, MODIFICATION_DATE_COLUMN, MODIFIED_BY_COLUMN, NAME_COLUMN, REMARK_COLUMN
+		};
 
-		public DeviceRepository(string connectionString) : base(connectionString, TableNames.DEVICE_TABLE) { }
+		public SpecialOwnerRepository(string connectionString) : base(connectionString, TableNames.SPECIAL_OWNER_TABLE) { }
 
-		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query)
+		private static IEnumerable<SpecialOwnerDto> ReadDtosFrom(SqlDataReader reader)
+		{
+			while (reader.Read())
+			{
+				yield return new SpecialOwnerDto
+				{
+					Id = GetValue<long?>(reader, ID_COLUMN),
+					CreationDate = GetValue<DateTime?>(reader, CREATION_DATE_COLUMN),
+					CreatedBy = GetValue<string>(reader, CREATED_BY_COLUMN),
+					ModificationDate = GetValue<DateTime?>(reader, MODIFICATION_DATE_COLUMN),
+					ModifiedBy = GetValue<string>(reader, MODIFIED_BY_COLUMN),
+					Name = GetValue<string>(reader, NAME_COLUMN),
+					Remark = GetValue<string>(reader, REMARK_COLUMN)
+				};
+			}
+		}
+
+		private static void AddSqlParameters(SqlParameterCollection @params, SpecialOwnerDto input)
+		{
+			AddSqlParameter(input.Id, $"@{ID_COLUMN}", SqlDbType.BigInt, @params);
+			AddSqlParameter(input.CreationDate, $"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2, @params);
+			AddSqlParameter(input.CreatedBy, $"@{CREATED_BY_COLUMN}", SqlDbType.VarChar, @params);
+			AddSqlParameter(input.ModificationDate, $"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2, @params);
+			AddSqlParameter(input.ModifiedBy, $"@{MODIFIED_BY_COLUMN}", SqlDbType.VarChar, @params);
+			
+			AddSqlParameter(input.Name, $"@{NAME_COLUMN}", SqlDbType.VarChar, @params, true);
+			AddSqlParameter(input.Remark, $"@{REMARK_COLUMN}", SqlDbType.VarChar, @params, true);
+		}
+
+		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, SpecialOwnerQuery query)
 		{
 			sb.AppendLine("WHERE");
 
 			bool firstCondition = true;
 			if (query.Id.HasValue)
 			{
-				sb.AppendLine($"[{ID_COLUMN}] = @Id");
-				@params.Add("@Id", SqlDbType.BigInt).Value = query.Id.Value;
+				sb.AppendLine($"[{ID_COLUMN}] = @{ID_COLUMN}");
+				@params.Add($"@{ID_COLUMN}", SqlDbType.BigInt).Value = query.Id.Value;
 				firstCondition = false;
 			}
 
-			if (!string.IsNullOrWhiteSpace(query.Tag))
+			if (query.CreationDate.HasValue)
 			{
 				if (!firstCondition)
 					sb.AppendLine(query.LogicalOperator.ToString());
 
-				sb.AppendLine($"[{TAG_COLUMN}] = @Tag");
-				@params.Add("@Tag", SqlDbType.NVarChar).Value = query.Tag;
+				sb.AppendLine($"[{CREATION_DATE_COLUMN}] = @{CREATION_DATE_COLUMN}");
+				@params.Add($"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = query.CreationDate.Value;
 				firstCondition = false;
 			}
 
-			if (!string.IsNullOrWhiteSpace(query.Owner))
+			if (!string.IsNullOrWhiteSpace(query.CreatedBy))
 			{
 				if (!firstCondition)
 					sb.AppendLine(query.LogicalOperator.ToString());
 
-				sb.AppendLine($"[{OWNER_COLUMN}] = @Owner");
-				@params.Add("@Owner", SqlDbType.NVarChar).Value = query.Owner;
+				sb.AppendLine($"[{CREATED_BY_COLUMN}] = @{CREATED_BY_COLUMN}");
+				@params.Add($"@{CREATED_BY_COLUMN}", SqlDbType.VarChar).Value = query.CreatedBy;
 				firstCondition = false;
 			}
 
-			if (!string.IsNullOrWhiteSpace(query.Brand))
+			if (query.ModificationDate.HasValue)
 			{
 				if (!firstCondition)
 					sb.AppendLine(query.LogicalOperator.ToString());
 
-				sb.AppendLine($"[{BRAND_COLUMN}] = @Brand");
-				@params.Add("@Brand", SqlDbType.NVarChar).Value = query.Brand;
+				sb.AppendLine($"[{MODIFICATION_DATE_COLUMN}] = @{MODIFICATION_DATE_COLUMN}");
+				@params.Add($"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = query.ModificationDate.Value;
 				firstCondition = false;
 			}
 
-			if (!string.IsNullOrWhiteSpace(query.Type))
+			if (!string.IsNullOrWhiteSpace(query.ModifiedBy))
 			{
 				if (!firstCondition)
 					sb.AppendLine(query.LogicalOperator.ToString());
 
-				sb.AppendLine($"[{TYPE_COLUMN}] = @Type");
-				@params.Add("@Type", SqlDbType.NVarChar).Value = query.Type;
+				sb.AppendLine($"[{MODIFIED_BY_COLUMN}] = @{MODIFIED_BY_COLUMN}");
+				@params.Add($"@{MODIFIED_BY_COLUMN}", SqlDbType.VarChar).Value = query.ModifiedBy;
 				firstCondition = false;
 			}
-		}
 
-		private static void AddSqlParameters(SqlParameterCollection @params, DeviceDto input)
-		{
-			AddSqlParameter(input.Id, $"@{ID_COLUMN}", SqlDbType.BigInt, @params);
-			AddSqlParameter(input.Tag, $"@{TAG_COLUMN}", SqlDbType.NVarChar, @params);
-			AddSqlParameter(input.Owner, $"@{OWNER_COLUMN}", SqlDbType.NVarChar, @params);
-			AddSqlParameter(input.Brand, $"@{BRAND_COLUMN}", SqlDbType.NVarChar, @params);
-			AddSqlParameter(input.Type, $"@{TYPE_COLUMN}", SqlDbType.NVarChar, @params);
-		}
-
-		private static IEnumerable<DeviceDto> ReadDtosFrom(SqlDataReader reader)
-		{
-			while (reader.Read())
+			if (!string.IsNullOrWhiteSpace(query.Name))
 			{
-				yield return new DeviceDto
-				{
-					Id = GetValue<long?>(reader, ID_COLUMN),
-					Tag = GetValue<string>(reader, TAG_COLUMN),
-					Owner = GetValue<string>(reader, OWNER_COLUMN),
-					Brand = GetValue<string>(reader, BRAND_COLUMN),
-					Type = GetValue<string>(reader, TYPE_COLUMN)
-				};
+				if (!firstCondition)
+					sb.AppendLine(query.LogicalOperator.ToString());
+
+				sb.AppendLine($"[{NAME_COLUMN}] = @{NAME_COLUMN}");
+				@params.Add($"@{NAME_COLUMN}", SqlDbType.VarChar).Value = query.Name;
+				firstCondition = false;
+			}
+
+			if (!string.IsNullOrWhiteSpace(query.Remark))
+			{
+				if (!firstCondition)
+					sb.AppendLine(query.LogicalOperator.ToString());
+
+				sb.AppendLine($"[{REMARK_COLUMN}] = @{REMARK_COLUMN}");
+				@params.Add($"@{REMARK_COLUMN}", SqlDbType.VarChar).Value = query.Remark;
+				firstCondition = false;
 			}
 		}
 
@@ -113,7 +139,7 @@ namespace LinkIT.Data.Repositories
 		private SqlCommand CreateSelectCommand(
 			SqlConnection con,
 			SqlTransaction tx,
-			DeviceQuery query = null,
+			SpecialOwnerQuery query = null,
 			PageInfo pageInfo = null)
 		{
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
@@ -135,7 +161,7 @@ namespace LinkIT.Data.Repositories
 		private SqlCommand CreateSelectCountCommand(
 			SqlConnection con,
 			SqlTransaction tx,
-			DeviceQuery query = null)
+			SpecialOwnerQuery query = null)
 		{
 			var cmd = new SqlCommand { Connection = con, Transaction = tx };
 
@@ -150,9 +176,9 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
-		public DeviceDto GetById(long id) => GetById(new[] { id }).Single();
+		public SpecialOwnerDto GetById(long id) => GetById(new[] { id }).Single();
 
-		public IEnumerable<DeviceDto> GetById(IEnumerable<long> ids)
+		public IEnumerable<SpecialOwnerDto> GetById(IEnumerable<long> ids)
 		{
 			if (ids == null || !ids.Any())
 				throw new ArgumentNullException("ids");
@@ -183,7 +209,7 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public IEnumerable<DeviceDto> Query(DeviceQuery query = null)
+		public IEnumerable<SpecialOwnerDto> Query(SpecialOwnerQuery query = null)
 		{
 			using (var con = new SqlConnection(ConnectionString))
 			{
@@ -201,7 +227,7 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public PagedResult<DeviceDto> PagedQuery(PageInfo pageInfo, DeviceQuery query = null)
+		public PagedResult<SpecialOwnerDto> PagedQuery(PageInfo pageInfo, SpecialOwnerQuery query = null)
 		{
 			if (pageInfo == null)
 				throw new ArgumentNullException("pageInfo");
@@ -225,7 +251,7 @@ namespace LinkIT.Data.Repositories
 					{
 						var result = ReadDtosFrom(reader).ToList();
 
-						return new PagedResult<DeviceDto>(result, pageInfo, totalCount);
+						return new PagedResult<SpecialOwnerDto>(result, pageInfo, totalCount);
 					}
 
 					//tx.Commit();
@@ -233,7 +259,7 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public long Insert(DeviceDto item)
+		public long Insert(SpecialOwnerDto item)
 		{
 			if (item == null)
 				throw new ArgumentNullException("item");
@@ -241,13 +267,19 @@ namespace LinkIT.Data.Repositories
 			if (item.Id.HasValue)
 				throw new ArgumentException("Id can not be specified.");
 
+			if (string.IsNullOrWhiteSpace(item.CreatedBy))
+				throw new ArgumentException("CreatedBy is required!");
+
+			item.ModifiedBy = item.CreatedBy;
+			item.ModificationDate = item.CreationDate = DateTimeProvider.Now();
+
 			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					string cmdText = $@"INSERT INTO [{TableName}] ([{TAG_COLUMN}], [{OWNER_COLUMN}], [{BRAND_COLUMN}], [{TYPE_COLUMN}]) 
-						VALUES (@Tag, @Owner, @Brand, @Type)
+					string cmdText = $@"INSERT INTO [{TableName}] ([{CREATION_DATE_COLUMN}], [{CREATED_BY_COLUMN}], [{MODIFICATION_DATE_COLUMN}], [{MODIFIED_BY_COLUMN}], [{NAME_COLUMN}], [{REMARK_COLUMN}]) 
+						VALUES (@{CREATION_DATE_COLUMN}, @{CREATED_BY_COLUMN}, @{MODIFICATION_DATE_COLUMN}, @{MODIFIED_BY_COLUMN}, @{NAME_COLUMN}, @{REMARK_COLUMN})
 						SELECT CONVERT(bigint, SCOPE_IDENTITY())";
 
 					long newId;
@@ -265,13 +297,9 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		/// <summary>
-		/// This is a full-update. So all required fields should be supplied.
-		/// </summary>
-		/// <param name="item"></param>
-		public void Update(DeviceDto item) => Update(new[] { item });
+		public void Update(SpecialOwnerDto item) => Update(new[] { item });
 
-		public void Update(IEnumerable<DeviceDto> items)
+		public void Update(IEnumerable<SpecialOwnerDto> items)
 		{
 			if (items == null || !items.Any())
 				throw new ArgumentNullException("items");
@@ -280,7 +308,12 @@ namespace LinkIT.Data.Repositories
 			{
 				if (!item.Id.HasValue)
 					throw new ArgumentException("Id is a required field.");
+
+				if (string.IsNullOrWhiteSpace(item.ModifiedBy))
+					throw new ArgumentException("ModifiedBy is required!");
 			}
+
+			var now = DateTimeProvider.Now();
 
 			using (var con = new SqlConnection(ConnectionString))
 			{
@@ -288,11 +321,13 @@ namespace LinkIT.Data.Repositories
 				using (var tx = con.BeginTransaction())
 				{
 					string cmdText = $@"UPDATE [{TableName}] 
-								SET [{TAG_COLUMN}]=@Tag, [{OWNER_COLUMN}]=@Owner, [{BRAND_COLUMN}]=@Brand, [{TYPE_COLUMN}]=@Type 
-								WHERE [{ID_COLUMN}]=@Id";
+						SET [{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, [{NAME_COLUMN}]=@{NAME_COLUMN}, [{REMARK_COLUMN}]=@{REMARK_COLUMN}
+						WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
 
 					foreach (var item in items)
 					{
+						item.ModificationDate = now;
+
 						using (var cmd = new SqlCommand(cmdText, con, tx))
 						{
 							AddSqlParameters(cmd.Parameters, item);

@@ -67,10 +67,13 @@
     <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithOneCondition.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithTwoConditions.cs" />
     <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithNoCondition.cs" />
-    <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithNoConditionAndPaging.cs" />
+    <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithOneConditionAndPaging.cs" />
     <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithNoCondition.cs" />
     <Compile Include="RepositoryTests\ProductRepo\WhenUpdatingAProduct.cs" />
     <Compile Include="RepositoryTests\ProductRepo\WhenInsertingANewProduct.cs" />
+    <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenQueryingTheSpecialOwnersWithOneConditionAndPaging.cs" />
+    <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenUpdatingASpecialOwner.cs" />
+    <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenInsertingANewSpecialOwner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -86,6 +89,7 @@
       <Name>LinkIT.Data</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

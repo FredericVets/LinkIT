@@ -72,6 +72,7 @@
     <Compile Include="Paging\OrderByConverter.cs" />
     <Compile Include="Paging\OrderExtensions.cs" />
     <Compile Include="Queries\ProductQuery.cs" />
+    <Compile Include="Queries\SpecialOwnerQuery.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\IRepositoryOfTU.cs" />
     <Compile Include="Paging\Order.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Queries\LogicalOperator.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="Repositories\Repository.cs" />
+    <Compile Include="Repositories\SpecialOwnerRepository.cs" />
     <Compile Include="TableNames.cs" />
   </ItemGroup>
   <ItemGroup>
