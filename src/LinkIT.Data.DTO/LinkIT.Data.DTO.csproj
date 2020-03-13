@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetDto.cs" />
     <Compile Include="DeviceDto.cs" />
     <Compile Include="Dto.cs" />
     <Compile Include="ProductDto.cs" />
