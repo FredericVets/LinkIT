@@ -162,6 +162,7 @@ namespace LinkIT.Data.Repositories
 					using (var cmd = CreateSelectCommand(con, tx, distinctIds))
 					using (var reader = cmd.ExecuteReader())
 					{
+						// TODO : fetch the product as well.
 						return ReadDtosFrom(reader).ToList();
 					}
 
@@ -180,6 +181,7 @@ namespace LinkIT.Data.Repositories
 					using (var cmd = CreateSelectCommand(con, tx, query))
 					using (var reader = cmd.ExecuteReader())
 					{
+						// TODO : fetch the product as well.
 						return ReadDtosFrom(reader).ToList();
 					}
 
