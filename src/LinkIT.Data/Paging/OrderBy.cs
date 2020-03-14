@@ -125,8 +125,8 @@ namespace LinkIT.Data.Paging
 		public bool Equals(OrderBy other)
 		{
 			return other != null &&
-				   Name == other.Name &&
-				   Order == other.Order;
+				Name == other.Name &&
+				Order == other.Order;
 		}
 
 		public bool IsValidFor(IEnumerable<string> names)

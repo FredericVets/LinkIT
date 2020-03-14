@@ -78,7 +78,7 @@ namespace LinkIT.Data.Repositories
 		/// <param name="query"></param>
 		/// <param name="paging"></param>
 		/// <returns></returns>
-		private SqlCommand CreateSelectCommand(
+		private SqlCommand BuildSelectCommand(
 			SqlConnection con,
 			SqlTransaction tx,
 			ProductQuery query = null,
@@ -100,7 +100,7 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
-		private SqlCommand CreateSelectCountCommand(
+		private SqlCommand BuildSelectCountCommand(
 			SqlConnection con,
 			SqlTransaction tx,
 			ProductQuery query = null)
@@ -133,14 +133,14 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCountCommand(con, tx, distinctIds))
+					using (var cmd = BuildSelectCountCommand(con, tx, distinctIds))
 					{
 						long count = Convert.ToInt64(cmd.ExecuteScalar());
 						if (distinctIds.Length != count)
 							throw new ArgumentException("Not all supplied id's exist.");
 					}
 
-					using (var cmd = CreateSelectCommand(con, tx, distinctIds))
+					using (var cmd = BuildSelectCommand(con, tx, distinctIds))
 					using (var reader = cmd.ExecuteReader())
 					{
 						return ReadDtosFrom(reader).ToList();
@@ -158,7 +158,7 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCommand(con, tx, query))
+					using (var cmd = BuildSelectCommand(con, tx, query))
 					using (var reader = cmd.ExecuteReader())
 					{
 						return ReadDtosFrom(reader).ToList();
@@ -183,12 +183,12 @@ namespace LinkIT.Data.Repositories
 				using (var tx = con.BeginTransaction())
 				{
 					long totalCount;
-					using (var cmd = CreateSelectCountCommand(con, tx, query))
+					using (var cmd = BuildSelectCountCommand(con, tx, query))
 					{
 						totalCount = Convert.ToInt64(cmd.ExecuteScalar());
 					}
 
-					using (var cmd = CreateSelectCommand(con, tx, query, pageInfo))
+					using (var cmd = BuildSelectCommand(con, tx, query, pageInfo))
 					using (var reader = cmd.ExecuteReader())
 					{
 						var result = ReadDtosFrom(reader).ToList();

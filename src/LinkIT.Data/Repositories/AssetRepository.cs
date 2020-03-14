@@ -34,7 +34,15 @@ namespace LinkIT.Data.Repositories
 			PAID_BY_COLUMN, OWNER_COLUMN, INSTALL_DATE_COLUMN, INSTALLED_BY_COLUMN, REMARK_COLUMN, TEAMASSET_COLUMN
 		};
 
-		public AssetRepository(string connectionString) : base(connectionString, TableNames.ASSET_TABLE, hasSoftDelete: true) { }
+		private readonly IRepository<ProductDto, ProductQuery> _productRepo;
+
+		public AssetRepository(
+			string connectionString, 
+			IRepository<ProductDto, ProductQuery> productRepo) : base(
+				connectionString, TableNames.ASSET_TABLE, hasSoftDelete: true)
+		{
+			_productRepo = productRepo;
+		}
 
 		private static IEnumerable<AssetDto> ReadDtosFrom(SqlDataReader reader)
 		{
@@ -132,7 +140,7 @@ namespace LinkIT.Data.Repositories
 		/// <param name="query"></param>
 		/// <param name="paging"></param>
 		/// <returns></returns>
-		private SqlCommand CreateSelectCommand(
+		private SqlCommand BuildSelectCommand(
 			SqlConnection con,
 			SqlTransaction tx,
 			AssetQuery query = null,
@@ -154,7 +162,7 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
-		private SqlCommand CreateSelectCountCommand(
+		private SqlCommand BuildSelectCountCommand(
 			SqlConnection con,
 			SqlTransaction tx,
 			AssetQuery query = null)
@@ -172,6 +180,15 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
+		private void LinkProductsTo(IEnumerable<AssetDto> assets)
+		{
+			var productIds = assets.Select(x => x.Product.Id.Value).Distinct();
+			var products = _productRepo.GetById(productIds);
+
+			foreach (var asset in assets)
+				asset.Product = products.Single(x => x.Id == asset.Product.Id);
+		}
+
 		public AssetDto GetById(long id) => GetById(new[] { id }).Single();
 
 		public IEnumerable<AssetDto> GetById(IEnumerable<long> ids)
@@ -182,47 +199,55 @@ namespace LinkIT.Data.Repositories
 			// Filter out possible duplicates.
 			var distinctIds = ids.Distinct().ToArray();
 
+			IList<AssetDto> assets;
 			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCountCommand(con, tx, distinctIds))
+					using (var cmd = BuildSelectCountCommand(con, tx, distinctIds))
 					{
 						long count = Convert.ToInt64(cmd.ExecuteScalar());
 						if (distinctIds.Length != count)
 							throw new ArgumentException("Not all supplied id's exist.");
 					}
 
-					using (var cmd = CreateSelectCommand(con, tx, distinctIds))
+					using (var cmd = BuildSelectCommand(con, tx, distinctIds))
 					using (var reader = cmd.ExecuteReader())
 					{
-						// TODO : fetch the product as well.
-						return ReadDtosFrom(reader).ToList();
+						assets = ReadDtosFrom(reader).ToList();
 					}
 
 					//tx.Commit();
 				}
 			}
+
+			LinkProductsTo(assets);
+
+			return assets;
 		}
 
 		public IEnumerable<AssetDto> Query(AssetQuery query = null)
 		{
+			IList<AssetDto> assets;
 			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCommand(con, tx, query))
+					using (var cmd = BuildSelectCommand(con, tx, query))
 					using (var reader = cmd.ExecuteReader())
 					{
-						// TODO : fetch the product as well.
-						return ReadDtosFrom(reader).ToList();
+						assets = ReadDtosFrom(reader).ToList();
 					}
 
 					//tx.Commit();
 				}
 			}
+
+			LinkProductsTo(assets);
+
+			return assets;
 		}
 
 		public PagedResult<AssetDto> PagedQuery(PageInfo pageInfo, AssetQuery query = null)
@@ -233,29 +258,31 @@ namespace LinkIT.Data.Repositories
 			if (!pageInfo.OrderBy.IsValidFor(COLUMNS))
 				throw new ArgumentException($"'{pageInfo.OrderBy.Name}' is an unrecognized column.");
 
+			long totalCount;
+			IList<AssetDto> assets;
 			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					long totalCount;
-					using (var cmd = CreateSelectCountCommand(con, tx, query))
+					using (var cmd = BuildSelectCountCommand(con, tx, query))
 					{
 						totalCount = Convert.ToInt64(cmd.ExecuteScalar());
 					}
 
-					using (var cmd = CreateSelectCommand(con, tx, query, pageInfo))
+					using (var cmd = BuildSelectCommand(con, tx, query, pageInfo))
 					using (var reader = cmd.ExecuteReader())
 					{
-						var result = ReadDtosFrom(reader).ToList();
-						
-						// TODO : fetch the product as well.
-						return new PagedResult<AssetDto>(result, pageInfo, totalCount);
+						assets = ReadDtosFrom(reader).ToList();
 					}
 
 					//tx.Commit();
 				}
 			}
+
+			LinkProductsTo(assets);
+
+			return new PagedResult<AssetDto>(assets, pageInfo, totalCount);
 		}
 
 		public long Insert(AssetDto item)
@@ -320,6 +347,9 @@ namespace LinkIT.Data.Repositories
 					throw new ArgumentException("ModifiedBy is required!");
 				if (item.Product == null || !item.Product.Id.HasValue)
 					throw new ArgumentException("Product Id is required!");
+
+				item.CreationDate = null;
+				item.CreatedBy = null;
 			}
 
 			var now = DateTimeProvider.Now();

@@ -84,7 +84,7 @@ namespace LinkIT.Data.Repositories
 
 		protected string CreateSelectCountStatement() => $"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]";
 
-		protected SqlCommand CreateSelectCommand(
+		protected SqlCommand BuildSelectCommand(
 			SqlConnection con,
 			SqlTransaction tx,
 			long[] ids)
@@ -101,7 +101,7 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
-		protected SqlCommand CreateSelectCountCommand(
+		protected SqlCommand BuildSelectCountCommand(
 			SqlConnection con,
 			SqlTransaction tx,
 			long[] ids)
@@ -133,7 +133,7 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = CreateSelectCountCommand(con, tx, distinctIds))
+					using (var cmd = BuildSelectCountCommand(con, tx, distinctIds))
 					{
 						long count = Convert.ToInt64(cmd.ExecuteScalar());
 
