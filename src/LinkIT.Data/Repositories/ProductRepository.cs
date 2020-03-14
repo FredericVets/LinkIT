@@ -28,100 +28,42 @@ namespace LinkIT.Data.Repositories
 			{
 				yield return new ProductDto
 				{
-					Id = GetValue<long?>(reader, ID_COLUMN),
-					CreationDate = GetValue<DateTime?>(reader, CREATION_DATE_COLUMN),
-					CreatedBy = GetValue<string>(reader, CREATED_BY_COLUMN),
-					ModificationDate = GetValue<DateTime?>(reader, MODIFICATION_DATE_COLUMN),
-					ModifiedBy = GetValue<string>(reader, MODIFIED_BY_COLUMN),
-					Brand = GetValue<string>(reader, BRAND_COLUMN),
-					Type = GetValue<string>(reader, TYPE_COLUMN)
+					Id = GetColumnValue<long?>(reader, ID_COLUMN),
+					CreationDate = GetColumnValue<DateTime?>(reader, CREATION_DATE_COLUMN),
+					CreatedBy = GetColumnValue<string>(reader, CREATED_BY_COLUMN),
+					ModificationDate = GetColumnValue<DateTime?>(reader, MODIFICATION_DATE_COLUMN),
+					ModifiedBy = GetColumnValue<string>(reader, MODIFIED_BY_COLUMN),
+					Brand = GetColumnValue<string>(reader, BRAND_COLUMN),
+					Type = GetColumnValue<string>(reader, TYPE_COLUMN)
 				};
 			}
 		}
 
 		private static void AddSqlParameters(SqlParameterCollection @params, ProductDto input)
 		{
-			AddSqlParameter(input.Id, $"@{ID_COLUMN}", SqlDbType.BigInt, @params);
-			AddSqlParameter(input.CreationDate, $"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2, @params);
-			AddSqlParameter(input.CreatedBy, $"@{CREATED_BY_COLUMN}", SqlDbType.VarChar, @params);
-			AddSqlParameter(input.ModificationDate, $"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2, @params);
-			AddSqlParameter(input.ModifiedBy, $"@{MODIFIED_BY_COLUMN}", SqlDbType.VarChar, @params);
+			var paramBuilder = new SqlParameterBuilder(@params);
+			paramBuilder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			paramBuilder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
 
-			AddSqlParameter(input.Brand, $"@{BRAND_COLUMN}", SqlDbType.VarChar, @params, true);
-			AddSqlParameter(input.Type, $"@{TYPE_COLUMN}", SqlDbType.VarChar, @params, true);
+			paramBuilder.Add(input.Brand, BRAND_COLUMN, SqlDbType.VarChar, true);
+			paramBuilder.Add(input.Type, TYPE_COLUMN, SqlDbType.VarChar, true);
 		}
 
 		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, ProductQuery query)
 		{
-			sb.AppendLine("WHERE");
+			var where = new WhereClauseBuilder(@params, query.LogicalOperator, false);
+			where.AddParameter(query.Id, ID_COLUMN, SqlDbType.BigInt);
+			where.AddParameter(query.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			where.AddParameter(query.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			where.AddParameter(query.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.BigInt);
+			where.AddParameter(query.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.DateTime2);
+			where.AddParameter(query.Brand, BRAND_COLUMN, SqlDbType.VarChar);
+			where.AddParameter(query.Type, TYPE_COLUMN, SqlDbType.VarChar);
 
-			bool firstCondition = true;
-			if (query.Id.HasValue)
-			{
-				sb.AppendLine($"[{ID_COLUMN}] = @{ID_COLUMN}");
-				@params.Add($"@{ID_COLUMN}", SqlDbType.BigInt).Value = query.Id.Value;
-				firstCondition = false;
-			}
-
-			if (query.CreationDate.HasValue)
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{CREATION_DATE_COLUMN}] = @{CREATION_DATE_COLUMN}");
-				@params.Add($"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = query.CreationDate.Value;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.CreatedBy))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{CREATED_BY_COLUMN}] = @{CREATED_BY_COLUMN}");
-				@params.Add($"@{CREATED_BY_COLUMN}", SqlDbType.VarChar).Value = query.CreatedBy;
-				firstCondition = false;
-			}
-
-			if (query.ModificationDate.HasValue)
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{MODIFICATION_DATE_COLUMN}] = @{MODIFICATION_DATE_COLUMN}");
-				@params.Add($"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = query.ModificationDate.Value;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.ModifiedBy))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{MODIFIED_BY_COLUMN}] = @{MODIFIED_BY_COLUMN}");
-				@params.Add($"@{MODIFIED_BY_COLUMN}", SqlDbType.VarChar).Value = query.ModifiedBy;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.Brand))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{BRAND_COLUMN}] = @{BRAND_COLUMN}");
-				@params.Add($"@{BRAND_COLUMN}", SqlDbType.VarChar).Value = query.Brand;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.Type))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{TYPE_COLUMN}] = @{TYPE_COLUMN}");
-				@params.Add($"@{TYPE_COLUMN}", SqlDbType.VarChar).Value = query.Type;
-				firstCondition = false;
-			}
+			sb.Append(where.Build());
 		}
 
 		/// <summary>

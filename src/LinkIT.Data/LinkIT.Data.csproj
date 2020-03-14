@@ -89,6 +89,8 @@
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="Repositories\Repository.cs" />
     <Compile Include="Repositories\SpecialOwnerRepository.cs" />
+    <Compile Include="Repositories\SqlParameterBuilder.cs" />
+    <Compile Include="Repositories\WhereClauseBuilder.cs" />
     <Compile Include="TableNames.cs" />
   </ItemGroup>
   <ItemGroup>

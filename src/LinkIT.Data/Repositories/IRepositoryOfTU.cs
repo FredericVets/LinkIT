@@ -45,7 +45,7 @@ namespace LinkIT.Data.Repositories
 
 		void Update(T item);
 
-		void Update(IEnumerable<T> data);
+		void Update(IEnumerable<T> items);
 
 	}
 }

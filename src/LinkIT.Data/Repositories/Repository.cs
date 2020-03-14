@@ -38,23 +38,7 @@ namespace LinkIT.Data.Repositories
 
 		protected string TableName { get; }
 
-		protected static void AddSqlParameter<T>(
-			T value, string name, SqlDbType sqlType, SqlParameterCollection @params, bool addIfNull = false)
-		{
-			if (value == null && addIfNull)
-			{
-				@params.Add(name, sqlType).Value = DBNull.Value;
-
-				return;
-			}
-
-			if (value == null)
-				return;
-
-			@params.Add(name, sqlType).Value = value;
-		}
-
-		protected static T GetValue<T>(SqlDataReader reader, string columnName)
+		protected static T GetColumnValue<T>(SqlDataReader reader, string columnName)
 		{
 			object value = reader[columnName];
 			if (value == null || value == DBNull.Value)

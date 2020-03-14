@@ -28,100 +28,42 @@ namespace LinkIT.Data.Repositories
 			{
 				yield return new SpecialOwnerDto
 				{
-					Id = GetValue<long?>(reader, ID_COLUMN),
-					CreationDate = GetValue<DateTime?>(reader, CREATION_DATE_COLUMN),
-					CreatedBy = GetValue<string>(reader, CREATED_BY_COLUMN),
-					ModificationDate = GetValue<DateTime?>(reader, MODIFICATION_DATE_COLUMN),
-					ModifiedBy = GetValue<string>(reader, MODIFIED_BY_COLUMN),
-					Name = GetValue<string>(reader, NAME_COLUMN),
-					Remark = GetValue<string>(reader, REMARK_COLUMN)
+					Id = GetColumnValue<long?>(reader, ID_COLUMN),
+					CreationDate = GetColumnValue<DateTime?>(reader, CREATION_DATE_COLUMN),
+					CreatedBy = GetColumnValue<string>(reader, CREATED_BY_COLUMN),
+					ModificationDate = GetColumnValue<DateTime?>(reader, MODIFICATION_DATE_COLUMN),
+					ModifiedBy = GetColumnValue<string>(reader, MODIFIED_BY_COLUMN),
+					Name = GetColumnValue<string>(reader, NAME_COLUMN),
+					Remark = GetColumnValue<string>(reader, REMARK_COLUMN)
 				};
 			}
 		}
 
 		private static void AddSqlParameters(SqlParameterCollection @params, SpecialOwnerDto input)
 		{
-			AddSqlParameter(input.Id, $"@{ID_COLUMN}", SqlDbType.BigInt, @params);
-			AddSqlParameter(input.CreationDate, $"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2, @params);
-			AddSqlParameter(input.CreatedBy, $"@{CREATED_BY_COLUMN}", SqlDbType.VarChar, @params);
-			AddSqlParameter(input.ModificationDate, $"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2, @params);
-			AddSqlParameter(input.ModifiedBy, $"@{MODIFIED_BY_COLUMN}", SqlDbType.VarChar, @params);
-			
-			AddSqlParameter(input.Name, $"@{NAME_COLUMN}", SqlDbType.VarChar, @params, true);
-			AddSqlParameter(input.Remark, $"@{REMARK_COLUMN}", SqlDbType.VarChar, @params, true);
+			var paramBuilder = new SqlParameterBuilder(@params);
+			paramBuilder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			paramBuilder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
+
+			paramBuilder.Add(input.Name, NAME_COLUMN, SqlDbType.VarChar, true);
+			paramBuilder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar, true);
 		}
 
 		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, SpecialOwnerQuery query)
 		{
-			sb.AppendLine("WHERE");
+			var where = new WhereClauseBuilder(@params, query.LogicalOperator, false);
+			where.AddParameter(query.Id, ID_COLUMN, SqlDbType.BigInt);
+			where.AddParameter(query.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			where.AddParameter(query.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			where.AddParameter(query.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.BigInt);
+			where.AddParameter(query.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.DateTime2);
+			where.AddParameter(query.Name, NAME_COLUMN, SqlDbType.VarChar);
+			where.AddParameter(query.Remark, REMARK_COLUMN, SqlDbType.VarChar);
 
-			bool firstCondition = true;
-			if (query.Id.HasValue)
-			{
-				sb.AppendLine($"[{ID_COLUMN}] = @{ID_COLUMN}");
-				@params.Add($"@{ID_COLUMN}", SqlDbType.BigInt).Value = query.Id.Value;
-				firstCondition = false;
-			}
-
-			if (query.CreationDate.HasValue)
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{CREATION_DATE_COLUMN}] = @{CREATION_DATE_COLUMN}");
-				@params.Add($"@{CREATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = query.CreationDate.Value;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.CreatedBy))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{CREATED_BY_COLUMN}] = @{CREATED_BY_COLUMN}");
-				@params.Add($"@{CREATED_BY_COLUMN}", SqlDbType.VarChar).Value = query.CreatedBy;
-				firstCondition = false;
-			}
-
-			if (query.ModificationDate.HasValue)
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{MODIFICATION_DATE_COLUMN}] = @{MODIFICATION_DATE_COLUMN}");
-				@params.Add($"@{MODIFICATION_DATE_COLUMN}", SqlDbType.DateTime2).Value = query.ModificationDate.Value;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.ModifiedBy))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{MODIFIED_BY_COLUMN}] = @{MODIFIED_BY_COLUMN}");
-				@params.Add($"@{MODIFIED_BY_COLUMN}", SqlDbType.VarChar).Value = query.ModifiedBy;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.Name))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{NAME_COLUMN}] = @{NAME_COLUMN}");
-				@params.Add($"@{NAME_COLUMN}", SqlDbType.VarChar).Value = query.Name;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.Remark))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{REMARK_COLUMN}] = @{REMARK_COLUMN}");
-				@params.Add($"@{REMARK_COLUMN}", SqlDbType.VarChar).Value = query.Remark;
-				firstCondition = false;
-			}
+			sb.Append(where.Build());
 		}
 
 		/// <summary>
@@ -308,7 +250,6 @@ namespace LinkIT.Data.Repositories
 			{
 				if (!item.Id.HasValue)
 					throw new ArgumentException("Id is a required field.");
-
 				if (string.IsNullOrWhiteSpace(item.ModifiedBy))
 					throw new ArgumentException("ModifiedBy is required!");
 			}
@@ -321,7 +262,8 @@ namespace LinkIT.Data.Repositories
 				using (var tx = con.BeginTransaction())
 				{
 					string cmdText = $@"UPDATE [{TableName}] 
-						SET [{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, [{NAME_COLUMN}]=@{NAME_COLUMN}, [{REMARK_COLUMN}]=@{REMARK_COLUMN}
+						SET [{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN},
+							[{NAME_COLUMN}]=@{NAME_COLUMN}, [{REMARK_COLUMN}]=@{REMARK_COLUMN}
 						WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
 
 					foreach (var item in items)

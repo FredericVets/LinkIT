@@ -11,7 +11,7 @@ CREATE TABLE [dbo].[Asset](
 	[Id] [bigint] PRIMARY KEY IDENTITY(1,1) NOT NULL,
 	[CreationDate] [DateTime2] NOT NULL,
 	[CreatedBy] [varchar](30) NOT NULL,
-	[ModoficationDate] [DateTime2] NOT NULL,
+	[ModificationDate] [DateTime2] NOT NULL,
 	[ModifiedBy] [varchar](30) NOT NULL,
 	[IctsReference] [varchar](30)
 	[Tag] [varchar](15) NOT NULL CONSTRAINT unique_tag UNIQUE (Tag),

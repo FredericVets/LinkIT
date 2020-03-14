@@ -23,64 +23,24 @@ namespace LinkIT.Data.Repositories
 
 		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query)
 		{
-			sb.AppendLine("WHERE");
+			var where = new WhereClauseBuilder(@params, query.LogicalOperator, false);
+			where.AddParameter(query.Id, ID_COLUMN, SqlDbType.BigInt);
+			where.AddParameter(query.Tag, TAG_COLUMN, SqlDbType.NVarChar);
+			where.AddParameter(query.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
+			where.AddParameter(query.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
+			where.AddParameter(query.Type, TYPE_COLUMN, SqlDbType.NVarChar);
 
-			bool firstCondition = true;
-			if (query.Id.HasValue)
-			{
-				sb.AppendLine($"[{ID_COLUMN}] = @Id");
-				@params.Add("@Id", SqlDbType.BigInt).Value = query.Id.Value;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.Tag))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{TAG_COLUMN}] = @Tag");
-				@params.Add("@Tag", SqlDbType.NVarChar).Value = query.Tag;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.Owner))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{OWNER_COLUMN}] = @Owner");
-				@params.Add("@Owner", SqlDbType.NVarChar).Value = query.Owner;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.Brand))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{BRAND_COLUMN}] = @Brand");
-				@params.Add("@Brand", SqlDbType.NVarChar).Value = query.Brand;
-				firstCondition = false;
-			}
-
-			if (!string.IsNullOrWhiteSpace(query.Type))
-			{
-				if (!firstCondition)
-					sb.AppendLine(query.LogicalOperator.ToString());
-
-				sb.AppendLine($"[{TYPE_COLUMN}] = @Type");
-				@params.Add("@Type", SqlDbType.NVarChar).Value = query.Type;
-				firstCondition = false;
-			}
+			sb.Append(where.Build());
 		}
 
 		private static void AddSqlParameters(SqlParameterCollection @params, DeviceDto input)
 		{
-			AddSqlParameter(input.Id, $"@{ID_COLUMN}", SqlDbType.BigInt, @params);
-			AddSqlParameter(input.Tag, $"@{TAG_COLUMN}", SqlDbType.NVarChar, @params);
-			AddSqlParameter(input.Owner, $"@{OWNER_COLUMN}", SqlDbType.NVarChar, @params);
-			AddSqlParameter(input.Brand, $"@{BRAND_COLUMN}", SqlDbType.NVarChar, @params);
-			AddSqlParameter(input.Type, $"@{TYPE_COLUMN}", SqlDbType.NVarChar, @params);
+			var paramBuilder = new SqlParameterBuilder(@params);
+			paramBuilder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			paramBuilder.Add(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
+			paramBuilder.Add(input.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
+			paramBuilder.Add(input.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
+			paramBuilder.Add(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
 		}
 
 		private static IEnumerable<DeviceDto> ReadDtosFrom(SqlDataReader reader)
@@ -89,11 +49,11 @@ namespace LinkIT.Data.Repositories
 			{
 				yield return new DeviceDto
 				{
-					Id = GetValue<long?>(reader, ID_COLUMN),
-					Tag = GetValue<string>(reader, TAG_COLUMN),
-					Owner = GetValue<string>(reader, OWNER_COLUMN),
-					Brand = GetValue<string>(reader, BRAND_COLUMN),
-					Type = GetValue<string>(reader, TYPE_COLUMN)
+					Id = GetColumnValue<long?>(reader, ID_COLUMN),
+					Tag = GetColumnValue<string>(reader, TAG_COLUMN),
+					Owner = GetColumnValue<string>(reader, OWNER_COLUMN),
+					Brand = GetColumnValue<string>(reader, BRAND_COLUMN),
+					Type = GetColumnValue<string>(reader, TYPE_COLUMN)
 				};
 			}
 		}
