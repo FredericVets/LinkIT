@@ -1,10 +1,9 @@
-﻿using System;
+﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Repositories;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using LinkIT.Data.DTO;
-using LinkIT.Data.Repositories;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 {
@@ -14,11 +13,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		private IEnumerable<SpecialOwnerDto> _expected;
 		private SpecialOwnerRepository _sut;
 
-		private void AssertDto(SpecialOwnerDto expected, DateTime created)
+		private void AssertDto(SpecialOwnerDto expected)
 		{
-			expected.CreationDate = expected.ModificationDate = created;
-			expected.ModifiedBy = expected.CreatedBy;
-
 			var actual = _sut.GetById(expected.Id.Value);
 
 			Assert.IsNotNull(actual);
@@ -51,13 +47,10 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		[TestMethod]
 		public void ThenTheDataIsInserted()
 		{
-			var created = DateTime.Now;
-			DateTimeProvider.SetDateTime(created);
-
 			_expected.ToList().ForEach(x => x.Id = _sut.Insert(x));
 
 			foreach (var dto in _expected)
-				AssertDto(dto, created);
+				AssertDto(dto);
 		}
 
 		[TestCleanup]

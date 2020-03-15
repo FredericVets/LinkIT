@@ -48,8 +48,8 @@ namespace LinkIT.Data.Repositories
 			paramBuilder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
 			paramBuilder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
 
-			paramBuilder.Add(input.Name, NAME_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar, true);
+			paramBuilder.Add(input.Name, NAME_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
 		}
 
 		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, SpecialOwnerQuery query)

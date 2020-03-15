@@ -13,18 +13,15 @@ namespace LinkIT.Data.Repositories
 			_params = @params;
 		}
 
-		public void Add<T>(T value, string columnName, SqlDbType sqlType, bool addIfNull = false)
+		public void Add<T>(T value, string columnName, SqlDbType sqlType)
 		{
 			string paramName = $"@{columnName}";
-			if (value == null && addIfNull)
+			if (value == null)
 			{
 				_params.Add(paramName, sqlType).Value = DBNull.Value;
 
 				return;
 			}
-
-			if (value == null)
-				return;
 
 			_params.Add(paramName, sqlType).Value = value;
 		}

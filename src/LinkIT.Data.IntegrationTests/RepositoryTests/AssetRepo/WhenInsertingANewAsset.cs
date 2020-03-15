@@ -23,7 +23,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 
 			product.Id = _productRepo.Insert(product);
 
-			return _productRepo.GetById(product.Id.Value);
+			return product;
 		}
 
 		[TestInitialize]
@@ -54,13 +54,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		[TestMethod]
 		public void ThenTheAssetIsInserted()
 		{
-			var created = DateTime.Now;
-			DateTimeProvider.SetDateTime(created);
-
 			_expected.Id = _sut.Insert(_expected);
-			_expected.CreationDate = _expected.ModificationDate = created;
-			_expected.ModifiedBy = _expected.CreatedBy;
-
 			var actual = _sut.GetById(_expected.Id.Value);
 
 			Assert.IsNotNull(actual);

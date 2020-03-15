@@ -85,20 +85,20 @@ namespace LinkIT.Data.Repositories
 			paramBuilder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
 			paramBuilder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
 
-			paramBuilder.Add(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.Tag, TAG_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt, true);
-			paramBuilder.Add(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2, true);
-			paramBuilder.Add(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.Price, PRICE_COLUMN, SqlDbType.Decimal, true);
-			paramBuilder.Add(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.Owner, OWNER_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2, true);
-			paramBuilder.Add(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar, true);
-			paramBuilder.Add(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit, true);
+			paramBuilder.Add(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Tag, TAG_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
+			paramBuilder.Add(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Price, PRICE_COLUMN, SqlDbType.Decimal);
+			paramBuilder.Add(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Owner, OWNER_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
 		}
 
 		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, AssetQuery query)
@@ -347,9 +347,6 @@ namespace LinkIT.Data.Repositories
 					throw new ArgumentException("ModifiedBy is required!");
 				if (item.Product == null || !item.Product.Id.HasValue)
 					throw new ArgumentException("Product Id is required!");
-
-				item.CreationDate = null;
-				item.CreatedBy = null;
 			}
 
 			var now = DateTimeProvider.Now();

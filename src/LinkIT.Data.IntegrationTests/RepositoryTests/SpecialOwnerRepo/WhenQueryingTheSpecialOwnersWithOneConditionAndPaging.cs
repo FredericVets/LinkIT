@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using LinkIT.Data.DTO;
+﻿using LinkIT.Data.DTO;
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 {
@@ -54,14 +53,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 
 			};
 
-			var created = DateTime.Now;
-			DateTimeProvider.SetDateTime(created);
-
 			foreach (var owner in _expected)
-			{
 				owner.Id = _sut.Insert(owner);
-				owner.CreationDate = created;
-			}
 		}
 
 		[TestMethod]

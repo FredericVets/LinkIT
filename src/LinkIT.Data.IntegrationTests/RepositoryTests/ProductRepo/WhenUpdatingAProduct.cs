@@ -1,8 +1,7 @@
-﻿using System;
-using System.Configuration;
-using LinkIT.Data.DTO;
+﻿using LinkIT.Data.DTO;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Configuration;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 {
@@ -25,25 +24,16 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 				Type = "EliteBook"
 			};
 
-			var created = DateTime.Now.AddDays(-1);
-			DateTimeProvider.SetDateTime(created);
-
 			_expected.Id = _sut.Insert(_expected);
-			_expected.CreationDate = created;
 		}
 
 		[TestMethod]
-		public void ThenTheDataIsInserted()
+		public void ThenTheDataIsUpdated()
 		{
 			_expected.Brand = "Dell";
 			_expected.ModifiedBy = "user2";
 
-			var modified = DateTime.Now;
-			DateTimeProvider.SetDateTime(modified);
 			_sut.Update(_expected);
-
-			_expected.ModificationDate = modified;
-
 			var actual = _sut.GetById(_expected.Id.Value);
 
 			Assert.IsNotNull(actual);

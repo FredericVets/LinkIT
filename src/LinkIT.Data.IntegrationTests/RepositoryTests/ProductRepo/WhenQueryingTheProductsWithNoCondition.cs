@@ -1,10 +1,9 @@
-﻿using System;
+﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Repositories;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using LinkIT.Data.DTO;
-using LinkIT.Data.Repositories;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 {

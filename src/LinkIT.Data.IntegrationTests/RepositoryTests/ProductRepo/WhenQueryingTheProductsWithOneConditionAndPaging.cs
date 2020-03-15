@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using LinkIT.Data.DTO;
+﻿using LinkIT.Data.DTO;
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 {
@@ -66,7 +65,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 			var pageInfo = new PageInfo(
 				2,
 				2,
-				new OrderBy(ProductRepository.CREATED_BY_COLUMN, Order.DESCENDING));
+				new OrderBy(Repository.CREATED_BY_COLUMN, Order.DESCENDING));
 			var actual = _sut.PagedQuery(pageInfo, query);
 
 			// Simulate the paging on the in-memory collection.

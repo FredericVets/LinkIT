@@ -1,8 +1,7 @@
-﻿using System;
-using System.Configuration;
-using LinkIT.Data.DTO;
+﻿using LinkIT.Data.DTO;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Configuration;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 {
@@ -29,13 +28,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 		[TestMethod]
 		public void ThenTheDataIsInserted()
 		{
-			var created = DateTime.Now;
-			DateTimeProvider.SetDateTime(created);
-
 			_expected.Id = _sut.Insert(_expected);
-			_expected.CreationDate = _expected.ModificationDate = created;
-			_expected.ModifiedBy = _expected.CreatedBy;
-
 			var actual = _sut.GetById(_expected.Id.Value);
 
 			Assert.IsNotNull(actual);

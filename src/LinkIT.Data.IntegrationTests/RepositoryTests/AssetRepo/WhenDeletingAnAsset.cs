@@ -23,7 +23,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 
 			product.Id = _productRepo.Insert(product);
 
-			return _productRepo.GetById(product.Id.Value);
+			return product;
 		}
 
 		[TestInitialize]
