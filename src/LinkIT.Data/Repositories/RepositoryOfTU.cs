@@ -71,7 +71,10 @@ namespace LinkIT.Data.Repositories
 			sb.AppendLine(CreateSelectCountStatement());
 
 			if (query != null)
-				AddWhereClause(cmd.Parameters, sb, query);
+			{
+				var builder = BuildParametersFrom(query, cmd.Parameters);
+				sb.Append(builder.ToString());
+			}
 
 			cmd.CommandText = sb.ToString();
 
@@ -107,7 +110,10 @@ namespace LinkIT.Data.Repositories
 			sb.AppendLine(CreateSelectStatement());
 
 			if (query != null)
-				AddWhereClause(cmd.Parameters, sb, query);
+			{
+				var builder = BuildParametersFrom(query, cmd.Parameters);
+				sb.Append(builder.ToString());
+			}
 
 			if (pageInfo != null)
 				AddPaging(cmd.Parameters, sb, pageInfo);
@@ -151,15 +157,15 @@ namespace LinkIT.Data.Repositories
 
 		protected abstract IEnumerable<string> Columns { get; }
 
-		protected abstract IEnumerable<TDto> ReadDtosFrom(SqlDataReader reader);
+		protected abstract SqlParameterBuilder BuildParametersFrom(TDto input, SqlParameterCollection @params);
 
-		protected abstract void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, TQuery query);
+		protected abstract WhereClauseBuilder BuildParametersFrom(TQuery input, SqlParameterCollection @params);
+
+		protected abstract IEnumerable<TDto> ReadDtosFrom(SqlDataReader reader);
 
 		protected abstract string CreateInsertStatement();
 
 		protected abstract string CreateUpdateStatement();
-
-		protected abstract void AddSqlParameters(SqlParameterCollection @params, TDto input);
 
 		protected string ConnectionString { get; }
 
@@ -299,7 +305,7 @@ namespace LinkIT.Data.Repositories
 					long newId;
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{
-						AddSqlParameters(cmd.Parameters, item);
+						BuildParametersFrom(item, cmd.Parameters);
 						newId = (long)cmd.ExecuteScalar();
 					}
 
@@ -333,7 +339,7 @@ namespace LinkIT.Data.Repositories
 					{
 						using (var cmd = new SqlCommand(cmdText, con, tx))
 						{
-							AddSqlParameters(cmd.Parameters, item);
+							BuildParametersFrom(item, cmd.Parameters);
 							cmd.ExecuteNonQuery();
 						}
 					}

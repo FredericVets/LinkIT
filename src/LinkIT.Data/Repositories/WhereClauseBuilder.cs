@@ -6,19 +6,19 @@ using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
-	public class WhereClauseBuilder
+	public class WhereClauseBuilder : SqlParameterBuilder
 	{
-		private readonly SqlParameterCollection _params;
 		private readonly LogicalOperator _logicalOperator;
 		private readonly bool _hasSoftDelete;
 		private readonly StringBuilder _builder;
 		private bool _isFirstParameter;
 
 		public WhereClauseBuilder(SqlParameterCollection @params, LogicalOperator logicalOperator, bool hasSoftDelete)
+			:base(@params)
 		{
-			_params = @params;
 			_logicalOperator = logicalOperator;
 			_hasSoftDelete = hasSoftDelete;
+
 			_builder = new StringBuilder();
 			_isFirstParameter = true;
 
@@ -40,6 +40,8 @@ namespace LinkIT.Data.Repositories
 
 		public void AddParameter<T>(T value, string columnName, SqlDbType sqlType)
 		{
+			Add(value, columnName, sqlType, false);
+
 			if (value == null)
 				return;
 
@@ -47,10 +49,12 @@ namespace LinkIT.Data.Repositories
 				_builder.AppendLine(_logicalOperator.ToString());
 
 			_builder.AppendLine($"[{columnName}] = @{columnName}");
-			_params.Add($"@{columnName}", sqlType).Value = value;
 			_isFirstParameter = false;
 		}
 
-		public string Build() => _builder.ToString();
+		public override string ToString()
+		{
+			return _builder.ToString();
+		}
 	}
 }

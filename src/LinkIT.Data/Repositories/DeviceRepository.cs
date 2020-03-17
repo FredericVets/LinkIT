@@ -3,7 +3,6 @@ using LinkIT.Data.Queries;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
@@ -20,6 +19,32 @@ namespace LinkIT.Data.Repositories
 
 		protected override IEnumerable<string> Columns => COLUMNS;
 
+		protected override SqlParameterBuilder BuildParametersFrom(DeviceDto input, SqlParameterCollection @params)
+		{
+			var builder = new SqlParameterBuilder(@params);
+
+			builder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.Add(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
+			builder.Add(input.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
+			builder.Add(input.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
+			builder.Add(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
+
+			return builder;
+		}
+
+		protected override WhereClauseBuilder BuildParametersFrom(DeviceQuery input, SqlParameterCollection @params)
+		{
+			var builder = new WhereClauseBuilder(@params, input.LogicalOperator, false);
+
+			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
+			builder.AddParameter(input.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
+			builder.AddParameter(input.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
+			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
+
+			return builder;
+		}
+
 		protected override IEnumerable<DeviceDto> ReadDtosFrom(SqlDataReader reader)
 		{
 			while (reader.Read())
@@ -35,18 +60,6 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		protected override void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, DeviceQuery query)
-		{
-			var where = new WhereClauseBuilder(@params, query.LogicalOperator, false);
-			where.AddParameter(query.Id, ID_COLUMN, SqlDbType.BigInt);
-			where.AddParameter(query.Tag, TAG_COLUMN, SqlDbType.NVarChar);
-			where.AddParameter(query.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
-			where.AddParameter(query.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
-			where.AddParameter(query.Type, TYPE_COLUMN, SqlDbType.NVarChar);
-
-			sb.Append(where.Build());
-		}
-
 		protected override string CreateInsertStatement()
 		{
 			return $@"INSERT INTO [{TableName}] 
@@ -59,16 +72,6 @@ namespace LinkIT.Data.Repositories
 			return $@"UPDATE [{TableName}] SET 
 						[{TAG_COLUMN}]=@Tag, [{OWNER_COLUMN}]=@Owner, [{BRAND_COLUMN}]=@Brand, [{TYPE_COLUMN}]=@Type 
 					WHERE [{ID_COLUMN}]=@Id";
-		}
-
-		protected override void AddSqlParameters(SqlParameterCollection @params, DeviceDto input)
-		{
-			var paramBuilder = new SqlParameterBuilder(@params);
-			paramBuilder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			paramBuilder.Add(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
-			paramBuilder.Add(input.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
-			paramBuilder.Add(input.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
-			paramBuilder.Add(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
 		}
 	}
 }

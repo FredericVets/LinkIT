@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
@@ -22,6 +21,36 @@ namespace LinkIT.Data.Repositories
 		public ProductRepository(string connectionString) : base(connectionString, TableNames.PRODUCT_TABLE) { }
 
 		protected override IEnumerable<string> Columns => COLUMNS;
+
+		protected override SqlParameterBuilder BuildParametersFrom(ProductDto input, SqlParameterCollection @params)
+		{
+			var builder = new SqlParameterBuilder(@params);
+
+			builder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
+
+			builder.Add(input.Brand, BRAND_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
+
+			return builder;
+		}
+
+		protected override WhereClauseBuilder BuildParametersFrom(ProductQuery input, SqlParameterCollection @params)
+		{
+			var builder = new WhereClauseBuilder(@params, input.LogicalOperator, false);
+			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.Brand, BRAND_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
+
+			return builder;
+		}
 
 		protected override IEnumerable<ProductDto> ReadDtosFrom(SqlDataReader reader)
 		{
@@ -40,20 +69,6 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		protected override void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, ProductQuery query)
-		{
-			var where = new WhereClauseBuilder(@params, query.LogicalOperator, false);
-			where.AddParameter(query.Id, ID_COLUMN, SqlDbType.BigInt);
-			where.AddParameter(query.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			where.AddParameter(query.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.BigInt);
-			where.AddParameter(query.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.DateTime2);
-			where.AddParameter(query.Brand, BRAND_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.Type, TYPE_COLUMN, SqlDbType.VarChar);
-
-			sb.Append(where.Build());
-		}
-
 		protected override string CreateInsertStatement()
 		{
 			return $@"INSERT INTO [{TableName}] 
@@ -69,19 +84,6 @@ namespace LinkIT.Data.Repositories
 						[{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, 
 						[{BRAND_COLUMN}]=@{BRAND_COLUMN}, [{TYPE_COLUMN}]=@{TYPE_COLUMN}
 					WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
-		}
-
-		protected override void AddSqlParameters(SqlParameterCollection @params, ProductDto input)
-		{
-			var paramBuilder = new SqlParameterBuilder(@params);
-			paramBuilder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			paramBuilder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
-
-			paramBuilder.Add(input.Brand, BRAND_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
 		}
 
 		public override long Insert(ProductDto item)

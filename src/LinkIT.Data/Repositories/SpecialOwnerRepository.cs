@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
@@ -22,6 +21,37 @@ namespace LinkIT.Data.Repositories
 		public SpecialOwnerRepository(string connectionString) : base(connectionString, TableNames.SPECIAL_OWNER_TABLE) { }
 
 		protected override IEnumerable<string> Columns => COLUMNS;
+
+		protected override SqlParameterBuilder BuildParametersFrom(SpecialOwnerDto input, SqlParameterCollection @params)
+		{
+			var builder = new SqlParameterBuilder(@params);
+
+			builder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
+
+			builder.Add(input.Name, NAME_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
+
+			return builder;
+		}
+
+		protected override WhereClauseBuilder BuildParametersFrom(SpecialOwnerQuery input, SqlParameterCollection @params)
+		{
+			var builder = new WhereClauseBuilder(@params, input.LogicalOperator, false);
+
+			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.Name, NAME_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
+
+			return builder;
+		}
 
 		protected override IEnumerable<SpecialOwnerDto> ReadDtosFrom(SqlDataReader reader)
 		{
@@ -40,20 +70,6 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		protected override void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, SpecialOwnerQuery query)
-		{
-			var where = new WhereClauseBuilder(@params, query.LogicalOperator, false);
-			where.AddParameter(query.Id, ID_COLUMN, SqlDbType.BigInt);
-			where.AddParameter(query.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			where.AddParameter(query.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.BigInt);
-			where.AddParameter(query.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.DateTime2);
-			where.AddParameter(query.Name, NAME_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.Remark, REMARK_COLUMN, SqlDbType.VarChar);
-
-			sb.Append(where.Build());
-		}
-
 		protected override string CreateInsertStatement()
 		{
 			return $@"INSERT INTO [{TableName}] 
@@ -69,19 +85,6 @@ namespace LinkIT.Data.Repositories
 						[{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN},
 						[{NAME_COLUMN}]=@{NAME_COLUMN}, [{REMARK_COLUMN}]=@{REMARK_COLUMN}
 					WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
-		}
-
-		protected override void AddSqlParameters(SqlParameterCollection @params, SpecialOwnerDto input)
-		{
-			var paramBuilder = new SqlParameterBuilder(@params);
-			paramBuilder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			paramBuilder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
-
-			paramBuilder.Add(input.Name, NAME_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
 		}
 
 		public override long Insert(SpecialOwnerDto item)

@@ -6,24 +6,32 @@ namespace LinkIT.Data.Repositories
 {
 	public class SqlParameterBuilder
 	{
-		private readonly SqlParameterCollection _params;
-
 		public SqlParameterBuilder(SqlParameterCollection @params)
 		{
-			_params = @params;
+			Parameters = @params;
 		}
 
-		public void Add<T>(T value, string columnName, SqlDbType sqlType)
+		public SqlParameterCollection Parameters { get; private set; }
+
+		protected void Add<T>(T value, string columnName, SqlDbType sqlType, bool addIfNull)
 		{
 			string paramName = $"@{columnName}";
-			if (value == null)
+			if (value == null && addIfNull)
 			{
-				_params.Add(paramName, sqlType).Value = DBNull.Value;
+				Parameters.Add(paramName, sqlType).Value = DBNull.Value;
 
 				return;
 			}
 
-			_params.Add(paramName, sqlType).Value = value;
+			if (value == null)
+				return;
+
+			Parameters.Add(paramName, sqlType).Value = value;
+		}
+
+		public void Add<T>(T value, string columnName, SqlDbType sqlType)
+		{
+			Add(value, columnName, sqlType, true);
 		}
 	}
 }

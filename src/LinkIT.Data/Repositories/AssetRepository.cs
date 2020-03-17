@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
@@ -55,6 +54,62 @@ namespace LinkIT.Data.Repositories
 
 		protected override IEnumerable<string> Columns => COLUMNS;
 
+		protected override SqlParameterBuilder BuildParametersFrom(AssetDto input, SqlParameterCollection @params)
+		{
+			var builder = new SqlParameterBuilder(@params);
+
+			builder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
+
+			builder.Add(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.Tag, TAG_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
+			builder.Add(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.Add(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.Price, PRICE_COLUMN, SqlDbType.Decimal);
+			builder.Add(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.Owner, OWNER_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.Add(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
+			builder.Add(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
+
+			return builder;
+		}
+
+		protected override WhereClauseBuilder BuildParametersFrom(AssetQuery input, SqlParameterCollection @params)
+		{
+			var builder = new WhereClauseBuilder(@params, input.LogicalOperator, HasSoftDelete);
+
+			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
+
+			builder.AddParameter(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Tag, TAG_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.ProductId, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Price, PRICE_COLUMN, SqlDbType.Decimal);
+			builder.AddParameter(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Owner, OWNER_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
+
+			return builder;
+		}
+
 		protected override IEnumerable<AssetDto> ReadDtosFrom(SqlDataReader reader)
 		{
 			while (reader.Read())
@@ -87,33 +142,6 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		protected override void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, AssetQuery query)
-		{
-			var where = new WhereClauseBuilder(@params, query.LogicalOperator, HasSoftDelete);
-			where.AddParameter(query.Id, ID_COLUMN, SqlDbType.BigInt);
-			where.AddParameter(query.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			where.AddParameter(query.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			where.AddParameter(query.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
-
-			where.AddParameter(query.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.Tag, TAG_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.ProductId, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
-			where.AddParameter(query.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
-			where.AddParameter(query.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.Price, PRICE_COLUMN, SqlDbType.Decimal);
-			where.AddParameter(query.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.Owner, OWNER_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
-			where.AddParameter(query.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.Remark, REMARK_COLUMN, SqlDbType.VarChar);
-			where.AddParameter(query.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
-
-			sb.Append(where.Build());
-		}
-
 		protected override string CreateInsertStatement()
 		{
 			return
@@ -140,31 +168,6 @@ namespace LinkIT.Data.Repositories
 					[{INSTALL_DATE_COLUMN}]=@{INSTALL_DATE_COLUMN}, [{INSTALLED_BY_COLUMN}]=@{INSTALLED_BY_COLUMN}, 
 					[{REMARK_COLUMN}]=@{REMARK_COLUMN}, [{TEAMASSET_COLUMN}]=@{TEAMASSET_COLUMN}
 				WHERE [{ID_COLUMN}]=@{ID_COLUMN} AND [{DELETED_COLUMN}]=0";
-		}
-
-		protected override void AddSqlParameters(SqlParameterCollection @params, AssetDto input)
-		{
-			var paramBuilder = new SqlParameterBuilder(@params);
-			paramBuilder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			paramBuilder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
-
-			paramBuilder.Add(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Tag, TAG_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
-			paramBuilder.Add(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Price, PRICE_COLUMN, SqlDbType.Decimal);
-			paramBuilder.Add(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Owner, OWNER_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
 		}
 
 		public override IEnumerable<AssetDto> GetById(IEnumerable<long> ids)
