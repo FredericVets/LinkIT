@@ -5,23 +5,27 @@ using System.Collections.Generic;
 
 namespace LinkIT.Data.Repositories
 {
-	public interface IRepository<T, U> : IRepository
-		where T : Dto
-		where U : Query
+	public interface IRepository<TDto, TQuery>
+		where TDto : Dto
+		where TQuery : Query
 	{
+		bool Exists(long id);
+
+		bool Exists(IEnumerable<long> ids);
+
 		/// <summary>
 		/// Returns the Dto for that id. If not found, throws an Exception.
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		T GetById(long id);
+		TDto GetById(long id);
 
 		/// <summary>
 		/// Returns the Dto's for those ids. If one isn't found, throws an Exception.
 		/// </summary>
 		/// <param name="ids"></param>
 		/// <returns></returns>
-		IEnumerable<T> GetById(IEnumerable<long> ids);
+		IEnumerable<TDto> GetById(IEnumerable<long> ids);
 
 		/// <summary>
 		/// Returns all the Dto's that match the query.
@@ -29,7 +33,7 @@ namespace LinkIT.Data.Repositories
 		/// </summary>
 		/// <param name="query"></param>
 		/// <returns></returns>
-		IEnumerable<T> Query(U query = null);
+		IEnumerable<TDto> Query(TQuery query = null);
 
 		/// <summary>
 		/// Returns all the Dto's that match the query.
@@ -39,13 +43,18 @@ namespace LinkIT.Data.Repositories
 		/// <param name="paging"></param>
 		/// <param name="query"></param>
 		/// <returns></returns>
-		PagedResult<T> PagedQuery(PageInfo paging, U query = null);
+		PagedResult<TDto> PagedQuery(PageInfo paging, TQuery query = null);
 
-		long Insert(T item);
+		long Insert(TDto item);
 
-		void Update(T item);
+		void Update(TDto item);
 
-		void Update(IEnumerable<T> items);
+		/// <summary>
+		/// This is a full-update. So all required fields should be supplied.
+		/// </summary>
+		/// <param name="items"></param>
+		void Update(IEnumerable<TDto> items);
 
+		void Delete(long id);
 	}
 }

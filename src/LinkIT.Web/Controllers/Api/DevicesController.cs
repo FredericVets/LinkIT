@@ -20,7 +20,7 @@ namespace LinkIT.Web.Controllers.Api
 		private const string MISSING_MESSAGE_BODY = "No message body present.";
 		private const int BULK_PUT_THRESHOLD = 50;
 
-		private readonly IDeviceRepository _repo;
+		private readonly IRepository<DeviceDto, DeviceQuery> _repo;
 		private readonly ILog _log;
 
 		public DevicesController()

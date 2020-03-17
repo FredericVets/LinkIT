@@ -105,7 +105,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 			var pageInfo = new PageInfo(
 				2,
 				2,
-				new OrderBy(Repository.CREATED_BY_COLUMN, Order.DESCENDING));
+				new OrderBy(AssetRepository.CREATED_BY_COLUMN, Order.DESCENDING));
 			var actual = _sut.PagedQuery(pageInfo, query);
 
 			// Simulate the paging on the in-memory collection.

@@ -10,7 +10,7 @@ using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
-	public class AssetRepository : Repository, IRepository<AssetDto, AssetQuery>
+	public class AssetRepository : Repository<AssetDto, AssetQuery>
 	{
 		public const string ICTS_REFERENCE_COLUMN = "IctsReference";
 		public const string TAG_COLUMN = "Tag";
@@ -27,7 +27,7 @@ namespace LinkIT.Data.Repositories
 		public const string REMARK_COLUMN = "Remark";
 		public const string TEAMASSET_COLUMN = "TeamAsset";
 
-		public static readonly string[] COLUMNS = new[]
+		private static readonly string[] COLUMNS = new[]
 		{
 			ID_COLUMN, CREATION_DATE_COLUMN, CREATED_BY_COLUMN, MODIFICATION_DATE_COLUMN, MODIFIED_BY_COLUMN, ICTS_REFERENCE_COLUMN,
 			TAG_COLUMN, SERIAL_COLUMN, PRODUCT_ID_COLUMN, DESCRIPTION_COLUMN, INVOICE_DATE_COLUMN, INVOICE_NUMBER_COLUMN, PRICE_COLUMN,
@@ -44,7 +44,18 @@ namespace LinkIT.Data.Repositories
 			_productRepo = productRepo;
 		}
 
-		private static IEnumerable<AssetDto> ReadDtosFrom(SqlDataReader reader)
+		private void LinkProductsTo(IEnumerable<AssetDto> assets)
+		{
+			var productIds = assets.Select(x => x.Product.Id.Value).Distinct();
+			var products = _productRepo.GetById(productIds);
+
+			foreach (var asset in assets)
+				asset.Product = products.Single(x => x.Id == asset.Product.Id);
+		}
+
+		protected override IEnumerable<string> Columns => COLUMNS;
+
+		protected override IEnumerable<AssetDto> ReadDtosFrom(SqlDataReader reader)
 		{
 			while (reader.Read())
 			{
@@ -76,34 +87,9 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		private static void AddSqlParameters(SqlParameterCollection @params, AssetDto input)
+		protected override void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, AssetQuery query)
 		{
-			var paramBuilder = new SqlParameterBuilder(@params);
-			paramBuilder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			paramBuilder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
-
-			paramBuilder.Add(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Tag, TAG_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
-			paramBuilder.Add(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Price, PRICE_COLUMN, SqlDbType.Decimal);
-			paramBuilder.Add(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Owner, OWNER_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
-			paramBuilder.Add(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
-			paramBuilder.Add(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
-		}
-
-		private static void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, AssetQuery query)
-		{
-			var where = new WhereClauseBuilder(@params, query.LogicalOperator, true);
+			var where = new WhereClauseBuilder(@params, query.LogicalOperator, HasSoftDelete);
 			where.AddParameter(query.Id, ID_COLUMN, SqlDbType.BigInt);
 			where.AddParameter(query.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
 			where.AddParameter(query.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
@@ -128,164 +114,85 @@ namespace LinkIT.Data.Repositories
 			sb.Append(where.Build());
 		}
 
-		/// <summary>
-		/// This will build the SqlCommand based on the optional query object. The specified Logical operator will be 
-		/// used to combine the query arguments.
-		/// Has support for paging. This is based on the new paging feature introduced in Sql Serever 2012.
-		/// If no query or paging instance is supplied, a select without where clause will be generated.
-		/// <see cref="https://social.technet.microsoft.com/wiki/contents/articles/23811.paging-a-query-with-sql-server.aspx#Paginacao_dentro"/>
-		/// </summary>
-		/// <param name="con"></param>
-		/// <param name="tx"></param>
-		/// <param name="query"></param>
-		/// <param name="paging"></param>
-		/// <returns></returns>
-		private SqlCommand BuildSelectCommand(
-			SqlConnection con,
-			SqlTransaction tx,
-			AssetQuery query = null,
-			PageInfo pageInfo = null)
+		protected override string CreateInsertStatement()
 		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine(CreateSelectStatement());
-
-			if (query != null)
-				AddWhereClause(cmd.Parameters, sb, query);
-
-			if (pageInfo != null)
-				AddPaging(cmd.Parameters, sb, pageInfo);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
+			return
+				$@"INSERT INTO [{TableName}] 
+					([{CREATION_DATE_COLUMN}], [{CREATED_BY_COLUMN}], [{MODIFICATION_DATE_COLUMN}], [{MODIFIED_BY_COLUMN}], 
+					[{ICTS_REFERENCE_COLUMN}], [{TAG_COLUMN}], [{SERIAL_COLUMN}], [{PRODUCT_ID_COLUMN}], [{DESCRIPTION_COLUMN}],
+					[{INVOICE_DATE_COLUMN}], [{INVOICE_NUMBER_COLUMN}], [{PRICE_COLUMN}], [{PAID_BY_COLUMN}], [{OWNER_COLUMN}], 
+					[{INSTALL_DATE_COLUMN}], [{INSTALLED_BY_COLUMN}], [{REMARK_COLUMN}], [{TEAMASSET_COLUMN}], [{DELETED_COLUMN}])
+				VALUES (@{CREATION_DATE_COLUMN}, @{CREATED_BY_COLUMN}, @{MODIFICATION_DATE_COLUMN}, @{MODIFIED_BY_COLUMN}, 
+					@{ICTS_REFERENCE_COLUMN}, @{TAG_COLUMN}, @{SERIAL_COLUMN}, @{PRODUCT_ID_COLUMN}, @{DESCRIPTION_COLUMN}, 
+					@{INVOICE_DATE_COLUMN}, @{INVOICE_NUMBER_COLUMN}, @{PRICE_COLUMN}, @{PAID_BY_COLUMN}, @{OWNER_COLUMN}, 
+					@{INSTALL_DATE_COLUMN}, @{INSTALLED_BY_COLUMN}, @{REMARK_COLUMN}, @{TEAMASSET_COLUMN}, 0)";
 		}
 
-		private SqlCommand BuildSelectCountCommand(
-			SqlConnection con,
-			SqlTransaction tx,
-			AssetQuery query = null)
+		protected override string CreateUpdateStatement()
 		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine(CreateSelectCountStatement());
-
-			if (query != null)
-				AddWhereClause(cmd.Parameters, sb, query);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
+			return
+				$@"UPDATE [{TableName}] SET
+					[{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, 
+					[{ICTS_REFERENCE_COLUMN}]=@{ICTS_REFERENCE_COLUMN}, [{TAG_COLUMN}]=@{TAG_COLUMN}, [{SERIAL_COLUMN}]=@{SERIAL_COLUMN}, 
+					[{PRODUCT_ID_COLUMN}]=@{PRODUCT_ID_COLUMN}, [{DESCRIPTION_COLUMN}]=@{DESCRIPTION_COLUMN}, 
+					[{INVOICE_DATE_COLUMN}]=@{INVOICE_DATE_COLUMN}, [{INVOICE_NUMBER_COLUMN}]=@{INVOICE_NUMBER_COLUMN}, 
+					[{PRICE_COLUMN}]=@{PRICE_COLUMN}, [{PAID_BY_COLUMN}]=@{PAID_BY_COLUMN}, [{OWNER_COLUMN}]=@{OWNER_COLUMN}, 
+					[{INSTALL_DATE_COLUMN}]=@{INSTALL_DATE_COLUMN}, [{INSTALLED_BY_COLUMN}]=@{INSTALLED_BY_COLUMN}, 
+					[{REMARK_COLUMN}]=@{REMARK_COLUMN}, [{TEAMASSET_COLUMN}]=@{TEAMASSET_COLUMN}
+				WHERE [{ID_COLUMN}]=@{ID_COLUMN} AND [{DELETED_COLUMN}]=0";
 		}
 
-		private void LinkProductsTo(IEnumerable<AssetDto> assets)
+		protected override void AddSqlParameters(SqlParameterCollection @params, AssetDto input)
 		{
-			var productIds = assets.Select(x => x.Product.Id.Value).Distinct();
-			var products = _productRepo.GetById(productIds);
+			var paramBuilder = new SqlParameterBuilder(@params);
+			paramBuilder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			paramBuilder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
 
-			foreach (var asset in assets)
-				asset.Product = products.Single(x => x.Id == asset.Product.Id);
+			paramBuilder.Add(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Tag, TAG_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
+			paramBuilder.Add(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Price, PRICE_COLUMN, SqlDbType.Decimal);
+			paramBuilder.Add(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Owner, OWNER_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
+			paramBuilder.Add(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
+			paramBuilder.Add(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
 		}
 
-		public AssetDto GetById(long id) => GetById(new[] { id }).Single();
-
-		public IEnumerable<AssetDto> GetById(IEnumerable<long> ids)
+		public override IEnumerable<AssetDto> GetById(IEnumerable<long> ids)
 		{
-			if (ids == null || !ids.Any())
-				throw new ArgumentNullException("ids");
-
-			// Filter out possible duplicates.
-			var distinctIds = ids.Distinct().ToArray();
-
-			IList<AssetDto> assets;
-			using (var con = new SqlConnection(ConnectionString))
-			{
-				con.Open();
-				using (var tx = con.BeginTransaction())
-				{
-					using (var cmd = BuildSelectCountCommand(con, tx, distinctIds))
-					{
-						long count = Convert.ToInt64(cmd.ExecuteScalar());
-						if (distinctIds.Length != count)
-							throw new ArgumentException("Not all supplied id's exist.");
-					}
-
-					using (var cmd = BuildSelectCommand(con, tx, distinctIds))
-					using (var reader = cmd.ExecuteReader())
-					{
-						assets = ReadDtosFrom(reader).ToList();
-					}
-
-					//tx.Commit();
-				}
-			}
-
+			var assets = base.GetById(ids);
 			LinkProductsTo(assets);
 
 			return assets;
 		}
 
-		public IEnumerable<AssetDto> Query(AssetQuery query = null)
+		public override IEnumerable<AssetDto> Query(AssetQuery query = null)
 		{
-			IList<AssetDto> assets;
-			using (var con = new SqlConnection(ConnectionString))
-			{
-				con.Open();
-				using (var tx = con.BeginTransaction())
-				{
-					using (var cmd = BuildSelectCommand(con, tx, query))
-					using (var reader = cmd.ExecuteReader())
-					{
-						assets = ReadDtosFrom(reader).ToList();
-					}
-
-					//tx.Commit();
-				}
-			}
-
+			var assets = base.Query(query);
 			LinkProductsTo(assets);
 
 			return assets;
 		}
 
-		public PagedResult<AssetDto> PagedQuery(PageInfo pageInfo, AssetQuery query = null)
+		public override PagedResult<AssetDto> PagedQuery(PageInfo pageInfo, AssetQuery query = null)
 		{
-			if (pageInfo == null)
-				throw new ArgumentNullException("pageInfo");
-
-			if (!pageInfo.OrderBy.IsValidFor(COLUMNS))
-				throw new ArgumentException($"'{pageInfo.OrderBy.Name}' is an unrecognized column.");
-
-			long totalCount;
-			IList<AssetDto> assets;
-			using (var con = new SqlConnection(ConnectionString))
-			{
-				con.Open();
-				using (var tx = con.BeginTransaction())
-				{
-					using (var cmd = BuildSelectCountCommand(con, tx, query))
-					{
-						totalCount = Convert.ToInt64(cmd.ExecuteScalar());
-					}
-
-					using (var cmd = BuildSelectCommand(con, tx, query, pageInfo))
-					using (var reader = cmd.ExecuteReader())
-					{
-						assets = ReadDtosFrom(reader).ToList();
-					}
-
-					//tx.Commit();
-				}
-			}
-
+			var pagedResult = base.PagedQuery(pageInfo, query);
+			var assets = pagedResult.Result;
 			LinkProductsTo(assets);
 
-			return new PagedResult<AssetDto>(assets, pageInfo, totalCount);
+			return new PagedResult<AssetDto>(assets, pagedResult.PageInfo, pagedResult.TotalCount);
 		}
 
-		public long Insert(AssetDto item)
+		public override long Insert(AssetDto item)
 		{
 			if (item == null)
 				throw new ArgumentNullException("item");
@@ -299,46 +206,15 @@ namespace LinkIT.Data.Repositories
 			item.ModifiedBy = item.CreatedBy;
 			item.ModificationDate = item.CreationDate = DateTimeProvider.Now();
 
-			using (var con = new SqlConnection(ConnectionString))
-			{
-				con.Open();
-				using (var tx = con.BeginTransaction())
-				{
-					string cmdText = 
-						$@"INSERT INTO [{TableName}] 
-							([{CREATION_DATE_COLUMN}], [{CREATED_BY_COLUMN}], [{MODIFICATION_DATE_COLUMN}], [{MODIFIED_BY_COLUMN}], 
-							[{ICTS_REFERENCE_COLUMN}], [{TAG_COLUMN}], [{SERIAL_COLUMN}], [{PRODUCT_ID_COLUMN}], [{DESCRIPTION_COLUMN}],
-							[{INVOICE_DATE_COLUMN}], [{INVOICE_NUMBER_COLUMN}], [{PRICE_COLUMN}], [{PAID_BY_COLUMN}], [{OWNER_COLUMN}], 
-							[{INSTALL_DATE_COLUMN}], [{INSTALLED_BY_COLUMN}], [{REMARK_COLUMN}], [{TEAMASSET_COLUMN}], [{DELETED_COLUMN}])
-						VALUES (@{CREATION_DATE_COLUMN}, @{CREATED_BY_COLUMN}, @{MODIFICATION_DATE_COLUMN}, @{MODIFIED_BY_COLUMN}, 
-							@{ICTS_REFERENCE_COLUMN}, @{TAG_COLUMN}, @{SERIAL_COLUMN}, @{PRODUCT_ID_COLUMN}, @{DESCRIPTION_COLUMN}, 
-							@{INVOICE_DATE_COLUMN}, @{INVOICE_NUMBER_COLUMN}, @{PRICE_COLUMN}, @{PAID_BY_COLUMN}, @{OWNER_COLUMN}, 
-							@{INSTALL_DATE_COLUMN}, @{INSTALLED_BY_COLUMN}, @{REMARK_COLUMN}, @{TEAMASSET_COLUMN}, @{DELETED_COLUMN})
-						SELECT CONVERT(bigint, SCOPE_IDENTITY())";
-
-					long newId;
-					using (var cmd = new SqlCommand(cmdText, con, tx))
-					{
-						AddSqlParameters(cmd.Parameters, item);
-						cmd.Parameters.Add($"@{DELETED_COLUMN}", SqlDbType.Bit).Value = 0;
-
-						newId = (long)cmd.ExecuteScalar();
-					}
-
-					tx.Commit();
-
-					return newId;
-				}
-			}
+			return base.Insert(item);
 		}
 
-		public void Update(AssetDto item) => Update(new[] { item });
-
-		public void Update(IEnumerable<AssetDto> items)
+		public override void Update(IEnumerable<AssetDto> items)
 		{
 			if (items == null || !items.Any())
 				throw new ArgumentNullException("items");
 
+			var now = DateTimeProvider.Now();
 			foreach (var item in items)
 			{
 				if (!item.Id.HasValue)
@@ -347,42 +223,11 @@ namespace LinkIT.Data.Repositories
 					throw new ArgumentException("ModifiedBy is required!");
 				if (item.Product == null || !item.Product.Id.HasValue)
 					throw new ArgumentException("Product Id is required!");
+
+				item.ModificationDate = now;
 			}
 
-			var now = DateTimeProvider.Now();
-
-			using (var con = new SqlConnection(ConnectionString))
-			{
-				con.Open();
-				using (var tx = con.BeginTransaction())
-				{
-					string cmdText =
-						$@"UPDATE [{TableName}] SET
-							[{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, 
-							[{ICTS_REFERENCE_COLUMN}]=@{ICTS_REFERENCE_COLUMN}, [{TAG_COLUMN}]=@{TAG_COLUMN}, [{SERIAL_COLUMN}]=@{SERIAL_COLUMN}, 
-							[{PRODUCT_ID_COLUMN}]=@{PRODUCT_ID_COLUMN}, [{DESCRIPTION_COLUMN}]=@{DESCRIPTION_COLUMN}, 
-							[{INVOICE_DATE_COLUMN}]=@{INVOICE_DATE_COLUMN}, [{INVOICE_NUMBER_COLUMN}]=@{INVOICE_NUMBER_COLUMN}, 
-							[{PRICE_COLUMN}]=@{PRICE_COLUMN}, [{PAID_BY_COLUMN}]=@{PAID_BY_COLUMN}, [{OWNER_COLUMN}]=@{OWNER_COLUMN}, 
-							[{INSTALL_DATE_COLUMN}]=@{INSTALL_DATE_COLUMN}, [{INSTALLED_BY_COLUMN}]=@{INSTALLED_BY_COLUMN}, 
-							[{REMARK_COLUMN}]=@{REMARK_COLUMN}, [{TEAMASSET_COLUMN}]=@{TEAMASSET_COLUMN}
-						WHERE [{ID_COLUMN}]=@{ID_COLUMN} AND [{DELETED_COLUMN}]=@{DELETED_COLUMN}";
-
-					foreach (var item in items)
-					{
-						item.ModificationDate = now;
-
-						using (var cmd = new SqlCommand(cmdText, con, tx))
-						{
-							AddSqlParameters(cmd.Parameters, item);
-							cmd.Parameters.Add($"@{DELETED_COLUMN}", SqlDbType.Bit).Value = 0;
-
-							cmd.ExecuteNonQuery();
-						}
-					}
-
-					tx.Commit();
-				}
-			}
+			base.Update(items);
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using LinkIT.Data.Queries;
+﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Queries;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
@@ -28,7 +29,7 @@ namespace LinkIT.Data.Repositories
 		{
 			if (_hasSoftDelete)
 			{
-				_builder.AppendLine($"WHERE [{Repository.DELETED_COLUMN}] = 0");
+				_builder.AppendLine($"WHERE [{Repository<Dto, Query>.DELETED_COLUMN}] = 0");
 				_isFirstParameter = false;
 
 				return;
