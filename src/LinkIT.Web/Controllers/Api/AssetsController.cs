@@ -1,10 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Queries;
+using LinkIT.Data.Repositories;
+using LinkIT.Web.Infrastructure.Api;
+using log4net;
+using System.Collections.Generic;
 using System.Web.Http;
 
 namespace LinkIT.Web.Controllers.Api
 {
     public class AssetsController : ApiController
     {
+        private readonly IRepository<AssetDto, AssetQuery> _assetRepo;
+        private readonly ILog _log;
+
+        public AssetsController()
+        {
+            var productRepo = new ProductRepository(ConnectionString.Get());
+            _assetRepo = new AssetRepository(ConnectionString.Get(), productRepo);
+        }
+
         // GET: api/Assets
         public IEnumerable<string> Get()
         {

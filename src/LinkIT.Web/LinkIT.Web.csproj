@@ -169,10 +169,16 @@
     </Compile>
     <Compile Include="Infrastructure\Api\ConnectionString.cs" />
     <Compile Include="Infrastructure\Api\Log4NetExceptionLogger.cs" />
+    <Compile Include="Models\Api\AssetReadModel.cs" />
+    <Compile Include="Models\Api\AssetWriteModel.cs" />
     <Compile Include="Models\Api\DeviceModel.cs" />
     <Compile Include="Models\Api\Filters\DeviceFilterModel.cs" />
     <Compile Include="Models\Api\Paging\PagedResultModelOfT.cs" />
     <Compile Include="Models\Api\Paging\PageInfoModel.cs" />
+    <Compile Include="Models\Api\ProductReadModel.cs" />
+    <Compile Include="Models\Api\ProductWriteModel.cs" />
+    <Compile Include="Models\Api\SpecialOwnerReadModel.cs" />
+    <Compile Include="Models\Api\SpecialOwnerWriteModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validation\StringElementOfAttribute.cs" />
   </ItemGroup>
