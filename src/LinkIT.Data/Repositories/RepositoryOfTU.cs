@@ -155,8 +155,6 @@ namespace LinkIT.Data.Repositories
 			return (T)value;
 		}
 
-		protected abstract IEnumerable<string> Columns { get; }
-
 		protected abstract SqlParameterBuilder BuildParametersFrom(TDto input, SqlParameterCollection @params);
 
 		protected abstract WhereClauseBuilder BuildParametersFrom(TQuery input, SqlParameterCollection @params);
@@ -176,6 +174,8 @@ namespace LinkIT.Data.Repositories
 		protected string CreateSelectStatement() => $"SELECT * FROM [{TableName}]";
 
 		protected string CreateSelectCountStatement() => $"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]";
+
+		public abstract IEnumerable<string> Columns { get; }
 
 		public bool Exists(long id) => Exists(new[] { id });
 

@@ -13,14 +13,12 @@ namespace LinkIT.Data.Repositories
 		public const string NAME_COLUMN = "Name";
 		public const string REMARK_COLUMN = "Remark";
 
-		public static readonly string[] COLUMNS = new[]
+		private static readonly string[] COLUMNS = new[]
 		{
 			ID_COLUMN, CREATION_DATE_COLUMN, CREATED_BY_COLUMN, MODIFICATION_DATE_COLUMN, MODIFIED_BY_COLUMN, NAME_COLUMN, REMARK_COLUMN
 		};
 
 		public SpecialOwnerRepository(string connectionString) : base(connectionString, TableNames.SPECIAL_OWNER_TABLE) { }
-
-		protected override IEnumerable<string> Columns => COLUMNS;
 
 		protected override SqlParameterBuilder BuildParametersFrom(SpecialOwnerDto input, SqlParameterCollection @params)
 		{
@@ -86,6 +84,8 @@ namespace LinkIT.Data.Repositories
 						[{NAME_COLUMN}]=@{NAME_COLUMN}, [{REMARK_COLUMN}]=@{REMARK_COLUMN}
 					WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
 		}
+
+		public override IEnumerable<string> Columns => COLUMNS;
 
 		public override long Insert(SpecialOwnerDto item)
 		{

@@ -52,8 +52,6 @@ namespace LinkIT.Data.Repositories
 				asset.Product = products.Single(x => x.Id == asset.Product.Id);
 		}
 
-		protected override IEnumerable<string> Columns => COLUMNS;
-
 		protected override SqlParameterBuilder BuildParametersFrom(AssetDto input, SqlParameterCollection @params)
 		{
 			var builder = new SqlParameterBuilder(@params);
@@ -169,6 +167,8 @@ namespace LinkIT.Data.Repositories
 					[{REMARK_COLUMN}]=@{REMARK_COLUMN}, [{TEAMASSET_COLUMN}]=@{TEAMASSET_COLUMN}
 				WHERE [{ID_COLUMN}]=@{ID_COLUMN} AND [{DELETED_COLUMN}]=0";
 		}
+
+		public override IEnumerable<string> Columns => COLUMNS;
 
 		public override IEnumerable<AssetDto> GetById(IEnumerable<long> ids)
 		{

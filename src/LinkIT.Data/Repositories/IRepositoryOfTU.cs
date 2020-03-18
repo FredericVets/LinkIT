@@ -9,6 +9,8 @@ namespace LinkIT.Data.Repositories
 		where TDto : Dto
 		where TQuery : Query
 	{
+		IEnumerable<string> Columns { get; }
+
 		bool Exists(long id);
 
 		bool Exists(IEnumerable<long> ids);

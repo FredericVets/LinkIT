@@ -13,11 +13,9 @@ namespace LinkIT.Data.Repositories
 		public const string BRAND_COLUMN = "Brand";
 		public const string TYPE_COLUMN = "Type";
 
-		public static readonly string[] COLUMNS = new[] { ID_COLUMN, TAG_COLUMN, OWNER_COLUMN, BRAND_COLUMN, TYPE_COLUMN };
+		private static readonly string[] COLUMNS = new[] { ID_COLUMN, TAG_COLUMN, OWNER_COLUMN, BRAND_COLUMN, TYPE_COLUMN };
 
 		public DeviceRepository(string connectionString) : base(connectionString, TableNames.DEVICE_TABLE) { }
-
-		protected override IEnumerable<string> Columns => COLUMNS;
 
 		protected override SqlParameterBuilder BuildParametersFrom(DeviceDto input, SqlParameterCollection @params)
 		{
@@ -73,5 +71,7 @@ namespace LinkIT.Data.Repositories
 						[{TAG_COLUMN}]=@Tag, [{OWNER_COLUMN}]=@Owner, [{BRAND_COLUMN}]=@Brand, [{TYPE_COLUMN}]=@Type 
 					WHERE [{ID_COLUMN}]=@Id";
 		}
+
+		public override IEnumerable<string> Columns => COLUMNS;
 	}
 }

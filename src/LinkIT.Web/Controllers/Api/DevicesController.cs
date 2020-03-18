@@ -17,7 +17,6 @@ namespace LinkIT.Web.Controllers.Api
 	// See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials for introduction.
 	public class DevicesController : ApiController
 	{
-		private const string MISSING_MESSAGE_BODY = "No message body present.";
 		private const int BULK_PUT_THRESHOLD = 50;
 
 		private readonly IRepository<DeviceDto, DeviceQuery> _repo;
@@ -95,23 +94,23 @@ namespace LinkIT.Web.Controllers.Api
 		/// If multiple fields of the filter are supplied, only results will be returned that match all the fields.
 		/// Uses paging on the resulting collection. If no paging info is supplied, default values will be used.
 		/// </summary>
-		/// <param name="filterModel"></param>
-		/// <param name="pageInfoModel"></param>
+		/// <param name="filter"></param>
+		/// <param name="pageInfo"></param>
 		/// <returns>A paged collection of DeviceModel instances that match the filter.</returns>
 		[Route("api/devices")]
 		public IHttpActionResult Get(
-			[FromUri]DeviceFilterModel filterModel,
-			[FromUri]PageInfoModel pageInfoModel)
+			[FromUri]DeviceFilterModel filter,
+			[FromUri]PageInfoModel pageInfo)
 		{
-			pageInfoModel = pageInfoModel ?? new PageInfoModel();
-			filterModel = filterModel ?? new DeviceFilterModel();
+			filter = filter ?? new DeviceFilterModel();
+			pageInfo = pageInfo ?? new PageInfoModel();
 			PagedResult<DeviceDto> pagedResult;
 
-			var paging = MappingHelper.MapToPageInfo(pageInfoModel);
-			if (!paging.OrderBy.IsValidFor(DeviceRepository.COLUMNS))
+			var paging = MappingHelper.MapToPageInfo(pageInfo);
+			if (!paging.OrderBy.IsValidFor(_repo.Columns))
 				return BadRequest($"Unknown field : {paging.OrderBy.Name}.");
 
-			if (filterModel.IsEmpty())
+			if (filter.IsEmpty())
 			{
 				pagedResult = _repo.PagedQuery(paging);
 
@@ -119,7 +118,7 @@ namespace LinkIT.Web.Controllers.Api
 			}
 
 			// Apply filter.
-			var query = MapToQuery(filterModel);
+			var query = MapToQuery(filter);
 			pagedResult = _repo.PagedQuery(paging, query);
 
 			return CreateResultFor(pagedResult);
@@ -129,7 +128,7 @@ namespace LinkIT.Web.Controllers.Api
 		public IHttpActionResult Post(DeviceModel model)
 		{
 			if (model == null)
-				return BadRequest(MISSING_MESSAGE_BODY);
+				return BadRequest(Constants.MISSING_MESSAGE_BODY);
 
 			if (model.Id.HasValue)
 				return BadRequest("Id can not be specified.");
@@ -149,7 +148,7 @@ namespace LinkIT.Web.Controllers.Api
 		public IHttpActionResult Put(IEnumerable<DeviceModel> models)
 		{
 			if (models == null)
-				return BadRequest(MISSING_MESSAGE_BODY);
+				return BadRequest(Constants.MISSING_MESSAGE_BODY);
 
 			if (models.Count() > BULK_PUT_THRESHOLD)
 				return BadRequest($"Maximum {BULK_PUT_THRESHOLD} elements can be updated in one request.");
@@ -180,7 +179,7 @@ namespace LinkIT.Web.Controllers.Api
 		public IHttpActionResult Put(long id, DeviceModel model)
 		{
 			if (model == null)
-				return BadRequest(MISSING_MESSAGE_BODY);
+				return BadRequest(Constants.MISSING_MESSAGE_BODY);
 
 			if (!_repo.Exists(id))
 				return NotFound();

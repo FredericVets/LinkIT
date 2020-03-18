@@ -20,8 +20,6 @@ namespace LinkIT.Data.Repositories
 
 		public ProductRepository(string connectionString) : base(connectionString, TableNames.PRODUCT_TABLE) { }
 
-		protected override IEnumerable<string> Columns => COLUMNS;
-
 		protected override SqlParameterBuilder BuildParametersFrom(ProductDto input, SqlParameterCollection @params)
 		{
 			var builder = new SqlParameterBuilder(@params);
@@ -85,6 +83,8 @@ namespace LinkIT.Data.Repositories
 						[{BRAND_COLUMN}]=@{BRAND_COLUMN}, [{TYPE_COLUMN}]=@{TYPE_COLUMN}
 					WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
 		}
+
+		public override IEnumerable<string> Columns => COLUMNS;
 
 		public override long Insert(ProductDto item)
 		{
