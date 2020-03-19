@@ -63,7 +63,7 @@ namespace LinkIT.Web.Controllers.Api
 			};
 		}
 
-		private IHttpActionResult CreateResultFor(PagedResult<DeviceDto> pagedResult)
+		private IHttpActionResult CreateActionResultFor(PagedResult<DeviceDto> pagedResult)
 		{
 			if (pagedResult.IsEmpty())
 				return StatusCode(HttpStatusCode.NoContent);
@@ -114,14 +114,14 @@ namespace LinkIT.Web.Controllers.Api
 			{
 				pagedResult = _repo.PagedQuery(paging);
 
-				return CreateResultFor(pagedResult);
+				return CreateActionResultFor(pagedResult);
 			}
 
 			// Apply filter.
 			var query = MapToQuery(filter);
 			pagedResult = _repo.PagedQuery(paging, query);
 
-			return CreateResultFor(pagedResult);
+			return CreateActionResultFor(pagedResult);
 		}
 
 		[Route("api/devices")]

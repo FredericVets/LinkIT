@@ -54,16 +54,14 @@ namespace LinkIT.Web.Controllers.Api
 		{
 			return new ProductQuery
 			{
-				CreationDate = filter.CreationDate,
 				CreatedBy = filter.CreatedBy,
-				ModificationDate = filter.ModificationDate,
 				ModifiedBy = filter.ModifiedBy,
 				Brand = filter.Brand,
 				Type = filter.Type
 			};
 		}
 
-		private IHttpActionResult CreateResultFor(PagedResult<ProductDto> pagedResult)
+		private IHttpActionResult CreateActionResultFor(PagedResult<ProductDto> pagedResult)
 		{
 			if (pagedResult.IsEmpty())
 				return StatusCode(HttpStatusCode.NoContent);
@@ -94,7 +92,6 @@ namespace LinkIT.Web.Controllers.Api
 			[FromUri]ProductFilterModel filter,
 			[FromUri]PageInfoModel pageInfo)
 		{
-			// TODO : test if filter can be null when not a single parameter is passed in the GET.
 			filter = filter ?? new ProductFilterModel();
 			pageInfo = pageInfo ?? new PageInfoModel();
 			PagedResult<ProductDto> pagedResult;
@@ -107,14 +104,14 @@ namespace LinkIT.Web.Controllers.Api
 			{
 				pagedResult = _repo.PagedQuery(paging);
 
-				return CreateResultFor(pagedResult);
+				return CreateActionResultFor(pagedResult);
 			}
 
 			// Apply filter.
 			var query = MapToQuery(filter);
 			pagedResult = _repo.PagedQuery(paging, query);
 
-			return CreateResultFor(pagedResult);
+			return CreateActionResultFor(pagedResult);
 		}
 
 		[Route("api/products")]

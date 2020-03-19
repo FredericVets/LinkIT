@@ -37,8 +37,9 @@ namespace LinkIT.Data.Repositories
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
 			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.BigInt);
-			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
+
 			builder.AddParameter(input.Brand, BRAND_COLUMN, SqlDbType.VarChar);
 			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
 		}
