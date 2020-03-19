@@ -119,6 +119,8 @@ namespace LinkIT.Web.Controllers.Api
 		{
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
+			if (string.IsNullOrWhiteSpace(model.CreatedBy))
+				return BadRequest("CreatedBy is required.");
 
 			var dto = MapToDto(model);
 			long id = _repo.Insert(dto);
@@ -130,12 +132,14 @@ namespace LinkIT.Web.Controllers.Api
 			return CreatedAtRoute("GetProductById", new { id = readModel.Id }, model);
 		}
 
-		// Fully updates the devices.
+		// Fully updates the product.
 		[Route("api/products/{id:long:min(1)}")]
 		public IHttpActionResult Put(long id, ProductWriteModel model)
 		{
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
+			if (string.IsNullOrWhiteSpace(model.ModifiedBy))
+				return BadRequest("ModifiedBy is required.");
 
 			if (!_repo.Exists(id))
 				return NotFound();

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LinkIT.Web.Models.Api
+namespace LinkIT.Web.Models.Api.Filters
 {
-	public class SpecialOwnerWriteModel
+	public class SpecialOwnerFilterModel
 	{
 		[MaxLength(30)]
 		public string CreatedBy { get; set; }
@@ -10,11 +10,18 @@ namespace LinkIT.Web.Models.Api
 		[MaxLength(30)]
 		public string ModifiedBy { get; set; }
 
-		[Required]
 		[MaxLength(30)]
 		public string Name { get; set; }
 
 		[MaxLength(30)]
 		public string Remark { get; set; }
+
+		public bool IsEmpty()
+		{
+			return string.IsNullOrWhiteSpace(CreatedBy) &&
+				string.IsNullOrWhiteSpace(ModifiedBy) &&
+				string.IsNullOrWhiteSpace(Name) &&
+				string.IsNullOrWhiteSpace(Remark);
+		}
 	}
 }
