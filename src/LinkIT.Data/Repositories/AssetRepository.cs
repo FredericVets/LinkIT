@@ -52,7 +52,7 @@ namespace LinkIT.Data.Repositories
 				asset.Product = products.Single(x => x.Id == asset.Product.Id);
 		}
 
-		protected override void BuildParametersFrom(AssetDto input, SqlParameterBuilder builder)
+		protected override void AddParametersFor(AssetDto input, SqlParameterBuilder builder)
 		{
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
@@ -76,7 +76,7 @@ namespace LinkIT.Data.Repositories
 			builder.AddParameter(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
 		}
 
-		protected override void BuildParametersFrom(AssetQuery input, WhereClauseBuilder builder)
+		protected override void AddParametersFor(AssetQuery input, WhereClauseBuilder builder)
 		{
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);

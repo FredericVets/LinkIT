@@ -20,7 +20,7 @@ namespace LinkIT.Data.Repositories
 
 		public ProductRepository(string connectionString) : base(connectionString, TableNames.PRODUCT_TABLE) { }
 
-		protected override void BuildParametersFrom(ProductDto input, SqlParameterBuilder builder)
+		protected override void AddParametersFor(ProductDto input, SqlParameterBuilder builder)
 		{
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
@@ -32,7 +32,7 @@ namespace LinkIT.Data.Repositories
 			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
 		}
 
-		protected override void BuildParametersFrom(ProductQuery input, WhereClauseBuilder builder)
+		protected override void AddParametersFor(ProductQuery input, WhereClauseBuilder builder)
 		{
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);

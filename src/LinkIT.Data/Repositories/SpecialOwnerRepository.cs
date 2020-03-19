@@ -20,7 +20,7 @@ namespace LinkIT.Data.Repositories
 
 		public SpecialOwnerRepository(string connectionString) : base(connectionString, TableNames.SPECIAL_OWNER_TABLE) { }
 
-		protected override void BuildParametersFrom(SpecialOwnerDto input, SqlParameterBuilder builder)
+		protected override void AddParametersFor(SpecialOwnerDto input, SqlParameterBuilder builder)
 		{
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
@@ -32,7 +32,7 @@ namespace LinkIT.Data.Repositories
 			builder.AddParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
 		}
 
-		protected override void BuildParametersFrom(SpecialOwnerQuery input, WhereClauseBuilder builder)
+		protected override void AddParametersFor(SpecialOwnerQuery input, WhereClauseBuilder builder)
 		{
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);

@@ -75,7 +75,7 @@ namespace LinkIT.Data.Repositories
 			if (query != null)
 			{
 				var builder = new WhereClauseBuilder(cmd.Parameters, query.LogicalOperator, HasSoftDelete);
-				BuildParametersFrom(query, builder);
+				AddParametersFor(query, builder);
 
 				sb.Append(builder);
 			}
@@ -118,7 +118,7 @@ namespace LinkIT.Data.Repositories
 			if (query != null)
 			{
 				var builder = new WhereClauseBuilder(cmd.Parameters, query.LogicalOperator, HasSoftDelete);
-				BuildParametersFrom(query, builder);
+				AddParametersFor(query, builder);
 
 				sb.Append(builder);
 			}
@@ -140,9 +140,9 @@ namespace LinkIT.Data.Repositories
 			return (T)value;
 		}
 
-		protected abstract void BuildParametersFrom(TDto input, SqlParameterBuilder builder);
+		protected abstract void AddParametersFor(TDto input, SqlParameterBuilder builder);
 
-		protected abstract void BuildParametersFrom(TQuery input, WhereClauseBuilder builder);
+		protected abstract void AddParametersFor(TQuery input, WhereClauseBuilder builder);
 
 		protected abstract IEnumerable<TDto> ReadDtosFrom(SqlDataReader reader);
 
@@ -291,7 +291,7 @@ namespace LinkIT.Data.Repositories
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{
 						var builder = new SqlParameterBuilder(cmd.Parameters);
-						BuildParametersFrom(item, builder);
+						AddParametersFor(item, builder);
 
 						newId = (long)cmd.ExecuteScalar();
 					}
@@ -327,7 +327,7 @@ namespace LinkIT.Data.Repositories
 						using (var cmd = new SqlCommand(cmdText, con, tx))
 						{
 							var builder = new SqlParameterBuilder(cmd.Parameters);
-							BuildParametersFrom(item, builder);
+							AddParametersFor(item, builder);
 
 							cmd.ExecuteNonQuery();
 						}

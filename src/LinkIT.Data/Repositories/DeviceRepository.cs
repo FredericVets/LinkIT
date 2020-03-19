@@ -17,7 +17,7 @@ namespace LinkIT.Data.Repositories
 
 		public DeviceRepository(string connectionString) : base(connectionString, TableNames.DEVICE_TABLE) { }
 
-		protected override void BuildParametersFrom(DeviceDto input, SqlParameterBuilder builder)
+		protected override void AddParametersFor(DeviceDto input, SqlParameterBuilder builder)
 		{
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
@@ -26,7 +26,7 @@ namespace LinkIT.Data.Repositories
 			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
 		}
 
-		protected override void BuildParametersFrom(DeviceQuery input, WhereClauseBuilder builder)
+		protected override void AddParametersFor(DeviceQuery input, WhereClauseBuilder builder)
 		{
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
