@@ -86,9 +86,10 @@
     <Compile Include="Queries\LogicalOperator.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="Repositories\SpecialOwnerRepository.cs" />
-    <Compile Include="Repositories\SqlParameterBuilder.cs" />
+    <Compile Include="Builders\SqlParameterBuilder.cs" />
     <Compile Include="Repositories\RepositoryOfTU.cs" />
-    <Compile Include="Repositories\WhereClauseBuilder.cs" />
+    <Compile Include="Builders\WhereClauseBuilder.cs" />
+    <Compile Include="Builders\WhereInClauseBuilder.cs" />
     <Compile Include="TableNames.cs" />
   </ItemGroup>
   <ItemGroup>

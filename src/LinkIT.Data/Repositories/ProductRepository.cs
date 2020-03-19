@@ -20,25 +20,20 @@ namespace LinkIT.Data.Repositories
 
 		public ProductRepository(string connectionString) : base(connectionString, TableNames.PRODUCT_TABLE) { }
 
-		protected override SqlParameterBuilder BuildParametersFrom(ProductDto input, SqlParameterCollection @params)
+		protected override void BuildParametersFrom(ProductDto input, SqlParameterBuilder builder)
 		{
-			var builder = new SqlParameterBuilder(@params);
+			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
 
-			builder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			builder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
-
-			builder.Add(input.Brand, BRAND_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
-
-			return builder;
+			builder.AddParameter(input.Brand, BRAND_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
 		}
 
-		protected override WhereClauseBuilder BuildParametersFrom(ProductQuery input, SqlParameterCollection @params)
+		protected override void BuildParametersFrom(ProductQuery input, WhereClauseBuilder builder)
 		{
-			var builder = new WhereClauseBuilder(@params, input.LogicalOperator, false);
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
 			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
@@ -46,8 +41,6 @@ namespace LinkIT.Data.Repositories
 			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.DateTime2);
 			builder.AddParameter(input.Brand, BRAND_COLUMN, SqlDbType.VarChar);
 			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
-
-			return builder;
 		}
 
 		protected override IEnumerable<ProductDto> ReadDtosFrom(SqlDataReader reader)

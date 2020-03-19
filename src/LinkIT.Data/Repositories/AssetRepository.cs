@@ -52,38 +52,32 @@ namespace LinkIT.Data.Repositories
 				asset.Product = products.Single(x => x.Id == asset.Product.Id);
 		}
 
-		protected override SqlParameterBuilder BuildParametersFrom(AssetDto input, SqlParameterCollection @params)
+		protected override void BuildParametersFrom(AssetDto input, SqlParameterBuilder builder)
 		{
-			var builder = new SqlParameterBuilder(@params);
+			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
 
-			builder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			builder.Add(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.Add(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.Add(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
-
-			builder.Add(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.Tag, TAG_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
-			builder.Add(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.Add(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.Price, PRICE_COLUMN, SqlDbType.Decimal);
-			builder.Add(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.Owner, OWNER_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.Add(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
-			builder.Add(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
-
-			return builder;
+			builder.AddParameter(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Tag, TAG_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Price, PRICE_COLUMN, SqlDbType.Decimal);
+			builder.AddParameter(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Owner, OWNER_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
+			builder.AddParameter(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
+			builder.AddParameter(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
 		}
 
-		protected override WhereClauseBuilder BuildParametersFrom(AssetQuery input, SqlParameterCollection @params)
+		protected override void BuildParametersFrom(AssetQuery input, WhereClauseBuilder builder)
 		{
-			var builder = new WhereClauseBuilder(@params, input.LogicalOperator, HasSoftDelete);
-
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
 			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
@@ -104,8 +98,6 @@ namespace LinkIT.Data.Repositories
 			builder.AddParameter(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
 			builder.AddParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
 			builder.AddParameter(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
-
-			return builder;
 		}
 
 		protected override IEnumerable<AssetDto> ReadDtosFrom(SqlDataReader reader)

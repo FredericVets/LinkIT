@@ -53,7 +53,9 @@ namespace LinkIT.Data.Repositories
 			var sb = new StringBuilder();
 			sb.AppendLine(CreateSelectCountStatement());
 
-			AddWhereClause(cmd.Parameters, sb, ids);
+			var builder = new WhereInClauseBuilder(ID_COLUMN, cmd.Parameters, HasSoftDelete);
+			builder.AddParameters(ids, SqlDbType.BigInt);
+			sb.Append(builder);
 
 			cmd.CommandText = sb.ToString();
 
@@ -72,8 +74,10 @@ namespace LinkIT.Data.Repositories
 
 			if (query != null)
 			{
-				var builder = BuildParametersFrom(query, cmd.Parameters);
-				sb.Append(builder.ToString());
+				var builder = new WhereClauseBuilder(cmd.Parameters, query.LogicalOperator, HasSoftDelete);
+				BuildParametersFrom(query, builder);
+
+				sb.Append(builder);
 			}
 
 			cmd.CommandText = sb.ToString();
@@ -91,7 +95,9 @@ namespace LinkIT.Data.Repositories
 			var sb = new StringBuilder();
 			sb.AppendLine(CreateSelectStatement());
 
-			AddWhereClause(cmd.Parameters, sb, ids);
+			var builder = new WhereInClauseBuilder(ID_COLUMN, cmd.Parameters, HasSoftDelete);
+			builder.AddParameters(ids, SqlDbType.BigInt);
+			sb.Append(builder);
 
 			cmd.CommandText = sb.ToString();
 
@@ -111,8 +117,10 @@ namespace LinkIT.Data.Repositories
 
 			if (query != null)
 			{
-				var builder = BuildParametersFrom(query, cmd.Parameters);
-				sb.Append(builder.ToString());
+				var builder = new WhereClauseBuilder(cmd.Parameters, query.LogicalOperator, HasSoftDelete);
+				BuildParametersFrom(query, builder);
+
+				sb.Append(builder);
 			}
 
 			if (pageInfo != null)
@@ -121,29 +129,6 @@ namespace LinkIT.Data.Repositories
 			cmd.CommandText = sb.ToString();
 
 			return cmd;
-		}
-
-		private void AddWhereClause(SqlParameterCollection @params, StringBuilder sb, long[] ids)
-		{
-			sb.Append($"WHERE [{ID_COLUMN}] IN (");
-
-			bool first = true;
-			for (int i = 0; i < ids.Length; i++)
-			{
-				if (!first)
-					sb.Append(", ");
-
-				string identifier = $"@{ID_COLUMN}{i}";
-				sb.Append(identifier);
-				@params.Add(identifier, SqlDbType.BigInt).Value = ids[i];
-
-				first = false;
-			}
-
-			sb.AppendLine(")");
-
-			if (HasSoftDelete)
-				sb.AppendLine($"AND [{DELETED_COLUMN}] = 0");
 		}
 
 		protected static T GetColumnValue<T>(SqlDataReader reader, string columnName)
@@ -155,9 +140,9 @@ namespace LinkIT.Data.Repositories
 			return (T)value;
 		}
 
-		protected abstract SqlParameterBuilder BuildParametersFrom(TDto input, SqlParameterCollection @params);
+		protected abstract void BuildParametersFrom(TDto input, SqlParameterBuilder builder);
 
-		protected abstract WhereClauseBuilder BuildParametersFrom(TQuery input, SqlParameterCollection @params);
+		protected abstract void BuildParametersFrom(TQuery input, WhereClauseBuilder builder);
 
 		protected abstract IEnumerable<TDto> ReadDtosFrom(SqlDataReader reader);
 
@@ -305,7 +290,9 @@ namespace LinkIT.Data.Repositories
 					long newId;
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{
-						BuildParametersFrom(item, cmd.Parameters);
+						var builder = new SqlParameterBuilder(cmd.Parameters);
+						BuildParametersFrom(item, builder);
+
 						newId = (long)cmd.ExecuteScalar();
 					}
 
@@ -339,7 +326,9 @@ namespace LinkIT.Data.Repositories
 					{
 						using (var cmd = new SqlCommand(cmdText, con, tx))
 						{
-							BuildParametersFrom(item, cmd.Parameters);
+							var builder = new SqlParameterBuilder(cmd.Parameters);
+							BuildParametersFrom(item, builder);
+
 							cmd.ExecuteNonQuery();
 						}
 					}

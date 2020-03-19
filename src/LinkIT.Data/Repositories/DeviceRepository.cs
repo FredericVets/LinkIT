@@ -17,30 +17,22 @@ namespace LinkIT.Data.Repositories
 
 		public DeviceRepository(string connectionString) : base(connectionString, TableNames.DEVICE_TABLE) { }
 
-		protected override SqlParameterBuilder BuildParametersFrom(DeviceDto input, SqlParameterCollection @params)
+		protected override void BuildParametersFrom(DeviceDto input, SqlParameterBuilder builder)
 		{
-			var builder = new SqlParameterBuilder(@params);
-
-			builder.Add(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			builder.Add(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
-			builder.Add(input.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
-			builder.Add(input.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
-			builder.Add(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
-
-			return builder;
-		}
-
-		protected override WhereClauseBuilder BuildParametersFrom(DeviceQuery input, SqlParameterCollection @params)
-		{
-			var builder = new WhereClauseBuilder(@params, input.LogicalOperator, false);
-
 			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
 			builder.AddParameter(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
 			builder.AddParameter(input.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
 			builder.AddParameter(input.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
 			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
+		}
 
-			return builder;
+		protected override void BuildParametersFrom(DeviceQuery input, WhereClauseBuilder builder)
+		{
+			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
+			builder.AddParameter(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
+			builder.AddParameter(input.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
+			builder.AddParameter(input.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
+			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
 		}
 
 		protected override IEnumerable<DeviceDto> ReadDtosFrom(SqlDataReader reader)
