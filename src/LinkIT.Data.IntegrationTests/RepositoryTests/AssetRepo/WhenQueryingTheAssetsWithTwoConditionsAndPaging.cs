@@ -110,7 +110,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 
 			// Simulate the paging on the in-memory collection.
 			var page = _expected
-				.Where(x => x.Owner == "user1" && x.TeamAsset.Value)
+				.Where(x => x.Owner == "user1" && x.TeamAsset)
 				.OrderByDescending(x => x.CreatedBy)
 				.Skip(2)
 				.Take(2)

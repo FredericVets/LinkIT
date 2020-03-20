@@ -127,7 +127,7 @@ namespace LinkIT.Data.Repositories
 					InstallDate = GetColumnValue<DateTime?>(reader, INSTALL_DATE_COLUMN),
 					InstalledBy = GetColumnValue<string>(reader, INSTALLED_BY_COLUMN),
 					Remark = GetColumnValue<string>(reader, REMARK_COLUMN),
-					TeamAsset = GetColumnValue<bool?>(reader, TEAMASSET_COLUMN)
+					TeamAsset = GetColumnValue<bool>(reader, TEAMASSET_COLUMN)
 				};
 			}
 		}

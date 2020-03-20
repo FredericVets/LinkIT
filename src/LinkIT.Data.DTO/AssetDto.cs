@@ -43,7 +43,7 @@ namespace LinkIT.Data.DTO
 
 		public string Remark { get; set; }
 
-		public bool? TeamAsset { get; set; }
+		public bool TeamAsset { get; set; }
 
 		public static bool operator ==(AssetDto left, AssetDto right)
 		{

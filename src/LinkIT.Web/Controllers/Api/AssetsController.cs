@@ -1,51 +1,219 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Infrastructure.Api;
+using LinkIT.Web.Models.Api;
+using LinkIT.Web.Models.Api.Filters;
+using LinkIT.Web.Models.Api.Paging;
 using log4net;
-using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Web.Http;
 
 namespace LinkIT.Web.Controllers.Api
 {
-    public class AssetsController : ApiController
-    {
-        private readonly IRepository<AssetDto, AssetQuery> _assetRepo;
-        private readonly ILog _log;
+	public class AssetsController : ApiController
+	{
+		private readonly IRepository<AssetDto, AssetQuery> _assetRepo;
+		private readonly ILog _log;
 
-        public AssetsController()
-        {
-            var productRepo = new ProductRepository(ConnectionString.Get());
-            _assetRepo = new AssetRepository(ConnectionString.Get(), productRepo);
+		public AssetsController()
+		{
+			var productRepo = new ProductRepository(ConnectionString.Get());
+			_assetRepo = new AssetRepository(ConnectionString.Get(), productRepo);
 
-            _log = LogManager.GetLogger(GetType());
-        }
+			_log = LogManager.GetLogger(GetType());
+		}
 
-        // GET: api/Assets
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+		private static AssetReadModel MapToModel(AssetDto input)
+		{
+			return new AssetReadModel
+			{
+				Id = input.Id.Value,
+				CreationDate = input.CreationDate.Value,
+				CreatedBy = input.CreatedBy,
+				ModificationDate = input.ModificationDate.Value,
+				ModifiedBy = input.ModifiedBy,
+				IctsReference = input.IctsReference,
+				Tag = input.Tag,
+				Serial = input.Serial,
+				Product = ProductsController.MapToModel(input.Product),
+				Description = input.Description,
+				InvoiceDate = input.InvoiceDate,
+				InvoiceNumber = input.InvoiceNumber,
+				Price = input.Price,
+				PaidBy = input.PaidBy,
+				Owner = input.Owner,
+				InstallDate = input.InstallDate,
+				InstalledBy = input.InstalledBy,
+				Remark = input.Remark,
+				TeamAsset = input.TeamAsset
+			};
+		}
 
-        // GET: api/Assets/5
-        public string Get(int id)
-        {
-            return "value";
-        }
+		private static AssetDto MapToDto(AssetWriteModel input, long? id = null)
+		{
+			return new AssetDto
+			{
+				Id = id,
+				CreatedBy = input.CreatedBy,
+				ModifiedBy = input.ModifiedBy,
+				IctsReference = input.IctsReference,
+				Tag = input.Tag,
+				Serial = input.Serial,
+				Product = new ProductDto { Id = input.ProductId },
+				Description = input.Description,
+				InvoiceDate = input.InvoiceDate,
+				InvoiceNumber = input.InvoiceNumber,
+				Price = input.Price,
+				PaidBy = input.PaidBy,
+				Owner = input.Owner,
+				InstallDate = input.InstallDate,
+				InstalledBy = input.InstalledBy,
+				Remark = input.Remark,
+				TeamAsset = input.TeamAsset
+			};
+		}
 
-        // POST: api/Assets
-        public void Post([FromBody]string value)
-        {
-        }
+		private static AssetQuery MapToQuery(AssetFilterModel filter)
+		{
+			return new AssetQuery
+			{
+				CreatedBy = filter.CreatedBy,
+				ModifiedBy = filter.ModifiedBy,
+				IctsReference = filter.IctsReference,
+				Tag = filter.Tag,
+				Serial = filter.Serial,
+				ProductId = filter.ProductId,
+				Description = filter.Description,
+				InvoiceDate = filter.InvoiceDate,
+				InvoiceNumber = filter.InvoiceNumber,
+				Price = filter.Price,
+				PaidBy = filter.PaidBy,
+				Owner = filter.Owner,
+				InstallDate = filter.InstallDate,
+				InstalledBy = filter.InstalledBy,
+				Remark = filter.Remark,
+				TeamAsset = filter.TeamAsset
+			};
+		}
 
-        // PUT: api/Assets/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+		private IHttpActionResult CreateActionResultFor(PagedResult<AssetDto> pagedResult)
+		{
+			if (pagedResult.IsEmpty())
+				return StatusCode(HttpStatusCode.NoContent);
 
-        // DELETE: api/Assets/5
-        public void Delete(int id)
-        {
-        }
-    }
+			var models = pagedResult.Result.Select(MapToModel).ToList();
+			var result = new PagedResultModel<AssetReadModel>(
+				models,
+				MappingHelper.MapToModel(pagedResult.PageInfo),
+				pagedResult.TotalCount);
+
+			return Ok(result);
+		}
+
+		[Route("api/assets/{id:long:min(1)}", Name = "GetAssetById")]
+		public IHttpActionResult Get(long id)
+		{
+			if (!_assetRepo.Exists(id))
+				return NotFound();
+
+			var dto = _assetRepo.GetById(id);
+			var readModel = MapToModel(dto);
+
+			return Ok(readModel);
+		}
+
+		[Route("api/assets/{id:long:min(1)}/product")]
+		public IHttpActionResult GetProductFor(long id)
+		{
+			if (!_assetRepo.Exists(id))
+				return NotFound();
+
+			var dto = _assetRepo.GetById(id);
+			var readModel = ProductsController.MapToModel(dto.Product);
+
+			return Ok(readModel);
+		}
+
+		[Route("api/assets")]
+		public IHttpActionResult Get(
+			[FromUri]AssetFilterModel filter,
+			[FromUri]PageInfoModel pageInfo)
+		{
+			filter = filter ?? new AssetFilterModel();
+			pageInfo = pageInfo ?? new PageInfoModel();
+			PagedResult<AssetDto> pagedResult;
+
+			var paging = MappingHelper.MapToPageInfo(pageInfo);
+			if (!paging.OrderBy.IsValidFor(_assetRepo.Columns))
+				return BadRequest($"Unknown field : {paging.OrderBy.Name}.");
+
+			if (filter.IsEmpty())
+			{
+				pagedResult = _assetRepo.PagedQuery(paging);
+
+				return CreateActionResultFor(pagedResult);
+			}
+
+			// Apply filter.
+			var query = MapToQuery(filter);
+			pagedResult = _assetRepo.PagedQuery(paging, query);
+
+			return CreateActionResultFor(pagedResult);
+		}
+
+		[Route("api/assets")]
+		public IHttpActionResult Post(AssetWriteModel model)
+		{
+			if (model == null)
+				return BadRequest(Constants.MISSING_MESSAGE_BODY);
+			if (string.IsNullOrWhiteSpace(model.CreatedBy))
+				return BadRequest("CreatedBy is required.");
+
+			var dto = MapToDto(model);
+			long id = _assetRepo.Insert(dto);
+
+			// Refetch the data.
+			dto = _assetRepo.GetById(id);
+			var readModel = MapToModel(dto);
+
+			return CreatedAtRoute("GetAssetById", new { id = readModel.Id }, readModel);
+		}
+
+		// Fully updates the asset.
+		[Route("api/assets/{id:long:min(1)}")]
+		public IHttpActionResult Put(long id, AssetWriteModel model)
+		{
+			if (model == null)
+				return BadRequest(Constants.MISSING_MESSAGE_BODY);
+			if (string.IsNullOrWhiteSpace(model.ModifiedBy))
+				return BadRequest("ModifiedBy is required.");
+
+			if (!_assetRepo.Exists(id))
+				return NotFound();
+
+			var dto = MapToDto(model, id);
+
+			_assetRepo.Update(dto);
+
+			// Refetch the data.
+			dto = _assetRepo.GetById(id);
+			var readModel = MapToModel(dto);
+
+			return Ok(readModel);
+		}
+
+		[Route("api/assets/{id:long:min(1)}")]
+		public IHttpActionResult Delete(long id)
+		{
+			if (!_assetRepo.Exists(id))
+				return NotFound();
+
+			_assetRepo.Delete(id);
+
+			return StatusCode(HttpStatusCode.NoContent);
+		}
+	}
 }

@@ -24,20 +24,6 @@ namespace LinkIT.Web.Controllers.Api
 			_log = LogManager.GetLogger(GetType());
 		}
 
-		private static ProductReadModel MapToModel(ProductDto input)
-		{
-			return new ProductReadModel
-			{
-				Id = input.Id.Value,
-				CreationDate = input.CreationDate.Value,
-				CreatedBy = input.CreatedBy,
-				ModificationDate = input.ModificationDate.Value,
-				ModifiedBy = input.ModifiedBy,
-				Brand = input.Brand,
-				Type = input.Type
-			};
-		}
-
 		private static ProductDto MapToDto(ProductWriteModel input, long? id = null)
 		{
 			return new ProductDto
@@ -73,6 +59,20 @@ namespace LinkIT.Web.Controllers.Api
 				pagedResult.TotalCount);
 
 			return Ok(result);
+		}
+
+		public static ProductReadModel MapToModel(ProductDto input)
+		{
+			return new ProductReadModel
+			{
+				Id = input.Id.Value,
+				CreationDate = input.CreationDate.Value,
+				CreatedBy = input.CreatedBy,
+				ModificationDate = input.ModificationDate.Value,
+				ModifiedBy = input.ModifiedBy,
+				Brand = input.Brand,
+				Type = input.Type
+			};
 		}
 
 		[Route("api/products/{id:long:min(1)}", Name = "GetProductById")]
