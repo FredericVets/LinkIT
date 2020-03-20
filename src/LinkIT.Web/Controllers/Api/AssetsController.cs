@@ -7,6 +7,7 @@ using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
 using log4net;
+using System;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -15,6 +16,8 @@ namespace LinkIT.Web.Controllers.Api
 {
 	public class AssetsController : ApiController
 	{
+		private const int MAX_NUMBER_OWNERS_ALLOWED = 50;
+
 		private readonly IRepository<AssetDto, AssetQuery> _assetRepo;
 		private readonly ILog _log;
 
@@ -125,18 +128,6 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(readModel);
 		}
 
-		[Route("api/assets/{id:long:min(1)}/product")]
-		public IHttpActionResult GetProductFor(long id)
-		{
-			if (!_assetRepo.Exists(id))
-				return NotFound();
-
-			var dto = _assetRepo.GetById(id);
-			var readModel = ProductsController.MapToModel(dto.Product);
-
-			return Ok(readModel);
-		}
-
 		[Route("api/assets")]
 		public IHttpActionResult Get(
 			[FromUri]AssetFilterModel filter,
@@ -162,6 +153,40 @@ namespace LinkIT.Web.Controllers.Api
 			pagedResult = _assetRepo.PagedQuery(paging, query);
 
 			return CreateActionResultFor(pagedResult);
+		}
+
+		/// <summary>
+		/// Gets all the assets for a comma separated list of owners.
+		/// </summary>
+		/// <param name="owners">A comma separated list of owners.</param>
+		/// <returns></returns>
+		[Route("api/assets")]
+		public IHttpActionResult GetForOwners(string owners)
+		{
+			if (string.IsNullOrWhiteSpace(owners))
+				throw new ArgumentNullException("owners");
+
+			var splitted = owners.Split(',').ToList();
+			if (splitted.Count > MAX_NUMBER_OWNERS_ALLOWED)
+				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
+
+			var trimmed = splitted.Select(x => x.Trim()).ToList();
+
+			throw new NotImplementedException();
+
+			return Ok(trimmed);// 
+		}
+
+		[Route("api/assets/{id:long:min(1)}/product")]
+		public IHttpActionResult GetProductFor(long id)
+		{
+			if (!_assetRepo.Exists(id))
+				return NotFound();
+
+			var dto = _assetRepo.GetById(id);
+			var readModel = ProductsController.MapToModel(dto.Product);
+
+			return Ok(readModel);
 		}
 
 		[Route("api/assets")]
