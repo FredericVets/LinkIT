@@ -129,7 +129,7 @@ namespace LinkIT.Web.Controllers.Api
             dto = _repo.GetById(id);
             var readModel = MapToModel(dto);
 
-            return CreatedAtRoute("GetSpecialOwnerById", new { id = readModel.Id }, model);
+            return CreatedAtRoute("GetSpecialOwnerById", new { id = readModel.Id }, readModel);
         }
 
         // Fully updates the product.

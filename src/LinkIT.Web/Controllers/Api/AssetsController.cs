@@ -17,6 +17,8 @@ namespace LinkIT.Web.Controllers.Api
         {
             var productRepo = new ProductRepository(ConnectionString.Get());
             _assetRepo = new AssetRepository(ConnectionString.Get(), productRepo);
+
+            _log = LogManager.GetLogger(GetType());
         }
 
         // GET: api/Assets

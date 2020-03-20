@@ -18,7 +18,7 @@ namespace LinkIT.Web.Models.Api.Filters
 
 		public bool IsEmpty()
 		{
-			return 	string.IsNullOrWhiteSpace(CreatedBy) &&
+			return string.IsNullOrWhiteSpace(CreatedBy) &&
 				string.IsNullOrWhiteSpace(ModifiedBy) &&
 				string.IsNullOrWhiteSpace(Brand) &&
 				string.IsNullOrWhiteSpace(Type);
