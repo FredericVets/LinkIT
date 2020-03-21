@@ -166,11 +166,9 @@ namespace LinkIT.Web.Controllers.Api
 			if (string.IsNullOrWhiteSpace(owners))
 				throw new ArgumentNullException("owners");
 
-			var splitted = owners.Split(',').ToList();
-			if (splitted.Count > MAX_NUMBER_OWNERS_ALLOWED)
+			var trimmed = owners.Split(',').Select(x => x.Trim()).ToList();
+			if (trimmed.Count > MAX_NUMBER_OWNERS_ALLOWED)
 				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
-
-			var trimmed = splitted.Select(x => x.Trim()).ToList();
 
 			throw new NotImplementedException();
 

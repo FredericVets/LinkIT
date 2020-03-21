@@ -1,4 +1,5 @@
-﻿using LinkIT.Data.DTO;
+﻿using LinkIT.Data.Builders;
+using LinkIT.Data.DTO;
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using System;
@@ -53,7 +54,7 @@ namespace LinkIT.Data.Repositories
 			var sb = new StringBuilder();
 			sb.AppendLine(CreateSelectCountStatement());
 
-			var builder = new WhereInClauseBuilder(ID_COLUMN, cmd.Parameters, HasSoftDelete);
+			var builder = new WhereInClauseBuilder(ID_COLUMN, cmd, HasSoftDelete);
 			builder.AddParameters(ids, SqlDbType.BigInt);
 			sb.Append(builder);
 
@@ -74,7 +75,7 @@ namespace LinkIT.Data.Repositories
 
 			if (query != null)
 			{
-				var builder = new WhereClauseBuilder(cmd.Parameters, query.LogicalOperator, HasSoftDelete);
+				var builder = new WhereClauseBuilder(cmd, query.LogicalOperator, HasSoftDelete);
 				AddParametersFor(query, builder);
 
 				sb.Append(builder);
@@ -95,7 +96,7 @@ namespace LinkIT.Data.Repositories
 			var sb = new StringBuilder();
 			sb.AppendLine(CreateSelectStatement());
 
-			var builder = new WhereInClauseBuilder(ID_COLUMN, cmd.Parameters, HasSoftDelete);
+			var builder = new WhereInClauseBuilder(ID_COLUMN, cmd, HasSoftDelete);
 			builder.AddParameters(ids, SqlDbType.BigInt);
 			sb.Append(builder);
 
@@ -117,7 +118,7 @@ namespace LinkIT.Data.Repositories
 
 			if (query != null)
 			{
-				var builder = new WhereClauseBuilder(cmd.Parameters, query.LogicalOperator, HasSoftDelete);
+				var builder = new WhereClauseBuilder(cmd, query.LogicalOperator, HasSoftDelete);
 				AddParametersFor(query, builder);
 
 				sb.Append(builder);
@@ -290,7 +291,7 @@ namespace LinkIT.Data.Repositories
 					long newId;
 					using (var cmd = new SqlCommand(cmdText, con, tx))
 					{
-						var builder = new SqlParameterBuilder(cmd.Parameters);
+						var builder = new SqlParameterBuilder(cmd);
 						AddParametersFor(item, builder);
 
 						newId = (long)cmd.ExecuteScalar();
@@ -326,7 +327,7 @@ namespace LinkIT.Data.Repositories
 					{
 						using (var cmd = new SqlCommand(cmdText, con, tx))
 						{
-							var builder = new SqlParameterBuilder(cmd.Parameters);
+							var builder = new SqlParameterBuilder(cmd);
 							AddParametersFor(item, builder);
 
 							cmd.ExecuteNonQuery();

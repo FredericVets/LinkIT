@@ -64,6 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuilderTests\WhenBuildingAWhereInClause.cs" />
+    <Compile Include="BuilderTests\WhenBuildingAWhereClause.cs" />
+    <Compile Include="BuilderTests\WhenBuildingAWhereClauseWithSoftDelete.cs" />
+    <Compile Include="BuilderTests\WhenBuildingAWhereInClauseWithSoftDelete.cs" />
     <Compile Include="PagingTests\WhenConvertingAStringToAnOrderByInstance.cs" />
     <Compile Include="PagingTests\WhenCreatingAnOrderByInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

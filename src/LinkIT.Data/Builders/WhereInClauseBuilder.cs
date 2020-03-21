@@ -1,31 +1,30 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Extensions;
 using LinkIT.Data.Queries;
+using LinkIT.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
-namespace LinkIT.Data.Repositories
+namespace LinkIT.Data.Builders
 {
 	public class WhereInClauseBuilder
 	{
 		private readonly string _columnName;
-		private readonly SqlParameterCollection _params;
+		private readonly IDbCommand _command;
 		private readonly bool _hasSoftDelete;
 		private readonly StringBuilder _builder;
 		private bool _isFirstParameter;
 
-		public WhereInClauseBuilder(string columnName, SqlParameterCollection @params, bool hasSoftDelete)
+		public WhereInClauseBuilder(string columnName, IDbCommand command, bool hasSoftDelete)
 		{
 			if (string.IsNullOrWhiteSpace(columnName))
 				throw new ArgumentNullException(columnName);
-			if (@params == null)
-				throw new ArgumentNullException("params");
-
+			
 			_columnName = columnName;
-			_params = @params;
+			_command = command ?? throw new ArgumentNullException("command");
 			_hasSoftDelete = hasSoftDelete;
 			_builder = new StringBuilder();
 			_isFirstParameter = true;
@@ -35,6 +34,14 @@ namespace LinkIT.Data.Repositories
 
 		private void Initialize()
 		{
+			if (_hasSoftDelete)
+			{
+				_builder.AppendLine($"WHERE [{Repository<Dto, Query>.DELETED_COLUMN}] = 0");
+				_builder.Append($"AND [{_columnName}] IN (");
+
+				return;
+			}
+
 			_builder.Append($"WHERE [{_columnName}] IN (");
 		}
 
@@ -48,9 +55,9 @@ namespace LinkIT.Data.Repositories
 				if (!_isFirstParameter)
 					_builder.Append(", ");
 
-				string identifier = $"@Value{i}";
-				_builder.Append(identifier);
-				_params.Add(identifier, sqlType).Value = values.ElementAt(i);
+				string paramName = $"@Value{i}";
+				_builder.Append(paramName);
+				_command.AddSqlParameter(paramName, values.ElementAt(i), sqlType);
 
 				_isFirstParameter = false;
 			}
@@ -58,14 +65,6 @@ namespace LinkIT.Data.Repositories
 			_builder.AppendLine(")");
 		}
 
-		public override string ToString()
-		{
-			if (!_hasSoftDelete)
-				return _builder.ToString();
-
-			_builder.AppendLine($"AND [{Repository<Dto, Query>.DELETED_COLUMN}] = 0");
-
-			return _builder.ToString();
-		}
+		public override string ToString() => _builder.ToString();
 	}
 }

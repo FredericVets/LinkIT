@@ -9,8 +9,10 @@ using System.Data;
 
 namespace LinkIT.Data.UnitTests.BuilderTests
 {
+	// SqlParameterCollection is not mockable ....
+	// Possible workaround = https://stackoverflow.com/questions/6376715/how-to-mock-sqlparametercollection-using-moq
 	[TestClass]
-	public class WhenBuildingAWhereInClause
+	public class WhenBuildingAWhereInClauseWithSoftDelete
 	{
 		private WhereInClauseBuilder _sut;
 		private Mock<IDbCommand> _mock;
@@ -23,7 +25,7 @@ namespace LinkIT.Data.UnitTests.BuilderTests
 			_sut = new WhereInClauseBuilder(
 				Repository<Dto, Query>.ID_COLUMN,
 				_mock.Object,
-				false);
+				true);
 		}
 
 		[TestMethod]
@@ -32,7 +34,9 @@ namespace LinkIT.Data.UnitTests.BuilderTests
 			var ids = new[] { 1, 2, 3, 4, 5 };
 			_sut.AddParameters(ids, SqlDbType.BigInt);
 
-			string expected = $"WHERE [Id] IN (@Value0, @Value1, @Value2, @Value3, @Value4){Environment.NewLine}";
+			string expected = $"WHERE [Deleted] = 0{Environment.NewLine}";
+			expected += $"AND [Id] IN (@Value0, @Value1, @Value2, @Value3, @Value4){Environment.NewLine}";
+
 			string actual = _sut.ToString();
 
 			Assert.AreEqual(expected, actual);

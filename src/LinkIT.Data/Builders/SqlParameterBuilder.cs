@@ -1,19 +1,16 @@
-﻿using System;
+﻿using LinkIT.Data.Extensions;
+using System;
 using System.Data;
-using System.Data.SqlClient;
 
-namespace LinkIT.Data.Repositories
+namespace LinkIT.Data.Builders
 {
 	public class SqlParameterBuilder
 	{
-		private readonly SqlParameterCollection _params;
+		private readonly IDbCommand _command;
 
-		public SqlParameterBuilder(SqlParameterCollection @params)
+		public SqlParameterBuilder(IDbCommand command)
 		{
-			if (@params == null)
-				throw new ArgumentNullException("params");
-
-			_params = @params;
+			_command = command ?? throw new ArgumentNullException("command");
 		}
 
 		public void AddParameter<T>(T value, string columnName, SqlDbType sqlType)
@@ -21,12 +18,12 @@ namespace LinkIT.Data.Repositories
 			string paramName = $"@{columnName}";
 			if (value == null)
 			{
-				_params.Add(paramName, sqlType).Value = DBNull.Value;
+				_command.AddSqlParameter(paramName, DBNull.Value, sqlType);
 
 				return;
 			}
 
-			_params.Add(paramName, sqlType).Value = value;
+			_command.AddSqlParameter(paramName, value, sqlType);
 		}
 	}
 }
