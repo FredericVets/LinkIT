@@ -231,6 +231,7 @@ namespace LinkIT.Data.Repositories
 			if (owners == null || !owners.Any())
 				throw new ArgumentNullException("owners");
 
+			IList<AssetDto> assets;
 			using (var con = new SqlConnection(ConnectionString))
 			{
 				con.Open();
@@ -239,15 +240,16 @@ namespace LinkIT.Data.Repositories
 					using (var cmd = BuildSelectCommand(con, tx, OWNER_COLUMN, owners, SqlDbType.VarChar))
 					using (var reader = cmd.ExecuteReader())
 					{
-						var assets = ReadDtosFrom(reader).ToList();
-						LinkProductsTo(assets);
-
-						return assets;
+						assets = ReadDtosFrom(reader).ToList();
 					}
 
 					//tx.Commit();
 				}
 			}
+
+			LinkProductsTo(assets);
+
+			return assets;
 		}
 	}
 }
