@@ -55,7 +55,7 @@ namespace LinkIT.Data.Repositories
 			sb.AppendLine(CreateSelectCountStatement());
 
 			var builder = new WhereInClauseBuilder(ID_COLUMN, cmd, HasSoftDelete);
-			builder.AddParameters(ids, SqlDbType.BigInt);
+			builder.ForParameters(ids, SqlDbType.BigInt);
 			sb.Append(builder);
 
 			cmd.CommandText = sb.ToString();
@@ -97,7 +97,7 @@ namespace LinkIT.Data.Repositories
 			sb.AppendLine(CreateSelectStatement());
 
 			var builder = new WhereInClauseBuilder(ID_COLUMN, cmd, HasSoftDelete);
-			builder.AddParameters(ids, SqlDbType.BigInt);
+			builder.ForParameters(ids, SqlDbType.BigInt);
 			sb.Append(builder);
 
 			cmd.CommandText = sb.ToString();

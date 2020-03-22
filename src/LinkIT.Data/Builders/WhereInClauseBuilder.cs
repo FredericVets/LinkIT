@@ -22,7 +22,7 @@ namespace LinkIT.Data.Builders
 		{
 			if (string.IsNullOrWhiteSpace(columnName))
 				throw new ArgumentNullException(columnName);
-			
+
 			_columnName = columnName;
 			_command = command ?? throw new ArgumentNullException("command");
 			_hasSoftDelete = hasSoftDelete;
@@ -45,24 +45,27 @@ namespace LinkIT.Data.Builders
 			_builder.Append($"WHERE [{_columnName}] IN (");
 		}
 
-		public void AddParameters<T>(IEnumerable<T> values, SqlDbType sqlType)
+		public WhereInClauseBuilder ForParameters<T>(IEnumerable<T> values, SqlDbType sqlType)
 		{
 			if (values == null || !values.Any())
 				throw new ArgumentNullException("values");
 
-			for (int i = 0; i < values.Count(); i++)
+			var valuesArray = values.ToArray();
+			for (int i = 0; i < valuesArray.Length; i++)
 			{
 				if (!_isFirstParameter)
 					_builder.Append(", ");
 
 				string paramName = $"@Value{i}";
 				_builder.Append(paramName);
-				_command.AddSqlParameter(paramName, values.ElementAt(i), sqlType);
+				_command.AddSqlParameter(paramName, valuesArray[i], sqlType);
 
 				_isFirstParameter = false;
 			}
 
 			_builder.AppendLine(")");
+
+			return this;
 		}
 
 		public override string ToString() => _builder.ToString();

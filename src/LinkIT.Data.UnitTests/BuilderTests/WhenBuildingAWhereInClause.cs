@@ -30,7 +30,7 @@ namespace LinkIT.Data.UnitTests.BuilderTests
 		public void ThenTheWhereInClauseIsAsExpected()
 		{
 			var ids = new[] { 1, 2, 3, 4, 5 };
-			_sut.AddParameters(ids, SqlDbType.BigInt);
+			_sut.ForParameters(ids, SqlDbType.BigInt);
 
 			string expected = $"WHERE [Id] IN (@Value0, @Value1, @Value2, @Value3, @Value4){Environment.NewLine}";
 			string actual = _sut.ToString();
