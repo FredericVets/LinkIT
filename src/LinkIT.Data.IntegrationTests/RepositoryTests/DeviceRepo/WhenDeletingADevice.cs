@@ -9,7 +9,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 	[TestClass]
 	public class WhenDeletingADevice
 	{
-		private DeviceDto _expected;
+		private DeviceDto _device;
 		private DeviceRepository _sut;
 
 		[TestInitialize]
@@ -18,7 +18,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
 			_sut = new DeviceRepository(conStr);
 
-			_expected = new DeviceDto
+			_device = new DeviceDto
 			{
 				Brand = "HP",
 				Type = "AwesomeBook",
@@ -26,15 +26,15 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 				Tag = "CRD-X-01234"
 			};
 
-			_expected.Id = _sut.Insert(_expected);
+			_device.Id = _sut.Insert(_device);
 		}
 
 		[TestMethod]
 		public void ThenTheDeviceDoesntExistAnymore()
 		{
-			_sut.Delete(_expected.Id.Value);
+			_sut.Delete(_device.Id.Value);
 
-			Assert.IsFalse(_sut.Exists(_expected.Id.Value));
+			Assert.IsFalse(_sut.Exists(_device.Id.Value));
 		}
 	}
 }

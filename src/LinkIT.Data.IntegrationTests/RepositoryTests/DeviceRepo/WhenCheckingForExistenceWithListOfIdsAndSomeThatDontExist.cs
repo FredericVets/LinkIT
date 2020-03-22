@@ -1,7 +1,6 @@
 ﻿using LinkIT.Data.DTO;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 	[TestClass]
 	public class WhenCheckingForExistenceWithListOfIdsAndSomeThatDontExist
 	{
-		private List<DeviceDto> _expected;
+		private List<DeviceDto> _devices;
 		private DeviceRepository _sut;
 
 		[TestInitialize]
@@ -20,7 +19,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
 			_sut = new DeviceRepository(conStr);
 
-			_expected = new List<DeviceDto>()
+			_devices = new List<DeviceDto>()
 			{
 				new DeviceDto
 				{
@@ -52,13 +51,13 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 				}
 			};
 
-			_expected.ForEach(x => x.Id = _sut.Insert(x));
+			_devices.ForEach(x => x.Id = _sut.Insert(x));
 		}
 
 		[TestMethod]
 		public void ThenTheResultIsFalse()
 		{
-			var ids = _expected.Select(x => x.Id.Value).ToList();
+			var ids = _devices.Select(x => x.Id.Value).ToList();
 
 			// Add range of non existing items.
 			ids.AddRange(new[] { -1L, -1L, -2L, -3L });
@@ -70,7 +69,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestCleanup]
 		public void CleanUp()
 		{
-			_expected.ForEach(x => _sut.Delete(x.Id.Value));
+			_devices.ForEach(x => _sut.Delete(x.Id.Value));
 		}
 	}
 }

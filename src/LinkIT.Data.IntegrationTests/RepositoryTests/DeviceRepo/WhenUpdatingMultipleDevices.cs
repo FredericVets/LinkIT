@@ -58,10 +58,9 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		{
 			// Make changes.
 			_expected[0].Tag = "CRD-X-55555";
-			_expected[0].Tag = "CRD-X-66666";
-			_expected[0].Tag = "CRD-X-77777";
-			_expected[0].Tag = "CRD-X-88888";
-			_expected[0].Tag = "CRD-X-99999";
+			_expected[1].Tag = "CRD-X-66666";
+			_expected[2].Tag = "CRD-X-77777";
+			_expected[3].Tag = "CRD-X-88888";
 
 			// Persist.
 			_sut.Update(_expected);

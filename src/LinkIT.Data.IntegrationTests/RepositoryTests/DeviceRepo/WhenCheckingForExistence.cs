@@ -8,14 +8,14 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 	[TestClass]
 	public class WhenCheckingForExistence
 	{
-		private DeviceRepository _sut;
+		private DeviceRepository _device;
 		private DeviceDto _expected;
 
 		[TestInitialize]
 		public void Setup()
 		{
 			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
-			_sut = new DeviceRepository(conStr);
+			_device = new DeviceRepository(conStr);
 
 			_expected = new DeviceDto
 			{
@@ -25,20 +25,20 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 				Tag = "CRD-X-01234"
 			};
 
-			_expected.Id = _sut.Insert(_expected);
+			_expected.Id = _device.Insert(_expected);
 		}
 
 		[TestMethod]
 		public void ThenTheDeviceExists()
 		{
-			bool actual = _sut.Exists(_expected.Id.Value);
+			bool actual = _device.Exists(_expected.Id.Value);
 			Assert.IsTrue(actual);
 		}
 
 		[TestCleanup]
 		public void Cleanup()
 		{
-			_sut.Delete(_expected.Id.Value);
+			_device.Delete(_expected.Id.Value);
 		}
 	}
 }

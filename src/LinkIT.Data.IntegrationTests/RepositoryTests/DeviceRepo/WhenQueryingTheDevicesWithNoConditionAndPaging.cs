@@ -11,7 +11,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 	[TestClass]
 	public class WhenQueryingTheDevicesWithNoConditionAndPaging
 	{
-		private List<DeviceDto> _expected;
+		private List<DeviceDto> _devices;
 		private DeviceRepository _sut;
 
 		[TestInitialize]
@@ -20,7 +20,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
 			_sut = new DeviceRepository(conStr);
 
-			_expected = new List<DeviceDto>()
+			_devices = new List<DeviceDto>()
 			{
 				new DeviceDto
 				{
@@ -59,7 +59,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 				}
 			};
 
-			_expected.ForEach(x => x.Id = _sut.Insert(x));
+			_devices.ForEach(x => x.Id = _sut.Insert(x));
 		}
 
 		[TestMethod]
@@ -72,12 +72,12 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 			var actual = _sut.PagedQuery(pageInfo);
 
 			// Simulate the paging on the in-memory collection.
-			var page = _expected.OrderBy(x => x.Tag).Skip(2).Take(2).ToList();
+			var expected = _devices.OrderBy(x => x.Tag).Skip(2).Take(2).ToList();
 
 			Assert.AreEqual(pageInfo, actual.PageInfo);
 			Assert.AreEqual(5, actual.TotalCount);
 			Assert.AreEqual(2, actual.Result.Count());
-			foreach (var item in page)
+			foreach (var item in expected)
 			{
 				var actualDto = actual.Result.Single(x => x.Id == item.Id);
 				Assert.AreEqual(item, actualDto);
@@ -87,7 +87,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestCleanup]
 		public void CleanUp()
 		{
-			_expected.ForEach(x => _sut.Delete(x.Id.Value));
+			_devices.ForEach(x => _sut.Delete(x.Id.Value));
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 	[TestClass]
 	public class WhenQueryingTheSpecialOwnersWithOneConditionAndPaging
 	{
-		private List<SpecialOwnerDto> _expected;
+		private List<SpecialOwnerDto> _specialOwners;
 		private SpecialOwnerRepository _sut;
 
 		[TestInitialize]
@@ -21,7 +21,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
 			_sut = new SpecialOwnerRepository(conStr);
 
-			_expected = new List<SpecialOwnerDto>()
+			_specialOwners = new List<SpecialOwnerDto>()
 			{
 				new SpecialOwnerDto
 				{
@@ -53,7 +53,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 
 			};
 
-			foreach (var owner in _expected)
+			foreach (var owner in _specialOwners)
 				owner.Id = _sut.Insert(owner);
 		}
 
@@ -68,12 +68,12 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 			var actual = _sut.PagedQuery(pageInfo, query);
 
 			// Simulate the paging on the in-memory collection.
-			var page = _expected.OrderByDescending(x => x.CreatedBy).Skip(2).Take(2).ToList();
+			var expected = _specialOwners.OrderByDescending(x => x.CreatedBy).Skip(2).Take(2).ToList();
 
 			Assert.AreEqual(pageInfo, actual.PageInfo);
 			Assert.AreEqual(5, actual.TotalCount);
 			Assert.AreEqual(2, actual.Result.Count());
-			foreach (var item in page)
+			foreach (var item in expected)
 			{
 				var actualDto = actual.Result.Single(x => x.Id == item.Id);
 				Assert.AreEqual(item, actualDto);
@@ -83,7 +83,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		[TestCleanup]
 		public void CleanUp()
 		{
-			_expected.ForEach(x => _sut.Delete(x.Id.Value));
+			_specialOwners.ForEach(x => _sut.Delete(x.Id.Value));
 		}
 	}
 }
