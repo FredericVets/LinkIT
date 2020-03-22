@@ -20,11 +20,11 @@ namespace LinkIT.Data.Repositories
 
 		protected override void AddParametersFor(DeviceDto input, SqlParameterBuilder builder)
 		{
-			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			builder.AddParameter(input.Tag, TAG_COLUMN, SqlDbType.NVarChar);
-			builder.AddParameter(input.Owner, OWNER_COLUMN, SqlDbType.NVarChar);
-			builder.AddParameter(input.Brand, BRAND_COLUMN, SqlDbType.NVarChar);
-			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
+			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)
+				.ForParameter(input.Tag, TAG_COLUMN, SqlDbType.NVarChar)
+				.ForParameter(input.Owner, OWNER_COLUMN, SqlDbType.NVarChar)
+				.ForParameter(input.Brand, BRAND_COLUMN, SqlDbType.NVarChar)
+				.ForParameter(input.Type, TYPE_COLUMN, SqlDbType.NVarChar);
 		}
 
 		protected override void AddParametersFor(DeviceQuery input, WhereClauseBuilder builder)

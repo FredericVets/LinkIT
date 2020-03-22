@@ -55,26 +55,26 @@ namespace LinkIT.Data.Repositories
 
 		protected override void AddParametersFor(AssetDto input, SqlParameterBuilder builder)
 		{
-			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
+			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)
+				.ForParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2)
+				.ForParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2)
+				.ForParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar)
 
-			builder.AddParameter(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.Tag, TAG_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt);
-			builder.AddParameter(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.AddParameter(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.Price, PRICE_COLUMN, SqlDbType.Decimal);
-			builder.AddParameter(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.Owner, OWNER_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.AddParameter(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
+				.ForParameter(input.IctsReference, ICTS_REFERENCE_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Tag, TAG_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Serial, SERIAL_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Product.Id, PRODUCT_ID_COLUMN, SqlDbType.BigInt)
+				.ForParameter(input.Description, DESCRIPTION_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.InvoiceDate, INVOICE_DATE_COLUMN, SqlDbType.DateTime2)
+				.ForParameter(input.InvoiceNumber, INVOICE_NUMBER_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Price, PRICE_COLUMN, SqlDbType.Decimal)
+				.ForParameter(input.PaidBy, PAID_BY_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Owner, OWNER_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.InstallDate, INSTALL_DATE_COLUMN, SqlDbType.DateTime2)
+				.ForParameter(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
 		}
 
 		protected override void AddParametersFor(AssetQuery input, WhereClauseBuilder builder)

@@ -13,17 +13,19 @@ namespace LinkIT.Data.Builders
 			_command = command ?? throw new ArgumentNullException("command");
 		}
 
-		public void AddParameter<T>(T value, string columnName, SqlDbType sqlType)
+		public SqlParameterBuilder ForParameter<T>(T value, string columnName, SqlDbType sqlType)
 		{
 			string paramName = $"@{columnName}";
 			if (value == null)
 			{
 				_command.AddSqlParameter(paramName, DBNull.Value, sqlType);
 
-				return;
+				return this;
 			}
 
 			_command.AddSqlParameter(paramName, value, sqlType);
+
+			return this;
 		}
 	}
 }
