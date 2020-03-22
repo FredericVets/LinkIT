@@ -41,10 +41,10 @@ namespace LinkIT.Data.Builders
 			_builder.AppendLine("WHERE");
 		}
 
-		public void AddParameter<T>(T value, string columnName, SqlDbType sqlType)
+		public WhereClauseBuilder ForParameter<T>(T value, string columnName, SqlDbType sqlType)
 		{
 			if (value == null)
-				return;
+				return this;
 
 			if (!_isFirstParameter)
 				_builder.AppendLine(_logicalOperator.ToString());
@@ -53,6 +53,8 @@ namespace LinkIT.Data.Builders
 			_builder.AppendLine($"[{columnName}] = {paramName}");
 			_command.AddSqlParameter(paramName, value, sqlType);
 			_isFirstParameter = false;
+
+			return this;
 		}
 
 		public override string ToString() => _builder.ToString();

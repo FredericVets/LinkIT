@@ -35,14 +35,14 @@ namespace LinkIT.Data.Repositories
 
 		protected override void AddParametersFor(ProductQuery input, WhereClauseBuilder builder)
 		{
-			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
+			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)
+				.ForParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2)
+				.ForParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2)
+				.ForParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar)
 
-			builder.AddParameter(input.Brand, BRAND_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
+				.ForParameter(input.Brand, BRAND_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
 		}
 
 		protected override IEnumerable<ProductDto> ReadDtosFrom(SqlDataReader reader)

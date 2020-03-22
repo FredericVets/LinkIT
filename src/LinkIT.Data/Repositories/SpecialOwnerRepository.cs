@@ -35,14 +35,14 @@ namespace LinkIT.Data.Repositories
 
 		protected override void AddParametersFor(SpecialOwnerQuery input, WhereClauseBuilder builder)
 		{
-			builder.AddParameter(input.Id, ID_COLUMN, SqlDbType.BigInt);
-			builder.AddParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.AddParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2);
-			builder.AddParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar);
+			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)
+				.ForParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2)
+				.ForParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2)
+				.ForParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar)
 
-			builder.AddParameter(input.Name, NAME_COLUMN, SqlDbType.VarChar);
-			builder.AddParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
+				.ForParameter(input.Name, NAME_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar);
 		}
 
 		protected override IEnumerable<SpecialOwnerDto> ReadDtosFrom(SqlDataReader reader)

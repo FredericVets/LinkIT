@@ -27,10 +27,10 @@ namespace LinkIT.Data.UnitTests.BuilderTests
 		[TestMethod]
 		public void ThenTheWhereClauseIsAsExpected()
 		{
-			_sut.AddParameter("John Doe", "Name", SqlDbType.VarChar);
-			_sut.AddParameter(35, "Age", SqlDbType.Int);
-			_sut.AddParameter("Leuven", "Location", SqlDbType.VarChar);
-			_sut.AddParameter((string)null, "ShouldBeOmitted", SqlDbType.VarChar);
+			_sut.ForParameter("John Doe", "Name", SqlDbType.VarChar)
+				.ForParameter(35, "Age", SqlDbType.Int)
+				.ForParameter("Leuven", "Location", SqlDbType.VarChar)
+				.ForParameter((string)null, "ShouldBeOmitted", SqlDbType.VarChar);
 
 			string expected = $"WHERE [Deleted] = 0{Environment.NewLine}";
 			expected += $"OR{Environment.NewLine}";
