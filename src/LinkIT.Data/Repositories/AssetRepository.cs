@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace LinkIT.Data.Repositories
 {
-	public class AssetRepository : Repository<AssetDto, AssetQuery>
+	public class AssetRepository : Repository<AssetDto, AssetQuery>, IAssetRepository
 	{
 		public const string ICTS_REFERENCE_COLUMN = "IctsReference";
 		public const string TAG_COLUMN = "Tag";
@@ -37,7 +37,7 @@ namespace LinkIT.Data.Repositories
 		private readonly IRepository<ProductDto, ProductQuery> _productRepo;
 
 		public AssetRepository(
-			string connectionString, 
+			string connectionString,
 			IRepository<ProductDto, ProductQuery> productRepo) : base(
 				connectionString, TableNames.ASSET_TABLE, hasSoftDelete: true)
 		{
@@ -224,6 +224,30 @@ namespace LinkIT.Data.Repositories
 			}
 
 			base.Update(items);
+		}
+
+		public IEnumerable<AssetDto> ForOwners(IEnumerable<string> owners)
+		{
+			if (owners == null || !owners.Any())
+				throw new ArgumentNullException("owners");
+
+			using (var con = new SqlConnection(ConnectionString))
+			{
+				con.Open();
+				using (var tx = con.BeginTransaction())
+				{
+					using (var cmd = BuildSelectCommand(con, tx, OWNER_COLUMN, owners, SqlDbType.VarChar))
+					using (var reader = cmd.ExecuteReader())
+					{
+						var assets = ReadDtosFrom(reader).ToList();
+						LinkProductsTo(assets);
+
+						return assets;
+					}
+
+					//tx.Commit();
+				}
+			}
 		}
 	}
 }

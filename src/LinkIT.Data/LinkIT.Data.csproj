@@ -76,6 +76,7 @@
     <Compile Include="Queries\ProductQuery.cs" />
     <Compile Include="Queries\SpecialOwnerQuery.cs" />
     <Compile Include="Repositories\AssetRepository.cs" />
+    <Compile Include="Repositories\IAssetRepository.cs" />
     <Compile Include="Repositories\IRepositoryOfTU.cs" />
     <Compile Include="Paging\Order.cs" />
     <Compile Include="Paging\PagedResultOfT.cs" />

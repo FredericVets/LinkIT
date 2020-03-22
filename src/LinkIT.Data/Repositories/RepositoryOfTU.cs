@@ -115,27 +115,6 @@ namespace LinkIT.Data.Repositories
 			return cmd;
 		}
 
-		private SqlCommand BuildSelectCommand<T>(
-			SqlConnection con,
-			SqlTransaction tx,
-			string columnName,
-			IEnumerable<T> values,
-			SqlDbType sqlType)
-		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine(CreateSelectStatement());
-
-			var builder = new WhereInClauseBuilder(columnName, cmd, HasSoftDelete);
-			builder.ForParameters(values, sqlType);
-			sb.Append(builder);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
-		}
-
 		protected static T GetColumnValue<T>(SqlDataReader reader, string columnName)
 		{
 			object value = reader[columnName];
@@ -164,6 +143,27 @@ namespace LinkIT.Data.Repositories
 		protected string CreateSelectStatement() => $"SELECT * FROM [{TableName}]";
 
 		protected string CreateSelectCountStatement() => $"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]";
+
+		protected SqlCommand BuildSelectCommand<T>(
+			SqlConnection con,
+			SqlTransaction tx,
+			string columnName,
+			IEnumerable<T> values,
+			SqlDbType sqlType)
+		{
+			var cmd = new SqlCommand { Connection = con, Transaction = tx };
+
+			var sb = new StringBuilder();
+			sb.AppendLine(CreateSelectStatement());
+
+			var builder = new WhereInClauseBuilder(columnName, cmd, HasSoftDelete);
+			builder.ForParameters(values, sqlType);
+			sb.Append(builder);
+
+			cmd.CommandText = sb.ToString();
+
+			return cmd;
+		}
 
 		public abstract IEnumerable<string> Columns { get; }
 

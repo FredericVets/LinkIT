@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryTests\AssetRepo\AssetDatabaseHelper.cs" />
+    <Compile Include="RepositoryTests\AssetRepo\WhenGettingTheAssetsForOwners.cs" />
     <Compile Include="RepositoryTests\AssetRepo\WhenQueryingTheAssetsWithTwoConditionsAndPaging.cs" />
     <Compile Include="RepositoryTests\AssetRepo\WhenQueryingTheAssetsWithNoCondition.cs" />
     <Compile Include="RepositoryTests\AssetRepo\WhenUpdatingAnAsset.cs" />

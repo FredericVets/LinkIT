@@ -8,7 +8,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 	[TestClass]
 	public class WhenDeletingAnAsset
 	{
-		private AssetDto _expected;
+		private AssetDto _asset;
 		private AssetRepository _sut;
 		private ProductRepository _productRepo;
 
@@ -34,7 +34,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 
 			var product = InsertProduct();
 
-			_expected = new AssetDto
+			_asset = new AssetDto
 			{
 				CreatedBy = "user2",
 				Tag = "CRD-X-012345",
@@ -50,23 +50,23 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 				TeamAsset = false
 			};
 
-			_expected.Id = _sut.Insert(_expected);
+			_asset.Id = _sut.Insert(_asset);
 		}
 
 		[TestMethod]
 		public void ThenTheAssetIsMarkedAsDeleted()
 		{
-			_sut.Delete(_expected.Id.Value);
+			_sut.Delete(_asset.Id.Value);
 
-			bool marked = AssetDatabaseHelper.IsMarkedAsDeleted(_expected.Id.Value);
+			bool marked = AssetDatabaseHelper.IsMarkedAsDeleted(_asset.Id.Value);
 			Assert.IsTrue(marked);
 		}
 
 		[TestCleanup]
 		public void Cleanup()
 		{
-			AssetDatabaseHelper.HardDelete(_expected.Id.Value);
-			_productRepo.Delete(_expected.Product.Id.Value);
+			AssetDatabaseHelper.HardDelete(_asset.Id.Value);
+			_productRepo.Delete(_asset.Product.Id.Value);
 		}
 	}
 }

@@ -18,7 +18,7 @@ namespace LinkIT.Web.Controllers.Api
 	{
 		private const int MAX_NUMBER_OWNERS_ALLOWED = 50;
 
-		private readonly IRepository<AssetDto, AssetQuery> _assetRepo;
+		private readonly IAssetRepository _assetRepo;
 		private readonly ILog _log;
 
 		public AssetsController()
@@ -170,9 +170,10 @@ namespace LinkIT.Web.Controllers.Api
 			if (trimmed.Count > MAX_NUMBER_OWNERS_ALLOWED)
 				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
 
-			throw new NotImplementedException();
+			var dtos = _assetRepo.ForOwners(trimmed);
+			var readModels = dtos.Select(MapToModel);
 
-			return Ok(trimmed);// 
+			return Ok(readModels);
 		}
 
 		[Route("api/assets/{id:long:min(1)}/product")]

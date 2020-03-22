@@ -1,6 +1,4 @@
 ﻿using LinkIT.Data.DTO;
-using LinkIT.Data.Paging;
-using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -10,7 +8,7 @@ using System.Linq;
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 {
 	[TestClass]
-	public class WhenQueryingTheAssetsWithTwoConditionsAndPaging
+	public class WhenGettingTheAssetsForOwners
 	{
 		private List<AssetDto> _assets;
 		private AssetRepository _sut;
@@ -60,7 +58,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 					InvoiceNumber = "ii0123456789",
 					Price = 50M,
 					PaidBy = "user2",
-					Owner = "user1",
+					Owner = "user2",
 					InstallDate = DateTime.Now.AddDays(2),
 					InstalledBy = "user2",
 					Remark = "To be installed within 2 days",
@@ -72,7 +70,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 					Tag = "CRD-X-00003",
 					Product = product,
 					PaidBy = "user3",
-					Owner = "user1",
+					Owner = "user3",
 					TeamAsset = true
 				},
 				new AssetDto
@@ -81,7 +79,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 					Tag = "CRD-X-00004",
 					Product = product,
 					PaidBy = "user4",
-					Owner = "user1",
+					Owner = "user4",
 					TeamAsset = true
 				},
 				new AssetDto
@@ -90,7 +88,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 					Tag = "CRD-X-00005",
 					Product = product,
 					PaidBy = "user5",
-					Owner = "user1",
+					Owner = "user5",
 					TeamAsset = true
 				},
 			};
@@ -101,27 +99,15 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var query = new AssetQuery { Owner = "user1", TeamAsset = true };
-			var pageInfo = new PageInfo(
-				2,
-				2,
-				new OrderBy(AssetRepository.CREATED_BY_COLUMN, Order.DESCENDING));
-			var actual = _sut.PagedQuery(pageInfo, query);
+			var owners = new[] { "user1", "user2", "user3", "user4" };
+			var actual = _sut.ForOwners(owners).ToList();
 
-			// Simulate the paging on the in-memory collection.
-			var expected = _assets
-				.Where(x => x.Owner == "user1" && x.TeamAsset)
-				.OrderByDescending(x => x.CreatedBy)
-				.Skip(2)
-				.Take(2)
-				.ToList();
+			var expected = _assets.Where(x => owners.Contains(x.Owner)).ToList();
 
-			Assert.AreEqual(pageInfo, actual.PageInfo);
-			Assert.AreEqual(4, actual.TotalCount);
-			Assert.AreEqual(2, actual.Result.Count());
+			Assert.AreEqual(4, actual.Count);
 			foreach (var expectedDto in expected)
 			{
-				var actualDto = actual.Result.Single(x => x.Id == expectedDto.Id);
+				var actualDto = actual.Single(x => x.Id == expectedDto.Id);
 				Assert.AreEqual(expectedDto, actualDto);
 			}
 		}
