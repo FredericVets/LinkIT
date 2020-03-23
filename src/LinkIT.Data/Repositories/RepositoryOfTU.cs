@@ -54,13 +54,18 @@ namespace LinkIT.Data.Repositories
 			var sb = new StringBuilder();
 			sb.AppendLine(CreateSelectCountStatement());
 
-			if (query != null)
+			WhereClauseBuilder builder;
+			if (query == null)
 			{
-				var builder = new WhereClauseBuilder(cmd, query.LogicalOperator, HasSoftDelete);
-				AddParametersFor(query, builder);
-
-				sb.Append(builder);
+				builder = new WhereClauseBuilder(cmd, HasSoftDelete);
 			}
+			else
+			{
+				builder = new WhereClauseBuilder(cmd, query.LogicalOperator, HasSoftDelete);
+				AddParametersFor(query, builder);
+			}
+
+			sb.Append(builder);
 
 			cmd.CommandText = sb.ToString();
 
@@ -99,13 +104,18 @@ namespace LinkIT.Data.Repositories
 			var sb = new StringBuilder();
 			sb.AppendLine(CreateSelectStatement());
 
-			if (query != null)
+			WhereClauseBuilder builder;
+			if (query == null)
 			{
-				var builder = new WhereClauseBuilder(cmd, query.LogicalOperator, HasSoftDelete);
-				AddParametersFor(query, builder);
-
-				sb.Append(builder);
+				builder = new WhereClauseBuilder(cmd, HasSoftDelete);
 			}
+			else
+			{
+				builder = new WhereClauseBuilder(cmd, query.LogicalOperator, HasSoftDelete);
+				AddParametersFor(query, builder);
+			}
+
+			sb.Append(builder);
 
 			if (pageInfo != null)
 				AddPaging(cmd.Parameters, sb, pageInfo);

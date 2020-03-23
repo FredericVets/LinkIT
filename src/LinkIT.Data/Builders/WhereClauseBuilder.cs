@@ -16,6 +16,9 @@ namespace LinkIT.Data.Builders
 		private readonly StringBuilder _builder;
 		private bool _isFirstParameter;
 
+		public WhereClauseBuilder(IDbCommand command, bool hasSoftDelete) : 
+			this(command, LogicalOperator.AND, hasSoftDelete) { }
+
 		public WhereClauseBuilder(IDbCommand command, LogicalOperator logicalOperator, bool hasSoftDelete)
 		{
 			_command = command ?? throw new ArgumentNullException("command");
@@ -24,21 +27,6 @@ namespace LinkIT.Data.Builders
 
 			_builder = new StringBuilder();
 			_isFirstParameter = true;
-
-			Initialize();
-		}
-
-		private void Initialize()
-		{
-			if (_hasSoftDelete)
-			{
-				_builder.AppendLine($"WHERE [{Repository<Dto, Query>.DELETED_COLUMN}] = 0");
-				_isFirstParameter = false;
-
-				return;
-			}
-
-			_builder.AppendLine("WHERE");
 		}
 
 		public WhereClauseBuilder ForParameter<T>(T value, string columnName, SqlDbType sqlType)
@@ -49,14 +37,38 @@ namespace LinkIT.Data.Builders
 			if (!_isFirstParameter)
 				_builder.AppendLine(_logicalOperator.ToString());
 
+			if (_isFirstParameter)
+			{
+				_builder.AppendLine("WHERE");
+				_isFirstParameter = false;
+			}
+
 			string paramName = $"@{columnName}";
 			_builder.AppendLine($"[{columnName}] = {paramName}");
 			_command.AddSqlParameter(paramName, value, sqlType);
-			_isFirstParameter = false;
 
 			return this;
 		}
 
-		public override string ToString() => _builder.ToString();
+		public override string ToString()
+		{
+			if (_hasSoftDelete && _isFirstParameter)
+			{
+				_builder.AppendLine("WHERE");
+				_builder.AppendLine($"[{Repository<Dto, Query>.DELETED_COLUMN}] = 0");
+
+				return _builder.ToString();
+			}
+
+			if (_hasSoftDelete)
+			{
+				_builder.AppendLine(LogicalOperator.AND.ToString());
+				_builder.AppendLine($"[{Repository<Dto, Query>.DELETED_COLUMN}] = 0");
+
+				return _builder.ToString();
+			}
+
+			return _builder.ToString();
+		}
 	}
 }

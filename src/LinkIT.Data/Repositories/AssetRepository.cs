@@ -46,6 +46,9 @@ namespace LinkIT.Data.Repositories
 
 		private void LinkProductsTo(IEnumerable<AssetDto> assets)
 		{
+			if (!assets.Any())
+				return;
+
 			var productIds = assets.Select(x => x.Product.Id.Value).Distinct();
 			var products = _productRepo.GetById(productIds);
 

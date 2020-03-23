@@ -171,6 +171,9 @@ namespace LinkIT.Web.Controllers.Api
 				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
 
 			var dtos = _assetRepo.ForOwners(trimmed);
+			if (!dtos.Any())
+				return StatusCode(HttpStatusCode.NoContent);
+			
 			var readModels = dtos.Select(MapToModel);
 
 			return Ok(readModels);

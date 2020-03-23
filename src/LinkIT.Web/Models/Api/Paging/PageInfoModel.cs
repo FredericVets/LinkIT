@@ -9,7 +9,7 @@ namespace LinkIT.Web.Models.Api.Paging
 		{
 			// The defaults.
 			PageNumber = 1;
-			RowsPerPage = 50;
+			RowsPerPage = 25;
 			OrderBy = new OrderBy("Id", Order.ASCENDING);
 		}
 

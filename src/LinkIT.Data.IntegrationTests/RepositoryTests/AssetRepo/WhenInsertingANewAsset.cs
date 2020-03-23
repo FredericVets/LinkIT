@@ -43,7 +43,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 				Description = "Asset Description",
 				InvoiceDate = DateTime.Now.AddDays(-7),
 				InvoiceNumber = "ii0123456789",
-				Price = 50M,
+				Price = 50.01M,
 				PaidBy = "user3",
 				Owner = "user4",
 				Remark = "Not yet installed",
