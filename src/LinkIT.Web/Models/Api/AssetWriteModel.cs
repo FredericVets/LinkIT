@@ -23,7 +23,7 @@ namespace LinkIT.Web.Models.Api
 
 		[Required]
 		[Range(0, long.MaxValue)]
-		public long ProductId { get; set; }
+		public long? ProductId { get; set; }
 
 		[MaxLength(500)]
 		public string Description { get; set; }
@@ -52,6 +52,6 @@ namespace LinkIT.Web.Models.Api
 		public string Remark { get; set; }
 
 		[Required]
-		public bool TeamAsset { get; set; }
+		public bool? TeamAsset { get; set; }
 	}
 }

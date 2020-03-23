@@ -65,7 +65,7 @@ namespace LinkIT.Web.Controllers.Api
 				IctsReference = input.IctsReference,
 				Tag = input.Tag,
 				Serial = input.Serial,
-				Product = new ProductDto { Id = input.ProductId },
+				Product = new ProductDto { Id = input.ProductId.Value },
 				Description = input.Description,
 				InvoiceDate = input.InvoiceDate,
 				InvoiceNumber = input.InvoiceNumber,
@@ -75,7 +75,7 @@ namespace LinkIT.Web.Controllers.Api
 				InstallDate = input.InstallDate,
 				InstalledBy = input.InstalledBy,
 				Remark = input.Remark,
-				TeamAsset = input.TeamAsset
+				TeamAsset = input.TeamAsset.Value
 			};
 		}
 
