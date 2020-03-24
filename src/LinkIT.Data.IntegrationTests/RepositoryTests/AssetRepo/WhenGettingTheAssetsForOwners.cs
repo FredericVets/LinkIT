@@ -114,9 +114,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		}
 
 		[TestCleanup]
-		public void CleanUp()
-		{
+		public void CleanUp() =>
 			new DatabaseHelper().HardDeleteAll();
-		}
 	}
 }

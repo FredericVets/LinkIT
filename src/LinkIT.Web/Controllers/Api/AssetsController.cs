@@ -29,9 +29,8 @@ namespace LinkIT.Web.Controllers.Api
 			_log = LogManager.GetLogger(GetType());
 		}
 
-		private static AssetReadModel MapToModel(AssetDto input)
-		{
-			return new AssetReadModel
+		private static AssetReadModel MapToModel(AssetDto input) =>
+			new AssetReadModel
 			{
 				Id = input.Id.Value,
 				CreationDate = input.CreationDate.Value,
@@ -53,11 +52,9 @@ namespace LinkIT.Web.Controllers.Api
 				Remark = input.Remark,
 				TeamAsset = input.TeamAsset
 			};
-		}
 
-		private static AssetDto MapToDto(AssetWriteModel input, long? id = null)
-		{
-			return new AssetDto
+		private static AssetDto MapToDto(AssetWriteModel input, long? id = null) =>
+			new AssetDto
 			{
 				Id = id,
 				CreatedBy = input.CreatedBy,
@@ -77,11 +74,9 @@ namespace LinkIT.Web.Controllers.Api
 				Remark = input.Remark,
 				TeamAsset = input.TeamAsset.Value
 			};
-		}
 
-		private static AssetQuery MapToQuery(AssetFilterModel filter)
-		{
-			return new AssetQuery
+		private static AssetQuery MapToQuery(AssetFilterModel filter) =>
+			new AssetQuery
 			{
 				CreatedBy = filter.CreatedBy,
 				ModifiedBy = filter.ModifiedBy,
@@ -100,7 +95,6 @@ namespace LinkIT.Web.Controllers.Api
 				Remark = filter.Remark,
 				TeamAsset = filter.TeamAsset
 			};
-		}
 
 		private IHttpActionResult CreateActionResultFor(PagedResult<AssetDto> pagedResult)
 		{

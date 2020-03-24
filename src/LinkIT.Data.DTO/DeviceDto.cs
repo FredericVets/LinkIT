@@ -13,14 +13,14 @@ namespace LinkIT.Data.DTO
 
 		public string Type { get; set; }
 
-		public static bool operator ==(DeviceDto left, DeviceDto right)
-		{
-			return EqualityComparer<DeviceDto>.Default.Equals(left, right);
-		}
+		public static bool operator ==(DeviceDto left, DeviceDto right) =>
+			EqualityComparer<DeviceDto>.Default.Equals(left, right);
 
-		public static bool operator !=(DeviceDto left, DeviceDto right) => !(left == right);
+		public static bool operator !=(DeviceDto left, DeviceDto right) =>
+			!(left == right);
 
-		public override bool Equals(object obj) => Equals(obj as DeviceDto);
+		public override bool Equals(object obj) =>
+			Equals(obj as DeviceDto);
 
 		public override int GetHashCode()
 		{
@@ -34,14 +34,12 @@ namespace LinkIT.Data.DTO
 			return hashCode;
 		}
 
-		public bool Equals(DeviceDto other)
-		{
-			return other != null &&
-				   base.Equals(other) &&
-				   Tag == other.Tag &&
-				   Owner == other.Owner &&
-				   Brand == other.Brand &&
-				   Type == other.Type;
-		}
+		public bool Equals(DeviceDto other) =>
+			other != null &&
+			base.Equals(other) &&
+			Tag == other.Tag &&
+			Owner == other.Owner &&
+			Brand == other.Brand &&
+			Type == other.Type;
 	}
 }

@@ -17,14 +17,14 @@ namespace LinkIT.Data.DTO
 
 		public string Remark { get; set; }
 
-		public static bool operator ==(SpecialOwnerDto left, SpecialOwnerDto right)
-		{
-			return EqualityComparer<SpecialOwnerDto>.Default.Equals(left, right);
-		}
+		public static bool operator ==(SpecialOwnerDto left, SpecialOwnerDto right) =>
+			EqualityComparer<SpecialOwnerDto>.Default.Equals(left, right);
 
-		public static bool operator !=(SpecialOwnerDto left, SpecialOwnerDto right) => !(left == right);
+		public static bool operator !=(SpecialOwnerDto left, SpecialOwnerDto right) => 
+			!(left == right);
 
-		public override bool Equals(object obj) => Equals(obj as SpecialOwnerDto);
+		public override bool Equals(object obj) => 
+			Equals(obj as SpecialOwnerDto);
 
 		public override int GetHashCode()
 		{
@@ -41,16 +41,14 @@ namespace LinkIT.Data.DTO
 			return hashCode;
 		}
 
-		public bool Equals(SpecialOwnerDto other)
-		{
-			return other != null &&
-				base.Equals(other) &&
-				CreationDate == other.CreationDate &&
-				CreatedBy == other.CreatedBy &&
-				ModificationDate == other.ModificationDate &&
-				ModifiedBy == other.ModifiedBy &&
-				Name == other.Name &&
-				Remark == other.Remark;
-		}
+		public bool Equals(SpecialOwnerDto other) =>
+			other != null &&
+			base.Equals(other) &&
+			CreationDate == other.CreationDate &&
+			CreatedBy == other.CreatedBy &&
+			ModificationDate == other.ModificationDate &&
+			ModifiedBy == other.ModifiedBy &&
+			Name == other.Name &&
+			Remark == other.Remark;
 	}
 }

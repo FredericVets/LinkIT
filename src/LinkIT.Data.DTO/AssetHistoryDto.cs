@@ -7,14 +7,14 @@ namespace LinkIT.Data.DTO
 	{
 		public long AssetId { get; set; }
 
-		public static bool operator ==(AssetHistoryDto left, AssetHistoryDto right)
-		{
-			return EqualityComparer<AssetHistoryDto>.Default.Equals(left, right);
-		}
+		public static bool operator ==(AssetHistoryDto left, AssetHistoryDto right) =>
+			EqualityComparer<AssetHistoryDto>.Default.Equals(left, right);
 
-		public static bool operator !=(AssetHistoryDto left, AssetHistoryDto right) => !(left == right);
+		public static bool operator !=(AssetHistoryDto left, AssetHistoryDto right) =>
+			!(left == right);
 
-		public override bool Equals(object obj) => Equals(obj as AssetHistoryDto);
+		public override bool Equals(object obj) =>
+			Equals(obj as AssetHistoryDto);
 
 		public override int GetHashCode()
 		{
@@ -25,11 +25,9 @@ namespace LinkIT.Data.DTO
 			return hashCode;
 		}
 
-		public bool Equals(AssetHistoryDto other)
-		{
-			return other != null &&
-				base.Equals(other) &&
-				AssetId == other.AssetId;
-		}
+		public bool Equals(AssetHistoryDto other) =>
+			other != null &&
+			base.Equals(other) &&
+			AssetId == other.AssetId;
 	}
 }

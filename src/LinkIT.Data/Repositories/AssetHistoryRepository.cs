@@ -24,27 +24,19 @@ namespace LinkIT.Data.Repositories
 
 		public AssetHistoryRepository(string connectionString) : base(connectionString, TableNames.ASSET_HISTORY_TABLE) { }
 
-		protected override void AddParametersFor(AssetHistoryDto input, SqlParameterBuilder builder)
-		{
+		protected override void AddParametersFor(AssetHistoryDto input, SqlParameterBuilder builder) =>
 			throw new NotImplementedException();
-		}
 
-		protected override void AddParametersFor(AssetHistoryQuery input, WhereClauseBuilder builder)
-		{
+		protected override void AddParametersFor(AssetHistoryQuery input, WhereClauseBuilder builder) =>
 			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)
 				.ForParameter(input.AssetId, ASSET_ID_COLUMN, SqlDbType.BigInt)
 				.ForParameter(input.Tag, AssetRepository.TAG_COLUMN, SqlDbType.VarChar);
-		}
 
-		protected override string CreateInsertStatement()
-		{
+		protected override string CreateInsertStatement() =>
 			throw new NotImplementedException();
-		}
 
-		protected override string CreateUpdateStatement()
-		{
+		protected override string CreateUpdateStatement() =>
 			throw new NotImplementedException();
-		}
 
 		protected override IEnumerable<AssetHistoryDto> ReadDtosFrom(SqlDataReader reader)
 		{
@@ -57,21 +49,16 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public override IEnumerable<string> Columns => COLUMNS;
+		public override IEnumerable<string> Columns => 
+			COLUMNS;
 
-		public override long Insert(AssetHistoryDto item)
-		{
+		public override long Insert(AssetHistoryDto item) =>
 			throw new InvalidOperationException("An AssetHistory can not be inserted.");
-		}
 
-		public override void Update(IEnumerable<AssetHistoryDto> items)
-		{
+		public override void Update(IEnumerable<AssetHistoryDto> items) =>
 			throw new InvalidOperationException("An AssetHistory can not be updated.");
-		}
 
-		public override void Delete(long id)
-		{
+		public override void Delete(long id) =>
 			throw new InvalidOperationException("An AssetHistory can not be deleted.");
-		}
 	}
 }

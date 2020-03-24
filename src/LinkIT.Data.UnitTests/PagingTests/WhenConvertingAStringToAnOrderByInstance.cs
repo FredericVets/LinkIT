@@ -11,10 +11,8 @@ namespace LinkIT.Data.UnitTests.PagingTests
 		private TypeConverter _sut;
 
 		[TestInitialize]
-		public void Setup()
-		{
+		public void Setup() =>
 			_sut = TypeDescriptor.GetConverter(typeof(OrderBy));
-		}
 
 		[TestMethod]
 		public void ThenTheConversionIsSuccessful()

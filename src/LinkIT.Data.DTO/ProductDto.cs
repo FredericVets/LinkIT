@@ -17,14 +17,14 @@ namespace LinkIT.Data.DTO
 
 		public string Type { get; set; }
 
-		public static bool operator ==(ProductDto left, ProductDto right)
-		{
-			return EqualityComparer<ProductDto>.Default.Equals(left, right);
-		}
+		public static bool operator ==(ProductDto left, ProductDto right) =>
+			EqualityComparer<ProductDto>.Default.Equals(left, right);
 
-		public static bool operator !=(ProductDto left, ProductDto right) => !(left == right);
+		public static bool operator !=(ProductDto left, ProductDto right) => 
+			!(left == right);
 
-		public override bool Equals(object obj) => Equals(obj as ProductDto);
+		public override bool Equals(object obj) => 
+			Equals(obj as ProductDto);
 
 		public override int GetHashCode()
 		{
@@ -40,16 +40,14 @@ namespace LinkIT.Data.DTO
 			return hashCode;
 		}
 
-		public bool Equals(ProductDto other)
-		{
-			return other != null &&
-				base.Equals(other) &&
-				CreationDate == other.CreationDate &&
-				CreatedBy == other.CreatedBy &&
-				ModificationDate == other.ModificationDate &&
-				ModifiedBy == other.ModifiedBy &&
-				Brand == other.Brand &&
-				Type == other.Type;
-		}
+		public bool Equals(ProductDto other) =>
+			other != null &&
+			base.Equals(other) &&
+			CreationDate == other.CreationDate &&
+			CreatedBy == other.CreatedBy &&
+			ModificationDate == other.ModificationDate &&
+			ModifiedBy == other.ModifiedBy &&
+			Brand == other.Brand &&
+			Type == other.Type;
 	}
 }

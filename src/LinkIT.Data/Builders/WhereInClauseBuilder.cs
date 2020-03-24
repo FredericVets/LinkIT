@@ -68,6 +68,7 @@ namespace LinkIT.Data.Builders
 			return this;
 		}
 
-		public override string ToString() => _builder.ToString();
+		public override string ToString() => 
+			_builder.ToString();
 	}
 }

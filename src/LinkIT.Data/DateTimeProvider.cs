@@ -8,10 +8,8 @@ namespace LinkIT.Data
 	/// </summary>
 	public static class DateTimeProvider
 	{
-		static DateTimeProvider()
-		{
+		static DateTimeProvider() =>
 			ResetDateTime();
-		}
 
 		public static Func<DateTime> Now { get; private set; }
 

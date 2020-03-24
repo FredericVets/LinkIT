@@ -16,12 +16,10 @@ namespace LinkIT.Web.Models.Api.Filters
 		[MaxLength(30)]
 		public string Remark { get; set; }
 
-		public bool IsEmpty()
-		{
-			return string.IsNullOrWhiteSpace(CreatedBy) &&
-				string.IsNullOrWhiteSpace(ModifiedBy) &&
-				string.IsNullOrWhiteSpace(Name) &&
-				string.IsNullOrWhiteSpace(Remark);
-		}
+		public bool IsEmpty() =>
+			string.IsNullOrWhiteSpace(CreatedBy) &&
+			string.IsNullOrWhiteSpace(ModifiedBy) &&
+			string.IsNullOrWhiteSpace(Name) &&
+			string.IsNullOrWhiteSpace(Remark);
 	}
 }

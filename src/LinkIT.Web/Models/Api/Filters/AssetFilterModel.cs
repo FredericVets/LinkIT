@@ -49,24 +49,22 @@ namespace LinkIT.Web.Models.Api.Filters
 
 		public bool? TeamAsset { get; set; }
 
-		public bool IsEmpty()
-		{
-			return string.IsNullOrWhiteSpace(CreatedBy) &&
-				string.IsNullOrWhiteSpace(ModifiedBy) &&
-				string.IsNullOrWhiteSpace(IctsReference) &&
-				string.IsNullOrWhiteSpace(Tag) &&
-				string.IsNullOrWhiteSpace(Serial) &&
-				!ProductId.HasValue &&
-				string.IsNullOrWhiteSpace(Description) &&
-				!InvoiceDate.HasValue &&
-				string.IsNullOrWhiteSpace(InvoiceNumber) &&
-				!Price.HasValue &&
-				string.IsNullOrWhiteSpace(PaidBy) &&
-				string.IsNullOrWhiteSpace(Owner) &&
-				!InstallDate.HasValue &&
-				string.IsNullOrWhiteSpace(InstalledBy) &&
-				string.IsNullOrWhiteSpace(Remark) &&
-				!TeamAsset.HasValue;
-		}
+		public bool IsEmpty() =>
+			string.IsNullOrWhiteSpace(CreatedBy) &&
+			string.IsNullOrWhiteSpace(ModifiedBy) &&
+			string.IsNullOrWhiteSpace(IctsReference) &&
+			string.IsNullOrWhiteSpace(Tag) &&
+			string.IsNullOrWhiteSpace(Serial) &&
+			!ProductId.HasValue &&
+			string.IsNullOrWhiteSpace(Description) &&
+			!InvoiceDate.HasValue &&
+			string.IsNullOrWhiteSpace(InvoiceNumber) &&
+			!Price.HasValue &&
+			string.IsNullOrWhiteSpace(PaidBy) &&
+			string.IsNullOrWhiteSpace(Owner) &&
+			!InstallDate.HasValue &&
+			string.IsNullOrWhiteSpace(InstalledBy) &&
+			string.IsNullOrWhiteSpace(Remark) &&
+			!TeamAsset.HasValue;
 	}
 }

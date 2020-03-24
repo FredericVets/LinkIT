@@ -7,10 +7,9 @@ namespace LinkIT.Web.Validation
 	{
 		private StringComparison _stringComparison;
 
-		public StringElementOfAttribute(StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase)
-		{
+		public StringElementOfAttribute(
+			StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase) =>
 			_stringComparison = stringComparison;
-		}
 
 		public string[] Elements { get; set;  }
 

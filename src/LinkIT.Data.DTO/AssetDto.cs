@@ -45,14 +45,14 @@ namespace LinkIT.Data.DTO
 
 		public bool TeamAsset { get; set; }
 
-		public static bool operator ==(AssetDto left, AssetDto right)
-		{
-			return EqualityComparer<AssetDto>.Default.Equals(left, right);
-		}
+		public static bool operator ==(AssetDto left, AssetDto right) =>
+			EqualityComparer<AssetDto>.Default.Equals(left, right);
 
-		public static bool operator !=(AssetDto left, AssetDto right) => !(left == right);
+		public static bool operator !=(AssetDto left, AssetDto right) =>
+			!(left == right);
 
-		public override bool Equals(object obj) => Equals(obj as AssetDto);
+		public override bool Equals(object obj) =>
+			Equals(obj as AssetDto);
 
 		public override int GetHashCode()
 		{
@@ -80,34 +80,29 @@ namespace LinkIT.Data.DTO
 			return hashCode;
 		}
 
-		public bool Equals(AssetDto other)
-		{
-			return other != null &&
-				base.Equals(other) &&
-				CreationDate == other.CreationDate &&
-				CreatedBy == other.CreatedBy &&
-				ModificationDate == other.ModificationDate &&
-				ModifiedBy == other.ModifiedBy &&
-				IctsReference == other.IctsReference &&
-				Tag == other.Tag &&
-				Serial == other.Serial &&
-				EqualityComparer<ProductDto>.Default.Equals(Product, other.Product) &&
-				Description == other.Description &&
-				InvoiceDate == other.InvoiceDate &&
-				InvoiceNumber == other.InvoiceNumber &&
-				Price == other.Price &&
-				PaidBy == other.PaidBy &&
-				Owner == other.Owner &&
-				InstallDate == other.InstallDate &&
-				InstalledBy == other.InstalledBy &&
-				Remark == other.Remark &&
-				TeamAsset == other.TeamAsset;
-		}
+		public bool Equals(AssetDto other) =>
+			other != null &&
+			base.Equals(other) &&
+			CreationDate == other.CreationDate &&
+			CreatedBy == other.CreatedBy &&
+			ModificationDate == other.ModificationDate &&
+			ModifiedBy == other.ModifiedBy &&
+			IctsReference == other.IctsReference &&
+			Tag == other.Tag &&
+			Serial == other.Serial &&
+			EqualityComparer<ProductDto>.Default.Equals(Product, other.Product) &&
+			Description == other.Description &&
+			InvoiceDate == other.InvoiceDate &&
+			InvoiceNumber == other.InvoiceNumber &&
+			Price == other.Price &&
+			PaidBy == other.PaidBy &&
+			Owner == other.Owner &&
+			InstallDate == other.InstallDate &&
+			InstalledBy == other.InstalledBy &&
+			Remark == other.Remark &&
+			TeamAsset == other.TeamAsset;
 
-		// Supplies a shallow copy.
-		public AssetDto Copy()
-		{
-			return (AssetDto)MemberwiseClone();
-		}
+		public AssetDto ShallowCopy() =>
+			(AssetDto)MemberwiseClone();
 	}
 }

@@ -24,9 +24,8 @@ namespace LinkIT.Web.Controllers.Api
 			_log = LogManager.GetLogger(GetType());
 		}
 
-		private static ProductDto MapToDto(ProductWriteModel input, long? id = null)
-		{
-			return new ProductDto
+		private static ProductDto MapToDto(ProductWriteModel input, long? id = null) =>
+			new ProductDto
 			{
 				Id = id,
 				CreatedBy = input.CreatedBy,
@@ -34,18 +33,15 @@ namespace LinkIT.Web.Controllers.Api
 				Brand = input.Brand,
 				Type = input.Type
 			};
-		}
 
-		private static ProductQuery MapToQuery(ProductFilterModel filter)
-		{
-			return new ProductQuery
+		private static ProductQuery MapToQuery(ProductFilterModel filter) =>
+			new ProductQuery
 			{
 				CreatedBy = filter.CreatedBy,
 				ModifiedBy = filter.ModifiedBy,
 				Brand = filter.Brand,
 				Type = filter.Type
 			};
-		}
 
 		private IHttpActionResult CreateActionResultFor(PagedResult<ProductDto> pagedResult)
 		{
@@ -61,9 +57,8 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(result);
 		}
 
-		public static ProductReadModel MapToModel(ProductDto input)
-		{
-			return new ProductReadModel
+		public static ProductReadModel MapToModel(ProductDto input) =>
+			new ProductReadModel
 			{
 				Id = input.Id.Value,
 				CreationDate = input.CreationDate.Value,
@@ -73,7 +68,6 @@ namespace LinkIT.Web.Controllers.Api
 				Brand = input.Brand,
 				Type = input.Type
 			};
-		}
 
 		[Route("api/products/{id:long:min(1)}", Name = "GetProductById")]
 		public IHttpActionResult Get(long id)

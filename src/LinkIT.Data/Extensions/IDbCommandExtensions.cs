@@ -7,7 +7,7 @@ namespace LinkIT.Data.Extensions
 	/// <summary>
 	/// This is a convenience method for adding a SqlParameter to an IDbCommand instance.
 	/// This IDbCommand instance is used in client code to facilitate unit testing.
-	/// This approach is used because SqlCommand is a sealed class and con not be mocked.
+	/// This approach is used because SqlCommand is a sealed class and can not be mocked.
 	/// <see href="https://stackoverflow.com/questions/6376715/how-to-mock-sqlparametercollection-using-moq"/>
 	/// </summary>
 	public static class IDbCommandExtensions

@@ -5,22 +5,18 @@ namespace LinkIT.Web.Controllers.Api
 {
 	public static class MappingHelper
 	{
-		public static PageInfo MapToPageInfo(PageInfoModel input)
-		{
-			return new PageInfo(
+		public static PageInfo MapToPageInfo(PageInfoModel input) =>
+			new PageInfo(
 				input.PageNumber,
 				input.RowsPerPage,
 				input.OrderBy);
-		}
 
-		public static PageInfoModel MapToModel(PageInfo input)
-		{
-			return new PageInfoModel
+		public static PageInfoModel MapToModel(PageInfo input) =>
+			new PageInfoModel
 			{
 				PageNumber = input.PageNumber,
 				RowsPerPage = input.RowsPerPage,
 				OrderBy = input.OrderBy
 			};
-		}
 	}
 }

@@ -17,7 +17,6 @@ namespace LinkIT.Data.UnitTests.BuilderTests
 		public void Setup()
 		{
 			_mock = new Mock<IDbCommand>();
-
 			_sut = new WhereClauseBuilder(
 				_mock.Object,
 				LogicalOperator.AND,

@@ -57,7 +57,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 					Description = "Asset Description",
 					InvoiceDate = DateTime.Now.AddDays(-7),
 					InvoiceNumber = "ii0123456789",
-					Price = 50M,
+					Price = 50.01M,
 					PaidBy = "user2",
 					Owner = "user1",
 					InstallDate = DateTime.Now.AddDays(2),
@@ -111,9 +111,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		}
 
 		[TestCleanup]
-		public void CleanUp()
-		{
+		public void CleanUp() =>
 			new DatabaseHelper().HardDeleteAll();
-		}
 	}
 }

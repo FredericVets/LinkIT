@@ -32,20 +32,17 @@ namespace LinkIT.Web.Controllers.Api
 			_log = LogManager.GetLogger(GetType());
 		}
 
-		private static DeviceQuery MapToQuery(DeviceFilterModel filter)
-		{
-			return new DeviceQuery
+		private static DeviceQuery MapToQuery(DeviceFilterModel filter) =>
+			new DeviceQuery
 			{
 				Brand = filter.Brand,
 				Type = filter.Type,
 				Owner = filter.Owner,
 				Tag = filter.Tag
 			};
-		}
 
-		private static DeviceModel MapToModel(DeviceDto input)
-		{
-			return new DeviceModel
+		private static DeviceModel MapToModel(DeviceDto input) =>
+			new DeviceModel
 			{
 				Id = input.Id,
 				Brand = input.Brand,
@@ -53,11 +50,9 @@ namespace LinkIT.Web.Controllers.Api
 				Owner = input.Owner,
 				Tag = input.Tag
 			};
-		}
 
-		private static DeviceDto MapToDto(DeviceModel input)
-		{
-			return new DeviceDto
+		private static DeviceDto MapToDto(DeviceModel input) =>
+			new DeviceDto
 			{
 				Id = input.Id,
 				Brand = input.Brand,
@@ -65,7 +60,6 @@ namespace LinkIT.Web.Controllers.Api
 				Owner = input.Owner,
 				Tag = input.Tag
 			};
-		}
 
 		private IHttpActionResult CreateActionResultFor(PagedResult<DeviceDto> pagedResult)
 		{

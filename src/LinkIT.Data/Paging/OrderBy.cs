@@ -10,7 +10,7 @@ namespace LinkIT.Data.Paging
 	/// Suppose you want to order on a field called 'name'.
 	/// This class supports the syntax +name for ascending sort, -name for descending sort.
 	/// When no ordering is provided, it defaults to ascending.
-	/// So +name = name.
+	/// So +name == name.
 	/// Handles the parsing of this format.
 	/// </summary>
 	[TypeConverter(typeof(OrderByConverter))]
@@ -36,12 +36,11 @@ namespace LinkIT.Data.Paging
 
 		public Order Order { get; }
 
-		public static bool operator ==(OrderBy left, OrderBy right)
-		{
-			return EqualityComparer<OrderBy>.Default.Equals(left, right);
-		}
+		public static bool operator ==(OrderBy left, OrderBy right) =>
+			EqualityComparer<OrderBy>.Default.Equals(left, right);
 
-		public static bool operator !=(OrderBy left, OrderBy right) => !(left == right);
+		public static bool operator !=(OrderBy left, OrderBy right) => 
+			!(left == right);
 
 		public static OrderBy Parse(string input)
 		{
@@ -92,7 +91,8 @@ namespace LinkIT.Data.Paging
 			}
 		}
 
-		public override bool Equals(object obj) => Equals(obj as OrderBy);
+		public override bool Equals(object obj) => 
+			Equals(obj as OrderBy);
 
 		public override int GetHashCode()
 		{
@@ -122,16 +122,12 @@ namespace LinkIT.Data.Paging
 			}
 		}
 
-		public bool Equals(OrderBy other)
-		{
-			return other != null &&
-				Name == other.Name &&
-				Order == other.Order;
-		}
+		public bool Equals(OrderBy other) =>
+			other != null &&
+			Name == other.Name &&
+			Order == other.Order;
 
-		public bool IsValidFor(IEnumerable<string> names)
-		{
-			return names.Contains(Name, StringComparer.InvariantCultureIgnoreCase);
-		}
+		public bool IsValidFor(IEnumerable<string> names) =>
+			names.Contains(Name, StringComparer.InvariantCultureIgnoreCase);
 	}
 }

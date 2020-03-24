@@ -150,9 +150,11 @@ namespace LinkIT.Data.Repositories
 
 		protected bool HasSoftDelete { get; }
 
-		protected string CreateSelectStatement() => $"SELECT * FROM [{TableName}]";
+		protected string CreateSelectStatement() => 
+			$"SELECT * FROM [{TableName}]";
 
-		protected string CreateSelectCountStatement() => $"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]";
+		protected string CreateSelectCountStatement() => 
+			$"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]";
 
 		protected SqlCommand BuildSelectCommand<T>(
 			SqlConnection con,
@@ -177,7 +179,8 @@ namespace LinkIT.Data.Repositories
 
 		public abstract IEnumerable<string> Columns { get; }
 
-		public bool Exists(long id) => Exists(new[] { id });
+		public bool Exists(long id) => 
+			Exists(new[] { id });
 
 		public bool Exists(IEnumerable<long> ids)
 		{
@@ -204,7 +207,8 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public TDto GetById(long id) => GetById(new[] { id }).Single();
+		public TDto GetById(long id) => 
+			GetById(new[] { id }).Single();
 
 		public virtual IEnumerable<TDto> GetById(IEnumerable<long> ids)
 		{
@@ -318,7 +322,8 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public void Update(TDto item) => Update(new[] { item });
+		public void Update(TDto item) => 
+			Update(new[] { item });
 
 		public virtual void Update(IEnumerable<TDto> items)
 		{

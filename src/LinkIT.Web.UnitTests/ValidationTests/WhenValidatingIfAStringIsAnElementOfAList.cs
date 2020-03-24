@@ -10,13 +10,11 @@ namespace LinkIT.Web.UnitTests.ValidationTests
 		private StringElementOfAttribute _sut;
 
 		[TestInitialize]
-		public void Setup()
-		{
+		public void Setup() =>
 			_sut = new StringElementOfAttribute(StringComparison.InvariantCultureIgnoreCase)
 			{
 				Elements = new[] { "azerty", "qwerty", "bla" }
 			};
-		}
 
 		[TestMethod]
 		public void ThenPresenceIsDetectedCorrectly()
@@ -27,9 +25,7 @@ namespace LinkIT.Web.UnitTests.ValidationTests
 		}
 
 		[TestMethod]
-		public void ThenAbsenceIsDetectedCorrectly()
-		{
+		public void ThenAbsenceIsDetectedCorrectly() =>
 			Assert.IsFalse(_sut.IsValid("doesntExist"));
-		}
 	}
 }

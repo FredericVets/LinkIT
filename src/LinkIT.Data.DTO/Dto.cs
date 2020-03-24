@@ -7,17 +7,19 @@ namespace LinkIT.Data.DTO
 	{
 		public long? Id { get; set; }
 
-		public static bool operator ==(Dto left, Dto right)
-		{
-			return EqualityComparer<Dto>.Default.Equals(left, right);
-		}
+		public static bool operator ==(Dto left, Dto right) =>
+			EqualityComparer<Dto>.Default.Equals(left, right);
 
-		public static bool operator !=(Dto left, Dto right) => !(left == right);
+		public static bool operator !=(Dto left, Dto right) => 
+			!(left == right);
 
-		public override bool Equals(object obj) => Equals(obj as Dto);
+		public override bool Equals(object obj) => 
+			Equals(obj as Dto);
 
-		public override int GetHashCode() => 2108858624 + Id.GetHashCode();
+		public override int GetHashCode() => 
+			2108858624 + Id.GetHashCode();
 
-		public bool Equals(Dto other) => other != null && Id == other.Id;
+		public bool Equals(Dto other) => 
+			other != null && Id == other.Id;
 	}
 }

@@ -8,10 +8,8 @@ namespace LinkIT.Data.Builders
 	{
 		private readonly IDbCommand _command;
 
-		public SqlParameterBuilder(IDbCommand command)
-		{
+		public SqlParameterBuilder(IDbCommand command) =>
 			_command = command ?? throw new ArgumentNullException("command");
-		}
 
 		public SqlParameterBuilder ForParameter<T>(T value, string columnName, SqlDbType sqlType)
 		{

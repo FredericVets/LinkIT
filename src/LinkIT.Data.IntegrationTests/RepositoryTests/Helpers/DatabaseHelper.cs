@@ -7,10 +7,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.Helpers
 	{
 		internal DatabaseHelper() : this(ConnectionString.Get()) { }
 
-		internal DatabaseHelper(string connString)
-		{
+		internal DatabaseHelper(string connString) =>
 			ConnString = connString;
-		}
 
 		internal string ConnString { get; private set; }
 

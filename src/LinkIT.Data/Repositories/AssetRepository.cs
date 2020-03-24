@@ -39,10 +39,8 @@ namespace LinkIT.Data.Repositories
 		public AssetRepository(
 			string connectionString,
 			IRepository<ProductDto, ProductQuery> productRepo) : base(
-				connectionString, TableNames.ASSET_TABLE, hasSoftDelete: true)
-		{
+				connectionString, TableNames.ASSET_TABLE, hasSoftDelete: true) =>
 			_productRepo = productRepo;
-		}
 
 		private void LinkProductsTo(IEnumerable<AssetDto> assets)
 		{
@@ -56,8 +54,7 @@ namespace LinkIT.Data.Repositories
 				asset.Product = products.Single(x => x.Id == asset.Product.Id);
 		}
 
-		protected override void AddParametersFor(AssetDto input, SqlParameterBuilder builder)
-		{
+		protected override void AddParametersFor(AssetDto input, SqlParameterBuilder builder) =>
 			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)
 				.ForParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2)
 				.ForParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar)
@@ -78,10 +75,8 @@ namespace LinkIT.Data.Repositories
 				.ForParameter(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar)
 				.ForParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar)
 				.ForParameter(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
-		}
 
-		protected override void AddParametersFor(AssetQuery input, WhereClauseBuilder builder)
-		{
+		protected override void AddParametersFor(AssetQuery input, WhereClauseBuilder builder) =>
 			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)
 				.ForParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2)
 				.ForParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar)
@@ -102,7 +97,6 @@ namespace LinkIT.Data.Repositories
 				.ForParameter(input.InstalledBy, INSTALLED_BY_COLUMN, SqlDbType.VarChar)
 				.ForParameter(input.Remark, REMARK_COLUMN, SqlDbType.VarChar)
 				.ForParameter(input.TeamAsset, TEAMASSET_COLUMN, SqlDbType.Bit);
-		}
 
 		protected override IEnumerable<AssetDto> ReadDtosFrom(SqlDataReader reader)
 		{
@@ -115,33 +109,27 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		protected override string CreateInsertStatement()
-		{
-			return
-				$@"INSERT INTO [{TableName}] 
-					([{CREATION_DATE_COLUMN}], [{CREATED_BY_COLUMN}], [{MODIFICATION_DATE_COLUMN}], [{MODIFIED_BY_COLUMN}], 
-					[{ICTS_REFERENCE_COLUMN}], [{TAG_COLUMN}], [{SERIAL_COLUMN}], [{PRODUCT_ID_COLUMN}], [{DESCRIPTION_COLUMN}],
-					[{INVOICE_DATE_COLUMN}], [{INVOICE_NUMBER_COLUMN}], [{PRICE_COLUMN}], [{PAID_BY_COLUMN}], [{OWNER_COLUMN}], 
-					[{INSTALL_DATE_COLUMN}], [{INSTALLED_BY_COLUMN}], [{REMARK_COLUMN}], [{TEAMASSET_COLUMN}], [{DELETED_COLUMN}])
-				VALUES (@{CREATION_DATE_COLUMN}, @{CREATED_BY_COLUMN}, @{MODIFICATION_DATE_COLUMN}, @{MODIFIED_BY_COLUMN}, 
-					@{ICTS_REFERENCE_COLUMN}, @{TAG_COLUMN}, @{SERIAL_COLUMN}, @{PRODUCT_ID_COLUMN}, @{DESCRIPTION_COLUMN}, 
-					@{INVOICE_DATE_COLUMN}, @{INVOICE_NUMBER_COLUMN}, @{PRICE_COLUMN}, @{PAID_BY_COLUMN}, @{OWNER_COLUMN}, 
-					@{INSTALL_DATE_COLUMN}, @{INSTALLED_BY_COLUMN}, @{REMARK_COLUMN}, @{TEAMASSET_COLUMN}, 0)";
-		}
+		protected override string CreateInsertStatement() =>
+			$@"INSERT INTO [{TableName}] 
+				([{CREATION_DATE_COLUMN}], [{CREATED_BY_COLUMN}], [{MODIFICATION_DATE_COLUMN}], [{MODIFIED_BY_COLUMN}], 
+				[{ICTS_REFERENCE_COLUMN}], [{TAG_COLUMN}], [{SERIAL_COLUMN}], [{PRODUCT_ID_COLUMN}], [{DESCRIPTION_COLUMN}],
+				[{INVOICE_DATE_COLUMN}], [{INVOICE_NUMBER_COLUMN}], [{PRICE_COLUMN}], [{PAID_BY_COLUMN}], [{OWNER_COLUMN}], 
+				[{INSTALL_DATE_COLUMN}], [{INSTALLED_BY_COLUMN}], [{REMARK_COLUMN}], [{TEAMASSET_COLUMN}], [{DELETED_COLUMN}])
+			VALUES (@{CREATION_DATE_COLUMN}, @{CREATED_BY_COLUMN}, @{MODIFICATION_DATE_COLUMN}, @{MODIFIED_BY_COLUMN}, 
+				@{ICTS_REFERENCE_COLUMN}, @{TAG_COLUMN}, @{SERIAL_COLUMN}, @{PRODUCT_ID_COLUMN}, @{DESCRIPTION_COLUMN}, 
+				@{INVOICE_DATE_COLUMN}, @{INVOICE_NUMBER_COLUMN}, @{PRICE_COLUMN}, @{PAID_BY_COLUMN}, @{OWNER_COLUMN}, 
+				@{INSTALL_DATE_COLUMN}, @{INSTALLED_BY_COLUMN}, @{REMARK_COLUMN}, @{TEAMASSET_COLUMN}, 0)";
 
-		protected override string CreateUpdateStatement()
-		{
-			return
-				$@"UPDATE [{TableName}] SET
-					[{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, 
-					[{ICTS_REFERENCE_COLUMN}]=@{ICTS_REFERENCE_COLUMN}, [{TAG_COLUMN}]=@{TAG_COLUMN}, [{SERIAL_COLUMN}]=@{SERIAL_COLUMN}, 
-					[{PRODUCT_ID_COLUMN}]=@{PRODUCT_ID_COLUMN}, [{DESCRIPTION_COLUMN}]=@{DESCRIPTION_COLUMN}, 
-					[{INVOICE_DATE_COLUMN}]=@{INVOICE_DATE_COLUMN}, [{INVOICE_NUMBER_COLUMN}]=@{INVOICE_NUMBER_COLUMN}, 
-					[{PRICE_COLUMN}]=@{PRICE_COLUMN}, [{PAID_BY_COLUMN}]=@{PAID_BY_COLUMN}, [{OWNER_COLUMN}]=@{OWNER_COLUMN}, 
-					[{INSTALL_DATE_COLUMN}]=@{INSTALL_DATE_COLUMN}, [{INSTALLED_BY_COLUMN}]=@{INSTALLED_BY_COLUMN}, 
-					[{REMARK_COLUMN}]=@{REMARK_COLUMN}, [{TEAMASSET_COLUMN}]=@{TEAMASSET_COLUMN}
-				WHERE [{ID_COLUMN}]=@{ID_COLUMN} AND [{DELETED_COLUMN}]=0";
-		}
+		protected override string CreateUpdateStatement() =>
+			$@"UPDATE [{TableName}] SET
+				[{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, 
+				[{ICTS_REFERENCE_COLUMN}]=@{ICTS_REFERENCE_COLUMN}, [{TAG_COLUMN}]=@{TAG_COLUMN}, [{SERIAL_COLUMN}]=@{SERIAL_COLUMN}, 
+				[{PRODUCT_ID_COLUMN}]=@{PRODUCT_ID_COLUMN}, [{DESCRIPTION_COLUMN}]=@{DESCRIPTION_COLUMN}, 
+				[{INVOICE_DATE_COLUMN}]=@{INVOICE_DATE_COLUMN}, [{INVOICE_NUMBER_COLUMN}]=@{INVOICE_NUMBER_COLUMN}, 
+				[{PRICE_COLUMN}]=@{PRICE_COLUMN}, [{PAID_BY_COLUMN}]=@{PAID_BY_COLUMN}, [{OWNER_COLUMN}]=@{OWNER_COLUMN}, 
+				[{INSTALL_DATE_COLUMN}]=@{INSTALL_DATE_COLUMN}, [{INSTALLED_BY_COLUMN}]=@{INSTALLED_BY_COLUMN}, 
+				[{REMARK_COLUMN}]=@{REMARK_COLUMN}, [{TEAMASSET_COLUMN}]=@{TEAMASSET_COLUMN}
+			WHERE [{ID_COLUMN}]=@{ID_COLUMN} AND [{DELETED_COLUMN}]=0";
 
 		public static void PopulateFrom(SqlDataReader reader, AssetDto target)
 		{
@@ -173,7 +161,8 @@ namespace LinkIT.Data.Repositories
 			target.TeamAsset = GetColumnValue<bool>(reader, TEAMASSET_COLUMN);
 		}
 
-		public override IEnumerable<string> Columns => COLUMNS;
+		public override IEnumerable<string> Columns => 
+			COLUMNS;
 
 		public override IEnumerable<AssetDto> GetById(IEnumerable<long> ids)
 		{
