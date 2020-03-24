@@ -42,7 +42,7 @@ namespace LinkIT.Data.Repositories
 			{
 				yield return new DeviceDto
 				{
-					Id = GetColumnValue<long?>(reader, ID_COLUMN),
+					Id = GetColumnValue<long>(reader, ID_COLUMN),
 					Tag = GetColumnValue<string>(reader, TAG_COLUMN),
 					Owner = GetColumnValue<string>(reader, OWNER_COLUMN),
 					Brand = GetColumnValue<string>(reader, BRAND_COLUMN),

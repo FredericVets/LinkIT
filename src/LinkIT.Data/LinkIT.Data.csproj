@@ -72,9 +72,11 @@
     <Compile Include="Paging\OrderBy.cs" />
     <Compile Include="Paging\OrderByConverter.cs" />
     <Compile Include="Paging\OrderExtensions.cs" />
+    <Compile Include="Queries\AssetHistoryQuery.cs" />
     <Compile Include="Queries\AssetQuery.cs" />
     <Compile Include="Queries\ProductQuery.cs" />
     <Compile Include="Queries\SpecialOwnerQuery.cs" />
+    <Compile Include="Repositories\AssetHistoryRepository.cs" />
     <Compile Include="Repositories\AssetRepository.cs" />
     <Compile Include="Repositories\IAssetRepository.cs" />
     <Compile Include="Repositories\IRepositoryOfTU.cs" />

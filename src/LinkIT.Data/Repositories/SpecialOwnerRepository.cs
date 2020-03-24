@@ -51,11 +51,12 @@ namespace LinkIT.Data.Repositories
 			{
 				yield return new SpecialOwnerDto
 				{
-					Id = GetColumnValue<long?>(reader, ID_COLUMN),
-					CreationDate = GetColumnValue<DateTime?>(reader, CREATION_DATE_COLUMN),
+					Id = GetColumnValue<long>(reader, ID_COLUMN),
+					CreationDate = GetColumnValue<DateTime>(reader, CREATION_DATE_COLUMN),
 					CreatedBy = GetColumnValue<string>(reader, CREATED_BY_COLUMN),
-					ModificationDate = GetColumnValue<DateTime?>(reader, MODIFICATION_DATE_COLUMN),
+					ModificationDate = GetColumnValue<DateTime>(reader, MODIFICATION_DATE_COLUMN),
 					ModifiedBy = GetColumnValue<string>(reader, MODIFIED_BY_COLUMN),
+
 					Name = GetColumnValue<string>(reader, NAME_COLUMN),
 					Remark = GetColumnValue<string>(reader, REMARK_COLUMN)
 				};

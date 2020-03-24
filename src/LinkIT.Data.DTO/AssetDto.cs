@@ -103,5 +103,11 @@ namespace LinkIT.Data.DTO
 				Remark == other.Remark &&
 				TeamAsset == other.TeamAsset;
 		}
+
+		// Supplies a shallow copy.
+		public AssetDto Copy()
+		{
+			return (AssetDto)MemberwiseClone();
+		}
 	}
 }

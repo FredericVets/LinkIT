@@ -108,31 +108,10 @@ namespace LinkIT.Data.Repositories
 		{
 			while (reader.Read())
 			{
-				yield return new AssetDto
-				{
-					Id = GetColumnValue<long?>(reader, ID_COLUMN),
-					CreationDate = GetColumnValue<DateTime?>(reader, CREATION_DATE_COLUMN),
-					CreatedBy = GetColumnValue<string>(reader, CREATED_BY_COLUMN),
-					ModificationDate = GetColumnValue<DateTime?>(reader, MODIFICATION_DATE_COLUMN),
-					ModifiedBy = GetColumnValue<string>(reader, MODIFIED_BY_COLUMN),
-					IctsReference = GetColumnValue<string>(reader, ICTS_REFERENCE_COLUMN),
-					Tag = GetColumnValue<string>(reader, TAG_COLUMN),
-					Serial = GetColumnValue<string>(reader, SERIAL_COLUMN),
-					Product = new ProductDto
-					{
-						Id = GetColumnValue<long?>(reader, PRODUCT_ID_COLUMN)
-					},
-					Description = GetColumnValue<string>(reader, DESCRIPTION_COLUMN),
-					InvoiceDate = GetColumnValue<DateTime?>(reader, INVOICE_DATE_COLUMN),
-					InvoiceNumber = GetColumnValue<string>(reader, INVOICE_NUMBER_COLUMN),
-					Price = GetColumnValue<decimal?>(reader, PRICE_COLUMN),
-					PaidBy = GetColumnValue<string>(reader, PAID_BY_COLUMN),
-					Owner = GetColumnValue<string>(reader, OWNER_COLUMN),
-					InstallDate = GetColumnValue<DateTime?>(reader, INSTALL_DATE_COLUMN),
-					InstalledBy = GetColumnValue<string>(reader, INSTALLED_BY_COLUMN),
-					Remark = GetColumnValue<string>(reader, REMARK_COLUMN),
-					TeamAsset = GetColumnValue<bool>(reader, TEAMASSET_COLUMN)
-				};
+				var dto = new AssetDto();
+				PopulateFrom(reader, dto);
+
+				yield return dto;
 			}
 		}
 
@@ -162,6 +141,36 @@ namespace LinkIT.Data.Repositories
 					[{INSTALL_DATE_COLUMN}]=@{INSTALL_DATE_COLUMN}, [{INSTALLED_BY_COLUMN}]=@{INSTALLED_BY_COLUMN}, 
 					[{REMARK_COLUMN}]=@{REMARK_COLUMN}, [{TEAMASSET_COLUMN}]=@{TEAMASSET_COLUMN}
 				WHERE [{ID_COLUMN}]=@{ID_COLUMN} AND [{DELETED_COLUMN}]=0";
+		}
+
+		public static void PopulateFrom(SqlDataReader reader, AssetDto target)
+		{
+			if (target == null)
+				throw new ArgumentNullException("target");
+
+			target.Id = GetColumnValue<long>(reader, ID_COLUMN);
+			target.CreationDate = GetColumnValue<DateTime>(reader, CREATION_DATE_COLUMN);
+			target.CreatedBy = GetColumnValue<string>(reader, CREATED_BY_COLUMN);
+			target.ModificationDate = GetColumnValue<DateTime>(reader, MODIFICATION_DATE_COLUMN);
+			target.ModifiedBy = GetColumnValue<string>(reader, MODIFIED_BY_COLUMN);
+
+			target.IctsReference = GetColumnValue<string>(reader, ICTS_REFERENCE_COLUMN);
+			target.Tag = GetColumnValue<string>(reader, TAG_COLUMN);
+			target.Serial = GetColumnValue<string>(reader, SERIAL_COLUMN);
+			target.Product = new ProductDto
+			{
+				Id = GetColumnValue<long?>(reader, PRODUCT_ID_COLUMN)
+			};
+			target.Description = GetColumnValue<string>(reader, DESCRIPTION_COLUMN);
+			target.InvoiceDate = GetColumnValue<DateTime?>(reader, INVOICE_DATE_COLUMN);
+			target.InvoiceNumber = GetColumnValue<string>(reader, INVOICE_NUMBER_COLUMN);
+			target.Price = GetColumnValue<decimal?>(reader, PRICE_COLUMN);
+			target.PaidBy = GetColumnValue<string>(reader, PAID_BY_COLUMN);
+			target.Owner = GetColumnValue<string>(reader, OWNER_COLUMN);
+			target.InstallDate = GetColumnValue<DateTime?>(reader, INSTALL_DATE_COLUMN);
+			target.InstalledBy = GetColumnValue<string>(reader, INSTALLED_BY_COLUMN);
+			target.Remark = GetColumnValue<string>(reader, REMARK_COLUMN);
+			target.TeamAsset = GetColumnValue<bool>(reader, TEAMASSET_COLUMN);
 		}
 
 		public override IEnumerable<string> Columns => COLUMNS;
