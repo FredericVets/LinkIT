@@ -44,8 +44,21 @@ CREATE NONCLUSTERED INDEX IX_AssetHistory_Tag ON [dbo].[AssetHistory](Tag);
 
 GO
 
--- Create the AfterUpdate trigger on the Asset table
+-- Create the AfterUpdate and AfterInsert triggers on the Asset table
+DROP TRIGGER IF EXISTS [dbo].[AfterAssetInsertTrigger];
 DROP TRIGGER IF EXISTS [dbo].[AfterAssetUpdateTrigger];
+
+GO
+
+CREATE TRIGGER [dbo].[AfterAssetInsertTrigger] on [dbo].[Asset]
+AFTER INSERT
+AS
+	INSERT INTO [dbo].[AssetHistory] ([AssetId], [CreationDate], [CreatedBy], [ModificationDate], [ModifiedBy], [IctsReference], [Tag], [Serial], [ProductId], [Description], 
+		[InvoiceDate], [InvoiceNumber], [Price], [PaidBy], [Owner], [InstallDate], [InstalledBy], [Remark], [TeamAsset], [Deleted])
+	SELECT ins.Id, ins.CreationDate, ins.CreatedBy, ins.ModificationDate, ins.ModifiedBy, ins.IctsReference, ins.Tag, ins.Serial, ins.ProductId, ins.Description, 
+		ins.InvoiceDate, ins.InvoiceNumber, ins.Price, ins.PaidBy, ins.Owner, ins.InstallDate, ins.InstalledBy, ins.Remark, ins.TeamAsset, ins.Deleted 
+	FROM INSERTED ins
+;
 
 GO
 
