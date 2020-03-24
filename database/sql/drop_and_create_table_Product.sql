@@ -4,9 +4,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- Asset has foreign key dependency
-DROP TABLE IF EXISTS [dbo].[Asset]
-DROP TABLE IF EXISTS [dbo].[Product]
+-- Product has foreign key dependencies.
+DROP TABLE IF EXISTS [dbo].[AssetHistory];
+DROP TABLE IF EXISTS [dbo].[Asset];
+DROP TABLE IF EXISTS [dbo].[Product];
 
 CREATE TABLE [dbo].[Product](
 	[Id] bigint PRIMARY KEY IDENTITY(1,1) NOT NULL,
@@ -16,5 +17,6 @@ CREATE TABLE [dbo].[Product](
 	[ModifiedBy] varchar(30) NOT NULL,
 	[Brand] varchar(30) NOT NULL,
 	[Type] varchar(30) NOT NULL
-)
+);
+
 GO

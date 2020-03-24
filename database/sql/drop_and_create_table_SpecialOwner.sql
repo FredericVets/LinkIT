@@ -4,7 +4,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-DROP TABLE IF EXISTS [dbo].[SpecialOwner]
+DROP TABLE IF EXISTS [dbo].[SpecialOwner];
 
 CREATE TABLE [dbo].[SpecialOwner](
 	[Id] bigint PRIMARY KEY IDENTITY(1,1) NOT NULL,
@@ -14,5 +14,6 @@ CREATE TABLE [dbo].[SpecialOwner](
 	[ModifiedBy] varchar(30) NOT NULL,
 	[Name] varchar(30) NOT NULL,
 	[Remark] varchar(30)
-)
+);
+
 GO

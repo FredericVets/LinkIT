@@ -14,7 +14,11 @@ using System.Web.Http;
 
 namespace LinkIT.Web.Controllers.Api
 {
-	// See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials for introduction.
+	/// <summary>
+	/// This is a first implementation of a webapi controller.
+	/// For referential purposes.
+	/// See docs at https://www.tutorialsteacher.com/webapi/web-api-tutorials for introduction.
+	/// </summary>
 	public class DevicesController : ApiController
 	{
 		private const int BULK_PUT_THRESHOLD = 50;

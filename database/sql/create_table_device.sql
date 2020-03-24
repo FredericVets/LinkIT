@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-DROP TABLE IF EXISTS dbo.Device
+DROP TABLE IF EXISTS dbo.Device;
 
 CREATE TABLE [dbo].[Device](
 	[Id] bigint PRIMARY KEY IDENTITY(1,1) NOT NULL,
@@ -13,5 +13,6 @@ CREATE TABLE [dbo].[Device](
 	[Owner] nvarchar(20) NOT NULL,
 	[Brand] nvarchar(20) NOT NULL,
 	[Type] nvarchar(20) NOT NULL,
-)
+);
+
 GO
