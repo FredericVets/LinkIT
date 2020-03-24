@@ -1,5 +1,6 @@
 ﻿using System;
 using LinkIT.Data.DTO;
+using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -29,8 +30,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		[TestInitialize]
 		public void Setup()
 		{
-			_productRepo = new ProductRepository(AssetDatabaseHelper.ConnectionString);
-			_sut = new AssetRepository(AssetDatabaseHelper.ConnectionString, _productRepo);
+			_productRepo = new ProductRepository(ConnectionString.Get());
+			_sut = new AssetRepository(ConnectionString.Get(), _productRepo);
 
 			var product = InsertProduct();
 
@@ -58,15 +59,14 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		{
 			_sut.Delete(_asset.Id.Value);
 
-			bool marked = AssetDatabaseHelper.IsMarkedAsDeleted(_asset.Id.Value);
+			bool marked = new DatabaseHelper().IsAssetMarkedAsDeleted(_asset.Id.Value);
 			Assert.IsTrue(marked);
 		}
 
 		[TestCleanup]
 		public void Cleanup()
 		{
-			AssetDatabaseHelper.HardDelete(_asset.Id.Value);
-			_productRepo.Delete(_asset.Product.Id.Value);
+			new DatabaseHelper().HardDeleteAll();
 		}
 	}
 }

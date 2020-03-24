@@ -1,8 +1,8 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
@@ -24,8 +24,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		[TestInitialize]
 		public void Setup()
 		{
-			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
-			_sut = new SpecialOwnerRepository(conStr);
+			_sut = new SpecialOwnerRepository(ConnectionString.Get());
 
 			_expected = new List<SpecialOwnerDto>
 			{
@@ -56,7 +55,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		[TestCleanup]
 		public void Cleanup()
 		{
-			_expected.ToList().ForEach(x => _sut.Delete(x.Id.Value));
+			new DatabaseHelper().HardDeleteAll();
 		}
 	}
 }

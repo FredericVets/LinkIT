@@ -1,8 +1,8 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Configuration;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 {
@@ -14,8 +14,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		[TestInitialize]
 		public void Setup()
 		{
-			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
-			_sut = new DeviceRepository(conStr);
+			_sut = new DeviceRepository(ConnectionString.Get());
 		}
 
 		[TestMethod]

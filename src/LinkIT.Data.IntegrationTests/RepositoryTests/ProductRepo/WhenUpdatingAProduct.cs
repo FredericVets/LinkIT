@@ -1,7 +1,7 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Configuration;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 {
@@ -14,8 +14,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 		[TestInitialize]
 		public void Setup()
 		{
-			var conStr = ConfigurationManager.ConnectionStrings["LinkITConnectionString"].ConnectionString;
-			_sut = new ProductRepository(conStr);
+			_sut = new ProductRepository(ConnectionString.Get());
 
 			_expected = new ProductDto
 			{
@@ -43,7 +42,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 		[TestCleanup]
 		public void Cleanup()
 		{
-			_sut.Delete(_expected.Id.Value);
+			new DatabaseHelper().HardDeleteAll();
 		}
 	}
 }

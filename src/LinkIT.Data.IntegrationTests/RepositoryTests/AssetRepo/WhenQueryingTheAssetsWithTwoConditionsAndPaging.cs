@@ -1,4 +1,5 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
@@ -33,8 +34,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		[TestInitialize]
 		public void Setup()
 		{
-			_productRepo = new ProductRepository(AssetDatabaseHelper.ConnectionString);
-			_sut = new AssetRepository(AssetDatabaseHelper.ConnectionString, _productRepo);
+			_productRepo = new ProductRepository(ConnectionString.Get());
+			_sut = new AssetRepository(ConnectionString.Get(), _productRepo);
 
 			var product = InsertProduct();
 
@@ -129,8 +130,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		[TestCleanup]
 		public void CleanUp()
 		{
-			_assets.ForEach(x => AssetDatabaseHelper.HardDelete(x.Id.Value));
-			_productRepo.Delete(_assets.First().Product.Id.Value);
+			new DatabaseHelper().HardDeleteAll();
 		}
 	}
 }

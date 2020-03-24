@@ -2,13 +2,14 @@
 using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 {
 	[TestClass]
-	public class WhenInsertingANewProduct
+	public class WhenDeletingAProduct
 	{
-		private ProductDto _expected;
+		private ProductDto product;
 		private ProductRepository _sut;
 
 		[TestInitialize]
@@ -16,22 +17,22 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 		{
 			_sut = new ProductRepository(ConnectionString.Get());
 
-			_expected = new ProductDto
+			product = new ProductDto
 			{
 				CreatedBy = "user1",
 				Brand = "HP",
 				Type = "EliteBook"
 			};
+
+			product.Id = _sut.Insert(product);
 		}
 
 		[TestMethod]
-		public void ThenTheDataIsInserted()
+		public void ThenTheAssetIsMarkedAsDeleted()
 		{
-			_expected.Id = _sut.Insert(_expected);
-			var actual = _sut.GetById(_expected.Id.Value);
-
-			Assert.IsNotNull(actual);
-			Assert.AreEqual(_expected, actual);
+			Assert.ThrowsException<InvalidOperationException>(
+				() => _sut.Delete(product.Id.Value),
+				"A Product can not be deleted.");
 		}
 
 		[TestCleanup]

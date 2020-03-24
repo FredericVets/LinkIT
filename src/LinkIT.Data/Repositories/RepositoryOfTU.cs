@@ -353,7 +353,7 @@ namespace LinkIT.Data.Repositories
 			}
 		}
 
-		public void Delete(long id)
+		public virtual void Delete(long id)
 		{
 			using (var con = new SqlConnection(ConnectionString))
 			{

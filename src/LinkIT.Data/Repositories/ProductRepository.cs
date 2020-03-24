@@ -114,5 +114,10 @@ namespace LinkIT.Data.Repositories
 
 			base.Update(items);
 		}
+
+		public override void Delete(long id)
+		{
+			throw new InvalidOperationException("A Product can not be deleted.");
+		}
 	}
 }
