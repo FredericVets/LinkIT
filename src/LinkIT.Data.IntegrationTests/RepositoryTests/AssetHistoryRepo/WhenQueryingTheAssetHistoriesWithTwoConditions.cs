@@ -87,6 +87,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetHistoryRepo
 
 			// And a second modification for one asset;
 			input[1].Description = "Yet another modified description";
+			input[1].IctsReference = "Ref0123456789";
 			input[1].ModifiedBy = "userY";
 
 			_assetRepo.Update(input[1]);

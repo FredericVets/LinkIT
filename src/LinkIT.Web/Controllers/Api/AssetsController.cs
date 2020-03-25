@@ -18,40 +18,16 @@ namespace LinkIT.Web.Controllers.Api
 	{
 		private const int MAX_NUMBER_OWNERS_ALLOWED = 50;
 
-		private readonly IAssetRepository _assetRepo;
+		private readonly IAssetRepository _repo;
 		private readonly ILog _log;
 
 		public AssetsController()
 		{
 			var productRepo = new ProductRepository(ConnectionString.Get());
-			_assetRepo = new AssetRepository(ConnectionString.Get(), productRepo);
+			_repo = new AssetRepository(ConnectionString.Get(), productRepo);
 
 			_log = LogManager.GetLogger(GetType());
 		}
-
-		private static AssetReadModel MapToModel(AssetDto input) =>
-			new AssetReadModel
-			{
-				Id = input.Id.Value,
-				CreationDate = input.CreationDate.Value,
-				CreatedBy = input.CreatedBy,
-				ModificationDate = input.ModificationDate.Value,
-				ModifiedBy = input.ModifiedBy,
-				IctsReference = input.IctsReference,
-				Tag = input.Tag,
-				Serial = input.Serial,
-				Product = ProductsController.MapToModel(input.Product),
-				Description = input.Description,
-				InvoiceDate = input.InvoiceDate,
-				InvoiceNumber = input.InvoiceNumber,
-				Price = input.Price,
-				PaidBy = input.PaidBy,
-				Owner = input.Owner,
-				InstallDate = input.InstallDate,
-				InstalledBy = input.InstalledBy,
-				Remark = input.Remark,
-				TeamAsset = input.TeamAsset
-			};
 
 		private static AssetDto MapToDto(AssetWriteModel input, long? id = null) =>
 			new AssetDto
@@ -110,13 +86,47 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(result);
 		}
 
+		public static AssetReadModel MapToModel(AssetDto input)
+		{
+			var model = new AssetReadModel();
+			Populate(input, model);
+
+			return model;
+		}
+
+		public static void Populate(AssetDto from, AssetReadModel to)
+		{
+			from = from ?? throw new ArgumentNullException("from");
+			to = to ?? throw new ArgumentNullException("to");
+
+			to.Id = from.Id.Value;
+			to.CreationDate = from.CreationDate.Value;
+			to.CreatedBy = from.CreatedBy;
+			to.ModificationDate = from.ModificationDate.Value;
+			to.ModifiedBy = from.ModifiedBy;
+			to.IctsReference = from.IctsReference;
+			to.Tag = from.Tag;
+			to.Serial = from.Serial;
+			to.Product = ProductsController.MapToModel(from.Product);
+			to.Description = from.Description;
+			to.InvoiceDate = from.InvoiceDate;
+			to.InvoiceNumber = from.InvoiceNumber;
+			to.Price = from.Price;
+			to.PaidBy = from.PaidBy;
+			to.Owner = from.Owner;
+			to.InstallDate = from.InstallDate;
+			to.InstalledBy = from.InstalledBy;
+			to.Remark = from.Remark;
+			to.TeamAsset = from.TeamAsset;
+		}
+
 		[Route("api/assets/{id:long:min(1)}", Name = "GetAssetById")]
 		public IHttpActionResult Get(long id)
 		{
-			if (!_assetRepo.Exists(id))
+			if (!_repo.Exists(id))
 				return NotFound();
 
-			var dto = _assetRepo.GetById(id);
+			var dto = _repo.GetById(id);
 			var readModel = MapToModel(dto);
 
 			return Ok(readModel);
@@ -132,19 +142,19 @@ namespace LinkIT.Web.Controllers.Api
 			PagedResult<AssetDto> pagedResult;
 
 			var paging = MappingHelper.MapToPageInfo(pageInfo);
-			if (!paging.OrderBy.IsValidFor(_assetRepo.Columns))
+			if (!paging.OrderBy.IsValidFor(_repo.Columns))
 				return BadRequest($"Unknown field : {paging.OrderBy.Name}.");
 
 			if (filter.IsEmpty())
 			{
-				pagedResult = _assetRepo.PagedQuery(paging);
+				pagedResult = _repo.PagedQuery(paging);
 
 				return CreateActionResultFor(pagedResult);
 			}
 
 			// Apply filter.
 			var query = MapToQuery(filter);
-			pagedResult = _assetRepo.PagedQuery(paging, query);
+			pagedResult = _repo.PagedQuery(paging, query);
 
 			return CreateActionResultFor(pagedResult);
 		}
@@ -164,7 +174,7 @@ namespace LinkIT.Web.Controllers.Api
 			if (trimmed.Count > MAX_NUMBER_OWNERS_ALLOWED)
 				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
 
-			var dtos = _assetRepo.ForOwners(trimmed);
+			var dtos = _repo.ForOwners(trimmed);
 			if (!dtos.Any())
 				return StatusCode(HttpStatusCode.NoContent);
 			
@@ -176,10 +186,10 @@ namespace LinkIT.Web.Controllers.Api
 		[Route("api/assets/{id:long:min(1)}/product")]
 		public IHttpActionResult GetProductFor(long id)
 		{
-			if (!_assetRepo.Exists(id))
+			if (!_repo.Exists(id))
 				return NotFound();
 
-			var dto = _assetRepo.GetById(id);
+			var dto = _repo.GetById(id);
 			var readModel = ProductsController.MapToModel(dto.Product);
 
 			return Ok(readModel);
@@ -194,10 +204,10 @@ namespace LinkIT.Web.Controllers.Api
 				return BadRequest("CreatedBy is required.");
 
 			var dto = MapToDto(model);
-			long id = _assetRepo.Insert(dto);
+			long id = _repo.Insert(dto);
 
 			// Refetch the data.
-			dto = _assetRepo.GetById(id);
+			dto = _repo.GetById(id);
 			var readModel = MapToModel(dto);
 
 			return CreatedAtRoute("GetAssetById", new { id = readModel.Id }, readModel);
@@ -212,15 +222,15 @@ namespace LinkIT.Web.Controllers.Api
 			if (string.IsNullOrWhiteSpace(model.ModifiedBy))
 				return BadRequest("ModifiedBy is required.");
 
-			if (!_assetRepo.Exists(id))
+			if (!_repo.Exists(id))
 				return NotFound();
 
 			var dto = MapToDto(model, id);
 
-			_assetRepo.Update(dto);
+			_repo.Update(dto);
 
 			// Refetch the data.
-			dto = _assetRepo.GetById(id);
+			dto = _repo.GetById(id);
 			var readModel = MapToModel(dto);
 
 			return Ok(readModel);
@@ -229,10 +239,10 @@ namespace LinkIT.Web.Controllers.Api
 		[Route("api/assets/{id:long:min(1)}")]
 		public IHttpActionResult Delete(long id)
 		{
-			if (!_assetRepo.Exists(id))
+			if (!_repo.Exists(id))
 				return NotFound();
 
-			_assetRepo.Delete(id);
+			_repo.Delete(id);
 
 			return StatusCode(HttpStatusCode.NoContent);
 		}

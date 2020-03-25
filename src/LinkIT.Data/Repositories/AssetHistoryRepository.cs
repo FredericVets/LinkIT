@@ -43,7 +43,7 @@ namespace LinkIT.Data.Repositories
 			while (reader.Read())
 			{
 				var dto = new AssetHistoryDto { AssetId = GetColumnValue<long>(reader, ASSET_ID_COLUMN) };
-				AssetRepository.PopulateFrom(reader, dto);
+				AssetRepository.Populate(reader, dto);
 
 				yield return dto;
 			}

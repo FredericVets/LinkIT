@@ -159,6 +159,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Controllers\Api\AssetHistoriesController.cs" />
     <Compile Include="Controllers\Api\AssetsController.cs" />
     <Compile Include="Controllers\Api\DevicesController.cs" />
     <Compile Include="Controllers\Api\MappingHelper.cs" />
@@ -171,10 +172,12 @@
     </Compile>
     <Compile Include="Infrastructure\Api\ConnectionString.cs" />
     <Compile Include="Infrastructure\Api\Log4NetExceptionLogger.cs" />
+    <Compile Include="Models\Api\AssetHistoryReadModel.cs" />
     <Compile Include="Models\Api\AssetReadModel.cs" />
     <Compile Include="Models\Api\AssetWriteModel.cs" />
     <Compile Include="Models\Api\DeviceModel.cs" />
     <Compile Include="Models\Api\Filters\AssetFilterModel.cs" />
+    <Compile Include="Models\Api\Filters\AssetHistoryFilterModel.cs" />
     <Compile Include="Models\Api\Filters\DeviceFilterModel.cs" />
     <Compile Include="Models\Api\Filters\ProductFilterModel.cs" />
     <Compile Include="Models\Api\Filters\SpecialOwnerFilterModel.cs" />
