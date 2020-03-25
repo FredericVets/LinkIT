@@ -52,6 +52,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepositoryTests\AssetHistoryRepo\AssetDtoEqualityComparer.cs" />
+    <Compile Include="RepositoryTests\AssetHistoryRepo\WhenQueryingTheAssetHistoriesWithTwoConditions.cs" />
+    <Compile Include="RepositoryTests\AssetHistoryRepo\WhenQueryingTheAssetHistoriesWithNoCondition.cs" />
     <Compile Include="RepositoryTests\Helpers\DatabaseHelper.cs" />
     <Compile Include="RepositoryTests\AssetRepo\WhenGettingTheAssetsForOwners.cs" />
     <Compile Include="RepositoryTests\AssetRepo\WhenQueryingTheAssetsWithTwoConditionsAndPaging.cs" />
