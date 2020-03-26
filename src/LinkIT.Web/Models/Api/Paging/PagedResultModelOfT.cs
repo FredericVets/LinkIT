@@ -2,7 +2,7 @@
 
 namespace LinkIT.Web.Models.Api.Paging
 {
-	public class PagedResultModel<T> where T : class
+	public class PagedResultModel<T>
 	{
 		public PagedResultModel(
 			IEnumerable<T> result,

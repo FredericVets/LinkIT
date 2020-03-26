@@ -89,35 +89,12 @@ namespace LinkIT.Web.Controllers.Api
 		public static AssetReadModel MapToModel(AssetDto input)
 		{
 			var model = new AssetReadModel();
-			Populate(input, model);
+			MappingHelper.PopulateReadModel(input, model);
+
+			// Map the extra properties belonging only to the AssetReadModel.
+			model.Product = ProductsController.MapToModel(input.Product);
 
 			return model;
-		}
-
-		public static void Populate(AssetDto from, AssetReadModel to)
-		{
-			from = from ?? throw new ArgumentNullException("from");
-			to = to ?? throw new ArgumentNullException("to");
-
-			to.Id = from.Id.Value;
-			to.CreationDate = from.CreationDate.Value;
-			to.CreatedBy = from.CreatedBy;
-			to.ModificationDate = from.ModificationDate.Value;
-			to.ModifiedBy = from.ModifiedBy;
-			to.IctsReference = from.IctsReference;
-			to.Tag = from.Tag;
-			to.Serial = from.Serial;
-			to.Product = ProductsController.MapToModel(from.Product);
-			to.Description = from.Description;
-			to.InvoiceDate = from.InvoiceDate;
-			to.InvoiceNumber = from.InvoiceNumber;
-			to.Price = from.Price;
-			to.PaidBy = from.PaidBy;
-			to.Owner = from.Owner;
-			to.InstallDate = from.InstallDate;
-			to.InstalledBy = from.InstalledBy;
-			to.Remark = from.Remark;
-			to.TeamAsset = from.TeamAsset;
 		}
 
 		[Route("api/assets/{id:long:min(1)}", Name = "GetAssetById")]

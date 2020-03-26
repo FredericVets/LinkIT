@@ -1,11 +1,12 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Infrastructure.Api;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
+using LinkIT.Web.Models.Api.Paging;
 using log4net;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -31,10 +32,11 @@ namespace LinkIT.Web.Controllers.Api
 		private static AssetHistoryReadModel MapToModel(AssetHistoryDto input)
 		{
 			var model = new AssetHistoryReadModel();
-			AssetsController.Populate(input, model);
+			MappingHelper.PopulateReadModel(input, model);
 
-			// Map the extra properties belonging only to the AssetHistoryDto.
+			// Map the extra properties belonging only to the AssetHistoryReadModel.
 			model.AssetId = input.AssetId;
+			model.ProductId = input.Product.Id.Value;
 
 			return model;
 		}
@@ -46,14 +48,18 @@ namespace LinkIT.Web.Controllers.Api
 				Tag = filter.Tag
 			};
 
-		private IHttpActionResult CreateActionResultFor(IEnumerable<AssetHistoryDto> input)
+		private IHttpActionResult CreateActionResultFor(PagedResult<AssetHistoryDto> pagedResult)
 		{
-			if (!input.Any())
+			if (pagedResult.IsEmpty())
 				return StatusCode(HttpStatusCode.NoContent);
 
-			var models = input.Select(MapToModel);
+			var models = pagedResult.Result.Select(MapToModel).ToList();
+			var result = new PagedResultModel<AssetHistoryReadModel>(
+				models,
+				MappingHelper.MapToModel(pagedResult.PageInfo),
+				pagedResult.TotalCount);
 
-			return Ok(models);
+			return Ok(result);
 		}
 
 		[Route("api/asset-histories/{id:long:min(1)}", Name = "GetAssetHistoryById")]
@@ -70,25 +76,32 @@ namespace LinkIT.Web.Controllers.Api
 
 		[Route("api/asset-histories")]
 		public IHttpActionResult Get(
-			[FromUri]AssetHistoryFilterModel filter)
+			[FromUri]AssetHistoryFilterModel filter,
+			[FromUri]PageInfoModel pageInfo)
 		{
 			filter = filter ?? new AssetHistoryFilterModel();
-			IEnumerable<AssetHistoryDto> result;
+			pageInfo = pageInfo ?? new PageInfoModel();
+			PagedResult<AssetHistoryDto> pagedResult;
+
+			var paging = MappingHelper.MapToPageInfo(pageInfo);
+			if (!paging.OrderBy.IsValidFor(_assetHistoryRepo.Columns))
+				return BadRequest($"Unknown field : {paging.OrderBy.Name}.");
 
 			if (filter.IsEmpty())
 			{
-				result = _assetHistoryRepo.Query();
+				pagedResult = _assetHistoryRepo.PagedQuery(paging);
 
-				return CreateActionResultFor(result);
+				return CreateActionResultFor(pagedResult);
 			}
 
+			// Apply filter.
 			var query = MapToQuery(filter);
-			result = _assetHistoryRepo.Query(query);
+			pagedResult = _assetHistoryRepo.PagedQuery(paging, query);
 
-			return CreateActionResultFor(result);
+			return CreateActionResultFor(pagedResult);
 		}
 
-		[Route("api/asset-histories/{id:long:min(1)/asset}")]
+		[Route("api/asset-histories/{id:long:min(1)}/asset")]
 		public IHttpActionResult GetAssetFor(long id)
 		{
 			if (!_assetHistoryRepo.Exists(id))
