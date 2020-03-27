@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D4F2EFA2-781A-4B70-B7AA-BF0D754B8C5C}</ProjectGuid>
+    <ProjectGuid>{E44FDF43-9BCF-4765-970E-9A4D55781A03}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LinkIT.Data.IntegrationTests</RootNamespace>
-    <AssemblyName>LinkIT.Data.IntegrationTests</AssemblyName>
+    <RootNamespace>LinkIT.Data.DTO.UnitTests</RootNamespace>
+    <AssemblyName>LinkIT.Data.DTO.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -46,65 +46,22 @@
       <HintPath>..\packages\MSTest.TestFramework.1.3.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WhenUsingTheUserRolesDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RepositoryTests\AssetHistoryRepo\AssetDtoEqualityComparer.cs" />
-    <Compile Include="RepositoryTests\AssetHistoryRepo\WhenQueryingTheAssetHistoriesWithTwoConditions.cs" />
-    <Compile Include="RepositoryTests\AssetHistoryRepo\WhenQueryingTheAssetHistoriesWithNoCondition.cs" />
-    <Compile Include="RepositoryTests\Helpers\DatabaseHelper.cs" />
-    <Compile Include="RepositoryTests\AssetRepo\WhenGettingTheAssetsForOwners.cs" />
-    <Compile Include="RepositoryTests\AssetRepo\WhenQueryingTheAssetsWithTwoConditionsAndPaging.cs" />
-    <Compile Include="RepositoryTests\AssetRepo\WhenQueryingTheAssetsWithNoCondition.cs" />
-    <Compile Include="RepositoryTests\AssetRepo\WhenUpdatingAnAsset.cs" />
-    <Compile Include="RepositoryTests\AssetRepo\WhenDeletingAnAsset.cs" />
-    <Compile Include="RepositoryTests\AssetRepo\WhenInsertingANewAsset.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenCheckingForExistenceWithListOfIdsAndSomeThatDontExist.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenCheckingForExistenceWithListOfIds.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenGettingByListOfIdsWithSomeThatDontExist.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenGettingByIdThatDoesntExist.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenGettingByListOfIds.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenUpdatingMultipleDevices.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenCheckingForExistence.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithNoConditionAndPaging.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithOneConditionAndPaging.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenDeletingADevice.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenUpdatingADevice.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenInsertingANewDevice.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenGettingById.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithOneCondition.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithTwoConditions.cs" />
-    <Compile Include="RepositoryTests\DeviceRepo\WhenQueryingTheDevicesWithNoCondition.cs" />
-    <Compile Include="RepositoryTests\Helpers\ConnectionString.cs" />
-    <Compile Include="RepositoryTests\ProductRepo\WhenDeletingAProduct.cs" />
-    <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithOneConditionAndPaging.cs" />
-    <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithNoCondition.cs" />
-    <Compile Include="RepositoryTests\ProductRepo\WhenUpdatingAProduct.cs" />
-    <Compile Include="RepositoryTests\ProductRepo\WhenInsertingANewProduct.cs" />
-    <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenDeletingASpecialOwner.cs" />
-    <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenQueryingTheSpecialOwnersWithOneConditionAndPaging.cs" />
-    <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenUpdatingASpecialOwner.cs" />
-    <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenInsertingANewSpecialOwner.cs" />
-    <Compile Include="RepositoryTests\UserRoleRepo\WhenGettingAllTheUserRoles.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <Content Include="nuget.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinkIT.Data.DTO\LinkIT.Data.DTO.csproj">
-      <Project>{D9B1AABB-C2C5-4A7F-AA71-A46834268ED1}</Project>
+      <Project>{d9b1aabb-c2c5-4a7f-aa71-a46834268ed1}</Project>
       <Name>LinkIT.Data.DTO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinkIT.Data\LinkIT.Data.csproj">
-      <Project>{CAF7189D-D1FE-4DEE-A156-20D980D54135}</Project>
-      <Name>LinkIT.Data</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

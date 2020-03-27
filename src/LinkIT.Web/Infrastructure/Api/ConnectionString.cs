@@ -9,7 +9,7 @@ namespace LinkIT.Web.Infrastructure.Api
 
 		public static string Get()
 		{
-			string value = WebConfigurationManager.ConnectionStrings[NAME].ConnectionString;
+			string value = WebConfigurationManager.ConnectionStrings[NAME]?.ConnectionString;
 			if (string.IsNullOrWhiteSpace(value))
 				throw new InvalidOperationException($"Connection string '{NAME}' was not found in config file.");
 

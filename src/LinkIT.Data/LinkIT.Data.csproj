@@ -44,21 +44,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
@@ -88,12 +81,14 @@
     <Compile Include="Queries\Query.cs" />
     <Compile Include="Repositories\DeviceRepository.cs" />
     <Compile Include="Queries\LogicalOperator.cs" />
+    <Compile Include="Repositories\IUserRoleRepository.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="Repositories\SpecialOwnerRepository.cs" />
     <Compile Include="Builders\SqlParameterBuilder.cs" />
     <Compile Include="Repositories\RepositoryOfTU.cs" />
     <Compile Include="Builders\WhereClauseBuilder.cs" />
     <Compile Include="Builders\WhereInClauseBuilder.cs" />
+    <Compile Include="Repositories\UserRoleRepository.cs" />
     <Compile Include="TableNames.cs" />
   </ItemGroup>
   <ItemGroup>

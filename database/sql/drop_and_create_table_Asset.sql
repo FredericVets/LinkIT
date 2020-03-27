@@ -16,10 +16,10 @@ CREATE TABLE [dbo].[Asset](
 	[ModifiedBy] varchar(30) NOT NULL,
 	[IctsReference] varchar(30),
 	[Tag] varchar(15) NOT NULL,
-		CONSTRAINT UQ_Asset_tag UNIQUE (Tag),
+		CONSTRAINT UQ_Asset_Tag UNIQUE (Tag),
 	[Serial] varchar(30),
 	[ProductId] bigint NOT NULL,
-		CONSTRAINT FK_Asset_Product_id FOREIGN KEY (ProductId)
+		CONSTRAINT FK_Asset_Product_Id FOREIGN KEY (ProductId)
 		REFERENCES [dbo].[Product](Id),
 	[Description] varchar(500),
 	[InvoiceDate] DateTime2,

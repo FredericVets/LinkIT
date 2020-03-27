@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS [dbo].[AssetHistory];
 CREATE TABLE [dbo].[AssetHistory](
 	[Id] bigint PRIMARY KEY IDENTITY(1,1) NOT NULL,
 	[AssetId] bigint NOT NULL,
-		 CONSTRAINT FK_AssetHistory_Asset_id FOREIGN KEY (AssetId)
+		 CONSTRAINT FK_AssetHistory_Asset_Id FOREIGN KEY (AssetId)
 		 REFERENCES [dbo].[Asset](Id),
 	[CreationDate] DateTime2 NOT NULL,
 	[CreatedBy] varchar(30) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[AssetHistory](
 	[Tag] varchar(15) NOT NULL,
 	[Serial] varchar(30),
 	[ProductId] bigint NOT NULL,
-		CONSTRAINT FK_AssetHistory_Product_id FOREIGN KEY (ProductId)
+		CONSTRAINT FK_AssetHistory_Product_Id FOREIGN KEY (ProductId)
 		REFERENCES [dbo].[Product](Id),
 	[Description] varchar(500),
 	[InvoiceDate] DateTime2,

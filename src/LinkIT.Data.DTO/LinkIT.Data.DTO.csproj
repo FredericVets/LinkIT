@@ -74,6 +74,7 @@
     <Compile Include="ProductDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpecialOwnerDto.cs" />
+    <Compile Include="UserRolesDto.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="nuget.config" />
