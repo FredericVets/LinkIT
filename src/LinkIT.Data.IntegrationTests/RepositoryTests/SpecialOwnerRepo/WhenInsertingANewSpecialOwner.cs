@@ -53,9 +53,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		}
 
 		[TestCleanup]
-		public void Cleanup()
-		{
+		public void Cleanup() =>
 			new DatabaseHelper().HardDeleteAll();
-		}
 	}
 }

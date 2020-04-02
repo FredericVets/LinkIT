@@ -1,7 +1,5 @@
 ﻿using LinkIT.Data.DTO;
 using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
-using LinkIT.Data.Paging;
-using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
@@ -10,9 +8,9 @@ using System.Linq;
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 {
 	[TestClass]
-	public class WhenQueryingTheSpecialOwnersWithOneConditionAndPaging
+	public class WhenGettingByListOfIds
 	{
-		private List<SpecialOwnerDto> _specialOwners;
+		private List<SpecialOwnerDto> _expected;
 		private SpecialOwnerRepository _sut;
 
 		[TestInitialize]
@@ -20,7 +18,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		{
 			_sut = new SpecialOwnerRepository(ConnectionString.Get());
 
-			_specialOwners = new List<SpecialOwnerDto>()
+			_expected = new List<SpecialOwnerDto>()
 			{
 				new SpecialOwnerDto
 				{
@@ -52,28 +50,19 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 
 			};
 
-			_specialOwners.ForEach(x => x.Id = _sut.Insert(x));
+			_expected.ForEach(x => x.Id = _sut.Insert(x));
 		}
 
 		[TestMethod]
-		public void ThenTheResultIsAsExpected()
+		public void ThenTheExpectedInstancesAreRetrieved()
 		{
-			var query = new SpecialOwnerQuery { CreatedBy = "user1" };
-			var pageInfo = new PageInfo(
-				2,
-				2,
-				new OrderBy(SpecialOwnerRepository.CREATED_BY_COLUMN, Order.DESCENDING));
-			var actual = _sut.PagedQuery(pageInfo, query);
+			var ids = _expected.Select(x => x.Id.Value);
+			var actual = _sut.GetById(ids).ToList();
 
-			// Simulate the paging on the in-memory collection.
-			var expected = _specialOwners.OrderByDescending(x => x.CreatedBy).Skip(2).Take(2).ToList();
-
-			Assert.AreEqual(pageInfo, actual.PageInfo);
-			Assert.AreEqual(5, actual.TotalCount);
-			Assert.AreEqual(2, actual.Result.Count());
-			foreach (var item in expected)
+			Assert.AreEqual(_expected.Count, actual.Count);
+			foreach (var item in _expected)
 			{
-				var actualDto = actual.Result.Single(x => x.Id == item.Id);
+				var actualDto = actual.Single(x => x.Id == item.Id);
 				Assert.AreEqual(item, actualDto);
 			}
 		}

@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 {
 	[TestClass]
-	public class WhenDeletingASpecialOwner
+	public class WhenCheckingForExistence
 	{
 		private SpecialOwnerDto _specialOwner;
 		private SpecialOwnerRepository _sut;
@@ -15,7 +15,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		public void Setup()
 		{
 			_sut = new SpecialOwnerRepository(ConnectionString.Get());
-			
+
 			_specialOwner = new SpecialOwnerDto
 			{
 				CreatedBy = "user1",
@@ -27,11 +27,10 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		}
 
 		[TestMethod]
-		public void ThenTheSpecialOwnerIsDeleted()
+		public void ThenTheSpecialOwnerExists()
 		{
-			_sut.Delete(_specialOwner.Id.Value);
-
-			Assert.IsFalse(_sut.Exists(_specialOwner.Id.Value));
+			bool actual = _sut.Exists(_specialOwner.Id.Value);
+			Assert.IsTrue(actual);
 		}
 
 		[TestCleanup]

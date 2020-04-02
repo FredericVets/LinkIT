@@ -3,32 +3,31 @@ using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
+namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 {
 	[TestClass]
 	public class WhenGettingById
 	{
-		private DeviceDto _expected;
-		private DeviceRepository _sut;
+		private SpecialOwnerDto _expected;
+		private SpecialOwnerRepository _sut;
 
 		[TestInitialize]
 		public void Setup()
 		{
-			_sut = new DeviceRepository(ConnectionString.Get());
+			_sut = new SpecialOwnerRepository(ConnectionString.Get());
 
-			_expected = new DeviceDto
+			_expected = new SpecialOwnerDto
 			{
-				Brand = "HP",
-				Type = "AwesomeBook",
-				Owner = "Unknown",
-				Tag = "CRD-X-01234"
+				CreatedBy = "user1",
+				Name = "Special one",
+				Remark = "I'm special"
 			};
 
 			_expected.Id = _sut.Insert(_expected);
 		}
 
 		[TestMethod]
-		public void ThenTheResultIsAsExpected()
+		public void ThenTheExpectedInstanceIsRetrieved()
 		{
 			var actual = _sut.GetById(_expected.Id.Value);
 
@@ -37,9 +36,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.DeviceRepo
 		}
 
 		[TestCleanup]
-		public void Cleanup()
-		{
-			_sut.Delete(_expected.Id.Value);
-		}
+		public void Cleanup() =>
+			new DatabaseHelper().HardDeleteAll();
 	}
 }

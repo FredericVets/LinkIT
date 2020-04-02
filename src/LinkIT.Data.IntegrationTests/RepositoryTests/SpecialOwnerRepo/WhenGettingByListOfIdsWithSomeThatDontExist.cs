@@ -1,18 +1,17 @@
 ﻿using LinkIT.Data.DTO;
 using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
-using LinkIT.Data.Paging;
-using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 {
 	[TestClass]
-	public class WhenQueryingTheSpecialOwnersWithOneConditionAndPaging
+	public class WhenGettingByListOfIdsWithSomeThatDontExist
 	{
-		private List<SpecialOwnerDto> _specialOwners;
+		private List<SpecialOwnerDto> _expected;
 		private SpecialOwnerRepository _sut;
 
 		[TestInitialize]
@@ -20,7 +19,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		{
 			_sut = new SpecialOwnerRepository(ConnectionString.Get());
 
-			_specialOwners = new List<SpecialOwnerDto>()
+			_expected = new List<SpecialOwnerDto>()
 			{
 				new SpecialOwnerDto
 				{
@@ -52,30 +51,20 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 
 			};
 
-			_specialOwners.ForEach(x => x.Id = _sut.Insert(x));
+			_expected.ForEach(x => x.Id = _sut.Insert(x));
 		}
 
 		[TestMethod]
-		public void ThenTheResultIsAsExpected()
+		public void ThenAnExceptionIsThrown()
 		{
-			var query = new SpecialOwnerQuery { CreatedBy = "user1" };
-			var pageInfo = new PageInfo(
-				2,
-				2,
-				new OrderBy(SpecialOwnerRepository.CREATED_BY_COLUMN, Order.DESCENDING));
-			var actual = _sut.PagedQuery(pageInfo, query);
+			var ids = _expected.Select(x => x.Id.Value).ToList();
 
-			// Simulate the paging on the in-memory collection.
-			var expected = _specialOwners.OrderByDescending(x => x.CreatedBy).Skip(2).Take(2).ToList();
+			// Add range of non existing items.
+			ids.AddRange(new[] { -1L, -1L, -2L, -3L });
 
-			Assert.AreEqual(pageInfo, actual.PageInfo);
-			Assert.AreEqual(5, actual.TotalCount);
-			Assert.AreEqual(2, actual.Result.Count());
-			foreach (var item in expected)
-			{
-				var actualDto = actual.Result.Single(x => x.Id == item.Id);
-				Assert.AreEqual(item, actualDto);
-			}
+			Assert.ThrowsException<ArgumentException>(
+				() => _sut.GetById(ids),
+				"Not all supplied id's exist.");
 		}
 
 		[TestCleanup]

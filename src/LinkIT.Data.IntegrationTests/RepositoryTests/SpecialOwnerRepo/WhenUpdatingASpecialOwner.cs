@@ -9,7 +9,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 	[TestClass]
 	public class WhenUpdatingASpecialOwner
 	{
-		private IEnumerable<SpecialOwnerDto> _expected;
+		private List<SpecialOwnerDto> _expected;
 		private SpecialOwnerRepository _sut;
 
 		private void AssertDto(SpecialOwnerDto expected)
@@ -41,12 +41,11 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 				}
 			};
 
-			foreach (var owner in _expected)
-				owner.Id = _sut.Insert(owner);
+			_expected.ForEach(x => x.Id = _sut.Insert(x));
 		}
 
 		[TestMethod]
-		public void ThenTheDataIsInserted()
+		public void ThenTheDataIsUpdated()
 		{
 			foreach (var owner in _expected)
 			{
@@ -61,9 +60,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		}
 
 		[TestCleanup]
-		public void Cleanup()
-		{
+		public void Cleanup() =>
 			new DatabaseHelper().HardDeleteAll();
-		}
 	}
 }
