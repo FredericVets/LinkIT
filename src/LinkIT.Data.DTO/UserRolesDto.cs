@@ -6,10 +6,8 @@ namespace LinkIT.Data.DTO
 {
 	public class UserRolesDto
 	{
-		public UserRolesDto(IDictionary<string, IEnumerable<string>> data)
-		{
+		public UserRolesDto(IDictionary<string, IEnumerable<string>> data) =>
 			Data = data ?? throw new ArgumentNullException(nameof(data));
-		}
 
 		private void GuardUser(string user)
 		{

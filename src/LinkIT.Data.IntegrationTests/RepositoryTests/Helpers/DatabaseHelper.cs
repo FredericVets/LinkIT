@@ -1,4 +1,5 @@
 ﻿using LinkIT.Data.Repositories;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -9,7 +10,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.Helpers
 		internal DatabaseHelper() : this(ConnectionString.Get()) { }
 
 		internal DatabaseHelper(string connString) =>
-			ConnString = connString;
+			ConnString = connString ?? throw new ArgumentNullException(nameof(connString));
 
 		private static string CreateUserRoleInsertStatement() =>
 			$@"INSERT INTO [{TableNames.USER_ROLE_TABLE}] ([{UserRoleRepository.USER_NAME_COLUMN}], [{UserRoleRepository.ROLES_COLUMN}])

@@ -46,7 +46,7 @@ namespace LinkIT.Data.DTO.UnitTests
 		}
 
 		[TestMethod]
-		public void TheExpectedExceptionsAreThrown()
+		public void ThenExpectedExceptionsAreThrown()
 		{
 			Assert.ThrowsException<ArgumentNullException>(
 				() => _sut.HasUser(string.Empty),
