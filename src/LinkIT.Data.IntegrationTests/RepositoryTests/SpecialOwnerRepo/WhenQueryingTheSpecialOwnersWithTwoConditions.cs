@@ -65,9 +65,9 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 
 			Assert.AreEqual(2, actual.Count());
 
-			foreach (var expectedDto in _specialOwners)
+			foreach (var actualDto in actual)
 			{
-				var actualDto = actual.Single(x => x.Id == expectedDto.Id);
+				var expectedDto = _specialOwners.Single(x => x.Id == actualDto.Id);
 				Assert.AreEqual(expectedDto, actualDto);
 			}
 		}
