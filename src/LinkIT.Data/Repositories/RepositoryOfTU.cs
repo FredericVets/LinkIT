@@ -44,15 +44,6 @@ namespace LinkIT.Data.Repositories
 			@params.Add("@RowsPerPage", SqlDbType.Int).Value = pageInfo.RowsPerPage;
 		}
 
-		protected static T GetColumnValue<T>(SqlDataReader reader, string columnName)
-		{
-			object value = reader[columnName];
-			if (value == null || value == DBNull.Value)
-				return default;
-
-			return (T)value;
-		}
-
 		protected abstract void AddParametersFor(TDto input, SqlParameterBuilder builder);
 
 		protected abstract void AddParametersFor(TQuery input, WhereClauseBuilder builder);
@@ -76,6 +67,15 @@ namespace LinkIT.Data.Repositories
 			$"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]";
 
 		public abstract IEnumerable<string> Columns { get; }
+
+		public static T GetColumnValue<T>(SqlDataReader reader, string columnName)
+		{
+			object value = reader[columnName];
+			if (value == null || value == DBNull.Value)
+				return default;
+
+			return (T)value;
+		}
 
 		public bool Exists(long id) => 
 			Exists(new[] { id });

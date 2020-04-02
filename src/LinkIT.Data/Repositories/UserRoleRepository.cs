@@ -1,4 +1,5 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Queries;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -20,23 +21,14 @@ namespace LinkIT.Data.Repositories
 		private static string CreateSelectStatement() =>
 			$"SELECT * FROM [{TableNames.USER_ROLE_TABLE}]";
 
-		private static T GetColumnValue<T>(SqlDataReader reader, string columnName)
-		{
-			object value = reader[columnName];
-			if (value == null || value == DBNull.Value)
-				return default;
-
-			return (T)value;
-		}
-
 		private UserRolesDto ReadDtoFrom(SqlDataReader reader)
 		{
 			var data = new Dictionary<string, IEnumerable<string>>();
 			while (reader.Read())
 			{
-				long id = GetColumnValue<long>(reader, ID_COLUMN);
-				string user = GetColumnValue<string>(reader, USER_NAME_COLUMN);
-				string roles = GetColumnValue<string>(reader, ROLES_COLUMN);
+				long id = Repository<Dto, Query>.GetColumnValue<long>(reader, ID_COLUMN);
+				string user = Repository<Dto, Query>.GetColumnValue<string>(reader, USER_NAME_COLUMN);
+				string roles = Repository<Dto, Query>.GetColumnValue<string>(reader, ROLES_COLUMN);
 
 				if (string.IsNullOrWhiteSpace(roles))
 					throw new InvalidOperationException($"Roles not specified for record with id : '{id}'.");
