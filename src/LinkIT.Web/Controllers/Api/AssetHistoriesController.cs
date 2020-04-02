@@ -16,6 +16,7 @@ namespace LinkIT.Web.Controllers.Api
 	public class AssetHistoriesController : ApiController
 	{
 		private readonly IRepository<AssetHistoryDto, AssetHistoryQuery> _assetHistoryRepo;
+		private readonly IRepository<ProductDto, ProductQuery> _productRepo;
 		private readonly IAssetRepository _assetRepo;
 		private readonly ILog _log;
 
@@ -23,8 +24,8 @@ namespace LinkIT.Web.Controllers.Api
 		{
 			_assetHistoryRepo = new AssetHistoryRepository(ConnectionString.Get());
 			
-			var productRepo = new ProductRepository(ConnectionString.Get());
-			_assetRepo = new AssetRepository(ConnectionString.Get(), productRepo);
+			_productRepo = new ProductRepository(ConnectionString.Get());
+			_assetRepo = new AssetRepository(ConnectionString.Get(), _productRepo);
 
 			_log = LogManager.GetLogger(GetType());
 		}
@@ -111,6 +112,20 @@ namespace LinkIT.Web.Controllers.Api
 			var assetDto = _assetRepo.GetById(historyDto.AssetId);
 
 			var readModel = AssetsController.MapToModel(assetDto);
+
+			return Ok(readModel);
+		}
+
+		[Route("api/asset-histories/{id:long:min(1)}/product")]
+		public IHttpActionResult GetProductFor(long id)
+		{
+			if (!_assetHistoryRepo.Exists(id))
+				return NotFound();
+
+			var historyDto = _assetHistoryRepo.GetById(id);
+			var productDto = _productRepo.GetById(historyDto.Product.Id.Value);
+
+			var readModel = ProductsController.MapToModel(productDto);
 
 			return Ok(readModel);
 		}

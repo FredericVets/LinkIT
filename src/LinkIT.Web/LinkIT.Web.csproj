@@ -161,7 +161,6 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\Api\AssetHistoriesController.cs" />
     <Compile Include="Controllers\Api\AssetsController.cs" />
-    <Compile Include="Controllers\Api\DevicesController.cs" />
     <Compile Include="Controllers\Api\MappingHelper.cs" />
     <Compile Include="Controllers\Api\ProductsController.cs" />
     <Compile Include="Controllers\Api\SpecialOwnersController.cs" />
@@ -176,10 +175,8 @@
     <Compile Include="Models\Api\AssetReadModel.cs" />
     <Compile Include="Models\Api\AssetWriteModel.cs" />
     <Compile Include="Models\Api\BaseAssetReadModel.cs" />
-    <Compile Include="Models\Api\DeviceModel.cs" />
     <Compile Include="Models\Api\Filters\AssetFilterModel.cs" />
     <Compile Include="Models\Api\Filters\AssetHistoryFilterModel.cs" />
-    <Compile Include="Models\Api\Filters\DeviceFilterModel.cs" />
     <Compile Include="Models\Api\Filters\ProductFilterModel.cs" />
     <Compile Include="Models\Api\Filters\SpecialOwnerFilterModel.cs" />
     <Compile Include="Models\Api\Paging\PagedResultModelOfT.cs" />

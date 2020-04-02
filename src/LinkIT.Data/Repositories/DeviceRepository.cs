@@ -7,6 +7,10 @@ using System.Data.SqlClient;
 
 namespace LinkIT.Data.Repositories
 {
+	/// <summary>
+	/// This class isn't used anymore. Served as a reference implementation.
+	/// Is still present because it's used in several integration tests that assert common functionality.
+	/// </summary>
 	public class DeviceRepository : Repository<DeviceDto, DeviceQuery>
 	{
 		public const string TAG_COLUMN = "Tag";
