@@ -21,10 +21,10 @@ namespace LinkIT.Data.Builders
 		public WhereInClauseBuilder(string columnName, IDbCommand command, bool hasSoftDelete)
 		{
 			if (string.IsNullOrWhiteSpace(columnName))
-				throw new ArgumentNullException(columnName);
+				throw new ArgumentNullException(nameof(columnName));
 
 			_columnName = columnName;
-			_command = command ?? throw new ArgumentNullException("command");
+			_command = command ?? throw new ArgumentNullException(nameof(command));
 			_hasSoftDelete = hasSoftDelete;
 			_builder = new StringBuilder();
 			_isFirstParameter = true;
@@ -48,7 +48,7 @@ namespace LinkIT.Data.Builders
 		public WhereInClauseBuilder ForParameters<T>(IEnumerable<T> values, SqlDbType sqlType)
 		{
 			if (values == null || !values.Any())
-				throw new ArgumentNullException("values");
+				throw new ArgumentNullException(nameof(values));
 
 			var valuesArray = values.ToArray();
 			for (int i = 0; i < valuesArray.Length; i++)

@@ -145,9 +145,13 @@ namespace LinkIT.Web.Controllers.Api
 		public IHttpActionResult GetForOwners(string owners)
 		{
 			if (string.IsNullOrWhiteSpace(owners))
-				throw new ArgumentNullException("owners");
+				throw new ArgumentNullException(nameof(owners));
 
-			var trimmed = owners.Split(',').Select(x => x.Trim()).ToList();
+			var trimmed = owners
+				.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(x => x.Trim())
+				.Except(new[] { string.Empty })
+				.ToList();
 			if (trimmed.Count > MAX_NUMBER_OWNERS_ALLOWED)
 				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
 

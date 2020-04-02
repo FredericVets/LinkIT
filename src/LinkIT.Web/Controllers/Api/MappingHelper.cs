@@ -24,8 +24,8 @@ namespace LinkIT.Web.Controllers.Api
 
 		public static void PopulateReadModel(AssetDto from, BaseAssetReadModel to)
 		{
-			from = from ?? throw new ArgumentNullException("from");
-			to = to ?? throw new ArgumentNullException("to");
+			from = from ?? throw new ArgumentNullException(nameof(from));
+			to = to ?? throw new ArgumentNullException(nameof(to));
 
 			to.Id = from.Id.Value;
 			to.CreationDate = from.CreationDate.Value;

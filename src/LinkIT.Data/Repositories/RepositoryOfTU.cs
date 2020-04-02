@@ -25,9 +25,9 @@ namespace LinkIT.Data.Repositories
 		public Repository(string connectionString, string tableName, bool hasSoftDelete = false)
 		{
 			if (string.IsNullOrWhiteSpace(connectionString))
-				throw new ArgumentNullException("connectionString");
+				throw new ArgumentNullException(nameof(connectionString));
 			if (string.IsNullOrWhiteSpace(tableName))
-				throw new ArgumentNullException("tableName");
+				throw new ArgumentNullException(nameof(tableName));
 
 			ConnectionString = connectionString;
 			TableName = tableName;
@@ -185,7 +185,7 @@ namespace LinkIT.Data.Repositories
 		public bool Exists(IEnumerable<long> ids)
 		{
 			if (ids == null || !ids.Any())
-				throw new ArgumentNullException("ids");
+				throw new ArgumentNullException(nameof(ids));
 
 			// Filter out possible duplicates.
 			var distinctIds = ids.Distinct().ToArray();
@@ -213,7 +213,7 @@ namespace LinkIT.Data.Repositories
 		public virtual IEnumerable<TDto> GetById(IEnumerable<long> ids)
 		{
 			if (ids == null || !ids.Any())
-				throw new ArgumentNullException("ids");
+				throw new ArgumentNullException(nameof(ids));
 
 			// Filter out possible duplicates.
 			var distinctIds = ids.Distinct().ToArray();
@@ -262,7 +262,7 @@ namespace LinkIT.Data.Repositories
 		public virtual PagedResult<TDto> PagedQuery(PageInfo pageInfo, TQuery query = null)
 		{
 			if (pageInfo == null)
-				throw new ArgumentNullException("pageInfo");
+				throw new ArgumentNullException(nameof(pageInfo));
 
 			if (!pageInfo.OrderBy.IsValidFor(Columns))
 				throw new ArgumentException($"'{pageInfo.OrderBy.Name}' is an unrecognized column.");
@@ -294,7 +294,7 @@ namespace LinkIT.Data.Repositories
 		public virtual long Insert(TDto item)
 		{
 			if (item == null)
-				throw new ArgumentNullException("item");
+				throw new ArgumentNullException(nameof(item));
 			if (item.Id.HasValue)
 				throw new ArgumentException("Id can not be specified.");
 
@@ -328,7 +328,7 @@ namespace LinkIT.Data.Repositories
 		public virtual void Update(IEnumerable<TDto> items)
 		{
 			if (items == null || !items.Any())
-				throw new ArgumentNullException("items");
+				throw new ArgumentNullException(nameof(items));
 
 			foreach (var item in items)
 			{

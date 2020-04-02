@@ -24,7 +24,7 @@ namespace LinkIT.Data.Paging
 
 		public OrderBy(string name, Order order)
 		{
-			Name = name ?? throw new ArgumentNullException("name");
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 
 			if (!Regex.IsMatch(name, PLAIN_STRING_PATTERN))
 				throw new ArgumentException("name");

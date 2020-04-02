@@ -15,7 +15,7 @@ namespace LinkIT.Data.Repositories
 		private readonly string _connectionString;
 
 		public UserRoleRepository(string connectionString) =>
-			_connectionString = connectionString ?? throw new ArgumentNullException("connectionString");
+			_connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
 
 		private static string CreateSelectStatement() =>
 			$"SELECT * FROM [{TableNames.USER_ROLE_TABLE}]";

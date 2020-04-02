@@ -8,7 +8,7 @@ namespace LinkIT.Data.DTO
 	{
 		public UserRolesDto(IDictionary<string, IEnumerable<string>> data)
 		{
-			Data = data ?? throw new ArgumentNullException("data");
+			Data = data ?? throw new ArgumentNullException(nameof(data));
 		}
 
 		private void GuardUser(string user)
@@ -22,7 +22,7 @@ namespace LinkIT.Data.DTO
 		public bool HasUser(string user)
 		{
 			if (string.IsNullOrWhiteSpace(user))
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 
 			return Data.ContainsKey(user);
 		}
@@ -56,7 +56,7 @@ namespace LinkIT.Data.DTO
 			GuardUser(user);
 
 			if (string.IsNullOrWhiteSpace(role))
-				throw new ArgumentNullException("role");
+				throw new ArgumentNullException(nameof(role));
 
 			if (!TryGetRolesFor(user, out var roles))
 				return false;

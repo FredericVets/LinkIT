@@ -21,7 +21,7 @@ namespace LinkIT.Data.Builders
 
 		public WhereClauseBuilder(IDbCommand command, LogicalOperator logicalOperator, bool hasSoftDelete)
 		{
-			_command = command ?? throw new ArgumentNullException("command");
+			_command = command ?? throw new ArgumentNullException(nameof(command));
 			_logicalOperator = logicalOperator;
 			_hasSoftDelete = hasSoftDelete;
 

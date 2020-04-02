@@ -79,7 +79,7 @@ namespace LinkIT.Data.Repositories
 		public override long Insert(SpecialOwnerDto item)
 		{
 			if (item == null)
-				throw new ArgumentNullException("item");
+				throw new ArgumentNullException(nameof(item));
 			if (item.Id.HasValue)
 				throw new ArgumentException("Id can not be specified.");
 			if (string.IsNullOrWhiteSpace(item.CreatedBy))
@@ -94,7 +94,7 @@ namespace LinkIT.Data.Repositories
 		public override void Update(IEnumerable<SpecialOwnerDto> items)
 		{
 			if (items == null || !items.Any())
-				throw new ArgumentNullException("items");
+				throw new ArgumentNullException(nameof(items));
 
 			var now = DateTimeProvider.Now();
 			foreach (var item in items)

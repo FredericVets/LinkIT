@@ -133,8 +133,8 @@ namespace LinkIT.Data.Repositories
 
 		public static void Populate(SqlDataReader from, AssetDto to)
 		{
-			from = from ?? throw new ArgumentNullException("from");
-			to = to ?? throw new ArgumentNullException("to");
+			from = from ?? throw new ArgumentNullException(nameof(from));
+			to = to ?? throw new ArgumentNullException(nameof(to));
 
 			to.Id = GetColumnValue<long>(from, ID_COLUMN);
 			to.CreationDate = GetColumnValue<DateTime>(from, CREATION_DATE_COLUMN);
@@ -192,7 +192,7 @@ namespace LinkIT.Data.Repositories
 		public override long Insert(AssetDto item)
 		{
 			if (item == null)
-				throw new ArgumentNullException("item");
+				throw new ArgumentNullException(nameof(item));
 			if (item.Id.HasValue)
 				throw new ArgumentException("Id can not be specified.");
 			if (string.IsNullOrWhiteSpace(item.CreatedBy))
@@ -209,7 +209,7 @@ namespace LinkIT.Data.Repositories
 		public override void Update(IEnumerable<AssetDto> items)
 		{
 			if (items == null || !items.Any())
-				throw new ArgumentNullException("items");
+				throw new ArgumentNullException(nameof(items));
 
 			var now = DateTimeProvider.Now();
 			foreach (var item in items)
@@ -230,7 +230,7 @@ namespace LinkIT.Data.Repositories
 		public IEnumerable<AssetDto> ForOwners(IEnumerable<string> owners)
 		{
 			if (owners == null || !owners.Any())
-				throw new ArgumentNullException("owners");
+				throw new ArgumentNullException(nameof(owners));
 
 			IList<AssetDto> assets;
 			using (var con = new SqlConnection(ConnectionString))
