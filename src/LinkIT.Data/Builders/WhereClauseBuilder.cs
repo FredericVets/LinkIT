@@ -14,6 +14,7 @@ namespace LinkIT.Data.Builders
 		private readonly LogicalOperator _logicalOperator;
 		private readonly bool _hasSoftDelete;
 		private readonly StringBuilder _builder;
+
 		private bool _isFirstParameter;
 
 		public WhereClauseBuilder(IDbCommand command, bool hasSoftDelete) : 
@@ -24,8 +25,8 @@ namespace LinkIT.Data.Builders
 			_command = command ?? throw new ArgumentNullException(nameof(command));
 			_logicalOperator = logicalOperator;
 			_hasSoftDelete = hasSoftDelete;
-
 			_builder = new StringBuilder();
+
 			_isFirstParameter = true;
 		}
 

@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\SelectCommandBuilder.cs" />
     <Compile Include="DateTimeProvider.cs" />
     <Compile Include="Extensions\IDbCommandExtensions.cs" />
     <Compile Include="Paging\OrderBy.cs" />

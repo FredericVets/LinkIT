@@ -44,87 +44,6 @@ namespace LinkIT.Data.Repositories
 			@params.Add("@RowsPerPage", SqlDbType.Int).Value = pageInfo.RowsPerPage;
 		}
 
-		private SqlCommand BuildSelectCountCommand(
-			SqlConnection con,
-			SqlTransaction tx,
-			TQuery query = null)
-		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine(CreateSelectCountStatement());
-
-			WhereClauseBuilder builder;
-			if (query == null)
-			{
-				builder = new WhereClauseBuilder(cmd, HasSoftDelete);
-			}
-			else
-			{
-				builder = new WhereClauseBuilder(cmd, query.LogicalOperator, HasSoftDelete);
-				AddParametersFor(query, builder);
-			}
-
-			sb.Append(builder);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
-		}
-
-		private SqlCommand BuildSelectCountCommand<T>(
-			SqlConnection con,
-			SqlTransaction tx,
-			string columnName,
-			IEnumerable<T> values,
-			SqlDbType sqlType)
-		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine(CreateSelectCountStatement());
-
-			var builder = new WhereInClauseBuilder(columnName, cmd, HasSoftDelete);
-			builder.ForParameters(values, sqlType);
-			sb.Append(builder);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
-		}
-
-		private SqlCommand BuildSelectCommand(
-			SqlConnection con,
-			SqlTransaction tx,
-			TQuery query = null,
-			PageInfo pageInfo = null)
-		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine(CreateSelectStatement());
-
-			WhereClauseBuilder builder;
-			if (query == null)
-			{
-				builder = new WhereClauseBuilder(cmd, HasSoftDelete);
-			}
-			else
-			{
-				builder = new WhereClauseBuilder(cmd, query.LogicalOperator, HasSoftDelete);
-				AddParametersFor(query, builder);
-			}
-
-			sb.Append(builder);
-
-			if (pageInfo != null)
-				AddPaging(cmd.Parameters, sb, pageInfo);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
-		}
-
 		protected static T GetColumnValue<T>(SqlDataReader reader, string columnName)
 		{
 			object value = reader[columnName];
@@ -156,27 +75,6 @@ namespace LinkIT.Data.Repositories
 		protected string CreateSelectCountStatement() => 
 			$"SELECT COUNT({ID_COLUMN}) FROM [{TableName}]";
 
-		protected SqlCommand BuildSelectCommand<T>(
-			SqlConnection con,
-			SqlTransaction tx,
-			string columnName,
-			IEnumerable<T> values,
-			SqlDbType sqlType)
-		{
-			var cmd = new SqlCommand { Connection = con, Transaction = tx };
-
-			var sb = new StringBuilder();
-			sb.AppendLine(CreateSelectStatement());
-
-			var builder = new WhereInClauseBuilder(columnName, cmd, HasSoftDelete);
-			builder.ForParameters(values, sqlType);
-			sb.Append(builder);
-
-			cmd.CommandText = sb.ToString();
-
-			return cmd;
-		}
-
 		public abstract IEnumerable<string> Columns { get; }
 
 		public bool Exists(long id) => 
@@ -195,7 +93,10 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = BuildSelectCountCommand(con, tx, ID_COLUMN, distinctIds, SqlDbType.BigInt))
+					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
+						.ForSelect(CreateSelectCountStatement())
+						.ForWhereIn(ID_COLUMN, distinctIds, SqlDbType.BigInt)
+						.Build())
 					{
 						long count = Convert.ToInt64(cmd.ExecuteScalar());
 
@@ -223,14 +124,20 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = BuildSelectCountCommand(con, tx, ID_COLUMN, distinctIds, SqlDbType.BigInt))
+					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
+						.ForSelect(CreateSelectCountStatement())
+						.ForWhereIn(ID_COLUMN, distinctIds, SqlDbType.BigInt)
+						.Build())
 					{
 						long count = Convert.ToInt64(cmd.ExecuteScalar());
 						if (distinctIds.Length != count)
 							throw new ArgumentException("Not all supplied id's exist.");
 					}
 
-					using (var cmd = BuildSelectCommand(con, tx, ID_COLUMN, distinctIds, SqlDbType.BigInt))
+					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
+						.ForSelect(CreateSelectStatement())
+						.ForWhereIn(ID_COLUMN, distinctIds, SqlDbType.BigInt)
+						.Build())
 					using (var reader = cmd.ExecuteReader())
 					{
 						return ReadDtosFrom(reader).ToList();
@@ -248,7 +155,10 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = BuildSelectCommand(con, tx, query))
+					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
+						.ForSelect(CreateSelectStatement())
+						.ForWhere(query, AddParametersFor)
+						.Build())
 					using (var reader = cmd.ExecuteReader())
 					{
 						return ReadDtosFrom(reader).ToList();
@@ -273,12 +183,19 @@ namespace LinkIT.Data.Repositories
 				using (var tx = con.BeginTransaction())
 				{
 					long totalCount;
-					using (var cmd = BuildSelectCountCommand(con, tx, query))
+					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
+						.ForSelect(CreateSelectCountStatement())
+						.ForWhere(query, AddParametersFor)
+						.Build())
 					{
 						totalCount = Convert.ToInt64(cmd.ExecuteScalar());
 					}
 
-					using (var cmd = BuildSelectCommand(con, tx, query, pageInfo))
+					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
+						.ForSelect(CreateSelectStatement())
+						.ForWhere(query, AddParametersFor)
+						.ForPaging(pageInfo)
+						.Build())
 					using (var reader = cmd.ExecuteReader())
 					{
 						var result = ReadDtosFrom(reader).ToList();

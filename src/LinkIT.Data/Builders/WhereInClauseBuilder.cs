@@ -16,6 +16,7 @@ namespace LinkIT.Data.Builders
 		private readonly IDbCommand _command;
 		private readonly bool _hasSoftDelete;
 		private readonly StringBuilder _builder;
+
 		private bool _isFirstParameter;
 
 		public WhereInClauseBuilder(string columnName, IDbCommand command, bool hasSoftDelete)
@@ -27,6 +28,7 @@ namespace LinkIT.Data.Builders
 			_command = command ?? throw new ArgumentNullException(nameof(command));
 			_hasSoftDelete = hasSoftDelete;
 			_builder = new StringBuilder();
+
 			_isFirstParameter = true;
 
 			Initialize();

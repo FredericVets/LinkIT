@@ -238,7 +238,10 @@ namespace LinkIT.Data.Repositories
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
-					using (var cmd = BuildSelectCommand(con, tx, OWNER_COLUMN, owners, SqlDbType.VarChar))
+					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
+						.ForSelect(CreateSelectStatement())
+						.ForWhereIn(OWNER_COLUMN, owners, SqlDbType.VarChar)
+						.Build())
 					using (var reader = cmd.ExecuteReader())
 					{
 						assets = ReadDtosFrom(reader).ToList();
