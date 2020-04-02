@@ -22,10 +22,14 @@ namespace LinkIT.Data.Extensions
 				return;
 			}
 
-			if (!(@params is SqlParameterCollection sqlParams))
-				throw new InvalidOperationException("This extension method is only intended for sql server.");
+			if (@params is SqlParameterCollection sqlParams)
+			{
+				sqlParams.Add(name, sqlType).Value = value;
 
-			sqlParams.Add(name, sqlType).Value = value;
+				return;
+			}
+
+			throw new InvalidOperationException("This extension method is only intended for sql server.");
 		}
 	}
 }
