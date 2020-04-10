@@ -73,10 +73,8 @@ namespace LinkIT.Data.Paging
 			return true;
 
 			// Local functions.
-			bool IsSortingChar(char value)
-			{
-				return new[] { ASCENDING_CHARACTER, DESCENDING_CHARACTER }.Contains(value);
-			}
+			bool IsSortingChar(char value) =>
+				new[] { ASCENDING_CHARACTER, DESCENDING_CHARACTER }.Contains(value);
 
 			Order GetOrderFor(char value)
 			{
