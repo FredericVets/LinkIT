@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LinkIT.Web.Infrastructure.Api
 {
-	public abstract class ShibbolethAttributesBase
+	public abstract class ShibbolethVariablesBase
 	{
 		protected const string SHIBBOLETH_PREFIX = "SHIB";
 		protected const string IGNORE_SHIBBOLETH_KEY = "HTTP_SHIB_ATTRIBUTES";

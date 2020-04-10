@@ -4,7 +4,7 @@ using System.Web;
 
 namespace LinkIT.Web.Infrastructure.Api
 {
-	public class ShibbolethServerVariables : ShibbolethAttributesBase
+	public class ShibbolethServerVariables : ShibbolethVariablesBase
 	{
 		private readonly HttpRequestBase _request;
 

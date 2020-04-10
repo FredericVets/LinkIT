@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 
 namespace LinkIT.Web.Infrastructure.Api
 {
-	public class ShibbolethHeaders : ShibbolethAttributesBase
+	public class ShibbolethHeaders : ShibbolethVariablesBase
 	{
 		private readonly HttpRequestHeaders _headers;
 
