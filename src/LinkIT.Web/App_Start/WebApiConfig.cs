@@ -1,4 +1,6 @@
-﻿using LinkIT.Web.Filters.Api;
+﻿using Autofac;
+using Autofac.Integration.WebApi;
+using LinkIT.Web.Filters.Api;
 using LinkIT.Web.Infrastructure.Api;
 using Newtonsoft.Json.Serialization;
 using System.Net.Http.Formatting;
@@ -35,19 +37,33 @@ namespace LinkIT.Web
 			formatters.Add(new BsonMediaTypeFormatter());
 		}
 
-		private static void BootStrapLog4Net()
-		{
+		private static void BootStrapLog4Net() =>
 			log4net.Config.XmlConfigurator.Configure();
-		}
 
-		private static void RegisterGlobalFilters(HttpConfiguration config)
-		{
+		private static void RegisterGlobalFilters(HttpConfiguration config) =>
 			config.Filters.Add(new ValidateModelAttribute());
-		}
 
-		private static void RegisterServices(HttpConfiguration config)
+		private static void RegisterDependencies(HttpConfiguration config)
 		{
 			config.Services.Add(typeof(IExceptionLogger), new Log4NetExceptionLogger());
+
+			var builder = new ContainerBuilder();
+
+			RegisterServices();
+			RegisterRepositories();
+
+			var container = builder.Build();
+			config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
+			void RegisterServices()
+			{
+				builder.RegisterType<Log4NetExceptionLogger>().As<IExceptionLogger>();
+			}
+
+			void RegisterRepositories()
+			{
+
+			}
 		}
 
 		public static void Register(HttpConfiguration config)
@@ -59,7 +75,7 @@ namespace LinkIT.Web
 			RegisterFormatters(config.Formatters);
 			BootStrapLog4Net();
 			RegisterGlobalFilters(config);
-			RegisterServices(config);
+			RegisterDependencies(config);
 		}
 	}
 }
