@@ -43,6 +43,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <ExcludeGeneratedDebugSymbol>true</ExcludeGeneratedDebugSymbol>
+    <LegacyPublishPropertiesPageEnabled>true</LegacyPublishPropertiesPageEnabled>
+    <PublishDatabases>false</PublishDatabases>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
@@ -171,6 +174,7 @@
     </Compile>
     <Compile Include="Infrastructure\Api\ConnectionString.cs" />
     <Compile Include="Infrastructure\Api\Log4NetExceptionLogger.cs" />
+    <Compile Include="Infrastructure\Api\ShibbolethAttributes.cs" />
     <Compile Include="Models\Api\AssetHistoryReadModel.cs" />
     <Compile Include="Models\Api\AssetReadModel.cs" />
     <Compile Include="Models\Api\AssetWriteModel.cs" />
