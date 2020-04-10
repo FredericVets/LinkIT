@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 
 namespace LinkIT.Data.Repositories
 {
@@ -32,16 +31,6 @@ namespace LinkIT.Data.Repositories
 			ConnectionString = connectionString;
 			TableName = tableName;
 			HasSoftDelete = hasSoftDelete;
-		}
-
-		private static void AddPaging(SqlParameterCollection @params, StringBuilder sb, PageInfo pageInfo)
-		{
-			sb.AppendLine($"ORDER BY [{pageInfo.OrderBy.Name}] {pageInfo.OrderBy.Order.ForSql()}");
-			sb.AppendLine("OFFSET ((@PageNumber - 1) * @RowsPerPage) ROWS");
-			sb.AppendLine("FETCH NEXT @RowsPerPage ROWS ONLY");
-
-			@params.Add("@PageNumber", SqlDbType.Int).Value = pageInfo.PageNumber;
-			@params.Add("@RowsPerPage", SqlDbType.Int).Value = pageInfo.RowsPerPage;
 		}
 
 		protected abstract void AddParametersFor(TDto input, SqlParameterBuilder builder);
