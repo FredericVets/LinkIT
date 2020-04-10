@@ -3,14 +3,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Specialized;
 
-namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethAttributesTests
+namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
 {
 	[TestClass]
-	public class WhenGettingAnAttributeThatDoesntExist
+	public class WhenGettingAVariableThatDoesntExist
 	{
-		private ShibbolethAttributes _sut;
+		private ShibbolethServerVariables _sut;
 
-		private NameValueCollection CreateValues() =>
+		private NameValueCollection CreateVariables() =>
 			new NameValueCollection()
 			{
 				{ "whatever", "whatever" },
@@ -19,15 +19,18 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethAttributesTests
 		[TestInitialize]
 		public void Setup()
 		{
-			var mock = MockFactory.Create(CreateValues);
+			var mock = MockFactory.Create(CreateVariables);
 
-			_sut = new ShibbolethAttributes(mock.Object);
+			_sut = new ShibbolethServerVariables(mock.Object);
 		}
 
 		[TestMethod]
-		public void ThenTheAttributeIsNotFound()
+		public void ThenTheVariableIsNotFound()
 		{
 			bool result = _sut.TryGet("iDontExist", out _);
+			Assert.IsFalse(result);
+
+			result = _sut.TryGet("SHIB_iDontExist", out _);
 			Assert.IsFalse(result);
 
 			Assert.ThrowsException<ArgumentException>(() => _sut.Get("iDontExist"));

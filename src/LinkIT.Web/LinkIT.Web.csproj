@@ -174,7 +174,9 @@
     </Compile>
     <Compile Include="Infrastructure\Api\ConnectionString.cs" />
     <Compile Include="Infrastructure\Api\Log4NetExceptionLogger.cs" />
-    <Compile Include="Infrastructure\Api\ShibbolethAttributes.cs" />
+    <Compile Include="Infrastructure\Api\ShibbolethAttributesBase.cs" />
+    <Compile Include="Infrastructure\Api\ShibbolethHeaders.cs" />
+    <Compile Include="Infrastructure\Api\ShibbolethServerVariables.cs" />
     <Compile Include="Models\Api\AssetHistoryReadModel.cs" />
     <Compile Include="Models\Api\AssetReadModel.cs" />
     <Compile Include="Models\Api\AssetWriteModel.cs" />
