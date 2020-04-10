@@ -13,13 +13,8 @@ namespace LinkIT.Web.Infrastructure.Api
 		public ShibbolethServerVariables(HttpRequestBase request) =>
 			_request = request ?? throw new ArgumentNullException(nameof(request));
 
-		private bool HasServerVariables()
-		{
-			if (_request.ServerVariables == null)
-				return false;
-
-			return _request.ServerVariables.HasKeys();
-		}
+		private bool HasServerVariables() =>
+			_request.ServerVariables?.HasKeys() == true;
 
 		protected override bool InnerTryGet(string key, out string value)
 		{

@@ -22,18 +22,19 @@ namespace LinkIT.Data.DTO.UnitTests
 			_sut = new UserRolesDto(data);
 		}
 
-		[TestMethod]
-		public void ThenExistentDataIsRetrievedCorrectly()
-		{
-			Assert.IsTrue(_sut.HasUser("user1"));
-			Assert.IsTrue(_sut.HasRole("user1", "select"));
-			Assert.IsTrue(_sut.HasRole("user1", "create"));
+		[DataTestMethod]
+		[DataRow("user1")]
+		[DataRow("user2")]
+		[DataRow("user3")]
+		public void ThenTheUsersAreRetrievedCorrectly(string userName) =>
+			Assert.IsTrue(_sut.HasUser(userName));
 
-			Assert.IsTrue(_sut.HasUser("user2"));
-			Assert.IsTrue(_sut.HasRole("user2", "select"));
-
-			Assert.IsTrue(_sut.HasUser("user3"));
-		}
+		[DataTestMethod]
+		[DataRow("user1", "select")]
+		[DataRow("user1", "create")]
+		[DataRow("user2", "select")]
+		public void ThenTheUserRolesAreRetrievedCorrectly(string user, string role) =>
+			Assert.IsTrue(_sut.HasRole(user, role));
 
 		[TestMethod]
 		public void ThenNonExistentDataIsHandledCorrectly()

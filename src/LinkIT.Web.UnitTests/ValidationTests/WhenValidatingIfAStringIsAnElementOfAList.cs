@@ -16,13 +16,12 @@ namespace LinkIT.Web.UnitTests.ValidationTests
 				Elements = new[] { "azerty", "qwerty", "bla" }
 			};
 
-		[TestMethod]
-		public void ThenPresenceIsDetectedCorrectly()
-		{
-			Assert.IsTrue(_sut.IsValid("bla"));
-			Assert.IsTrue(_sut.IsValid("blA"));
-			Assert.IsTrue(_sut.IsValid("BLA"));
-		}
+		[DataTestMethod]
+		[DataRow("bla")]
+		[DataRow("blA")]
+		[DataRow("BLA")]
+		public void ThenPresenceIsDetectedCorrectly(string input) =>
+			Assert.IsTrue(_sut.IsValid(input));
 
 		[TestMethod]
 		public void ThenAbsenceIsDetectedCorrectly() =>

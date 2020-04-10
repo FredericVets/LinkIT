@@ -24,9 +24,7 @@ namespace LinkIT.Data.UnitTests.PagingTests
 		}
 
 		[TestMethod]
-		public void ThenTheConversionIsNotSuccessful()
-		{
+		public void ThenTheConversionIsNotSuccessful() =>
 			Assert.ThrowsException<NotSupportedException>(() => _sut.ConvertFrom("*Id"));
-		}
 	}
 }

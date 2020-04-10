@@ -1,51 +1,43 @@
 ﻿using LinkIT.Data.Paging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace LinkIT.Data.UnitTests.PagingTests
 {
 	[TestClass]
 	public class WhenCreatingAnOrderByInstance
 	{
+		private string[] _names = new[] { "BLABLA876", "whatever" };
+
+		private static IEnumerable<object[]> GetInputData() =>
+			new[]
+			{
+				// input, expectedOrderBy, expectedOrderByToString
+				new object[] { "+blaBla876", new OrderBy("blaBla876", Order.ASCENDING), "+blaBla876" },
+				new object[] { "BlaBla876", new OrderBy("BlaBla876", Order.ASCENDING), "+BlaBla876" },
+				new object[] { "-blaBla876", new OrderBy("blaBla876", Order.DESCENDING), "-blaBla876" },
+			};
+
 		[TestMethod]
-		public void ThenTheInstanceIsCreated()
+		[DynamicData(nameof(GetInputData), DynamicDataSourceType.Method)]
+		public void ThenTheInstanceIsCreated(string input, OrderBy expected, string expectedToString)
 		{
-			bool success = OrderBy.TryParse("+blaBla876", out OrderBy actual);
+			bool success = OrderBy.TryParse(input, out OrderBy actual);
 			Assert.IsTrue(success);
-			Assert.AreEqual(new OrderBy("blaBla876", Order.ASCENDING), actual);
-
-			var names = new[] { "BLABLA876", "whatever" };
-
-			Assert.IsTrue(actual.IsValidFor(names));
-			Assert.AreEqual("+blaBla876", actual.ToString());
-
-			// When no leading '+' or '-' character is present, the default is Order.ASCENDING.
-			success = OrderBy.TryParse("BlaBla876", out actual);
-			Assert.IsTrue(success);
-			Assert.IsTrue(actual.IsValidFor(names));
-			Assert.AreEqual(new OrderBy("BlaBla876", Order.ASCENDING), actual);
-			Assert.AreEqual("+BlaBla876", actual.ToString());
-
-			success = OrderBy.TryParse("-blaBla876", out actual);
-			Assert.IsTrue(success);
-			Assert.IsTrue(actual.IsValidFor(names));
-			Assert.AreEqual(new OrderBy("blaBla876", Order.DESCENDING), actual);
-			Assert.AreEqual("-blaBla876", actual.ToString());
+			Assert.AreEqual(expected, actual);
+			Assert.IsTrue(actual.IsValidFor(_names));
+			Assert.AreEqual(expectedToString, actual.ToString());
 		}
 
-		[TestMethod]
-		public void ThenTheInstanceIsNotCreated()
+		[DataTestMethod]
+		[DataRow("*blaBla876;")]
+		[DataRow("blaBla876;")]
+		[DataRow(null)]
+		[DataRow("")]
+		public void ThenTheInstanceIsNotCreated(string input)
 		{
 			// Negative cases.
-			bool success = OrderBy.TryParse("*blaBla876;", out _);
-			Assert.IsFalse(success);
-
-			success = OrderBy.TryParse("blaBla876;", out _);
-			Assert.IsFalse(success);
-
-			success = OrderBy.TryParse(null, out _);
-			Assert.IsFalse(success);
-
-			success = OrderBy.TryParse("", out _);
+			bool success = OrderBy.TryParse(input, out _);
 			Assert.IsFalse(success);
 		}
 	}
