@@ -7,10 +7,10 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.Helpers
 {
 	internal class DatabaseHelper
 	{
-		internal DatabaseHelper() : this(ConnectionString.Get()) { }
+		internal DatabaseHelper() : this(new ConnectionString()) { }
 
-		internal DatabaseHelper(string connString) =>
-			ConnString = connString ?? throw new ArgumentNullException(nameof(connString));
+		internal DatabaseHelper(ConnectionString connString) =>
+			ConnectionString = connString ?? throw new ArgumentNullException(nameof(connString));
 
 		private static string CreateUserRoleInsertStatement() =>
 			$@"INSERT INTO [{TableNames.USER_ROLE_TABLE}] ([{UserRoleRepository.USER_NAME_COLUMN}], [{UserRoleRepository.ROLES_COLUMN}])
@@ -19,11 +19,11 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.Helpers
 			('user2', 'select,,  ,  update'),
 			('user3', 'select');";
 
-		internal string ConnString { get; private set; }
+		internal ConnectionString ConnectionString { get; private set; }
 
 		internal void HardDeleteAll()
 		{
-			using (var con = new SqlConnection(ConnString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -44,7 +44,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.Helpers
 
 		internal bool IsAssetMarkedAsDeleted(long id)
 		{
-			using (var con = new SqlConnection(ConnString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -64,7 +64,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.Helpers
 
 		internal void InsertTestUserRoles()
 		{
-			using (var con = new SqlConnection(ConnString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())

@@ -12,7 +12,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 
 		[TestInitialize]
 		public void Setup() =>
-			_sut = new SpecialOwnerRepository(ConnectionString.Get());
+			_sut = new SpecialOwnerRepository(new ConnectionString());
 
 		[TestMethod]
 		public void ThenAnExceptionIsThrown()

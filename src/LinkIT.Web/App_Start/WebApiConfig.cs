@@ -1,11 +1,7 @@
-﻿using Autofac;
-using Autofac.Integration.WebApi;
-using LinkIT.Web.Filters.Api;
-using LinkIT.Web.Infrastructure.Api;
+﻿using LinkIT.Web.Filters.Api;
 using Newtonsoft.Json.Serialization;
 using System.Net.Http.Formatting;
 using System.Web.Http;
-using System.Web.Http.ExceptionHandling;
 
 namespace LinkIT.Web
 {
@@ -43,32 +39,11 @@ namespace LinkIT.Web
 		private static void RegisterGlobalFilters(HttpConfiguration config) =>
 			config.Filters.Add(new ValidateModelAttribute());
 
-		private static void RegisterDependencies(HttpConfiguration config)
-		{
-			config.Services.Add(typeof(IExceptionLogger), new Log4NetExceptionLogger());
-
-			var builder = new ContainerBuilder();
-
-			RegisterServices();
-			RegisterRepositories();
-
-			var container = builder.Build();
-			config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-
-			void RegisterServices()
-			{
-				builder.RegisterType<Log4NetExceptionLogger>().As<IExceptionLogger>();
-			}
-
-			void RegisterRepositories()
-			{
-
-			}
-		}
+		private static void RegisterDependencies(HttpConfiguration config) =>
+			new WebApiDependencies().Register(config);
 
 		public static void Register(HttpConfiguration config)
 		{
-			// Web API configuration and services
 			config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly;
 
 			RegisterRouting(config);

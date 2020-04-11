@@ -32,8 +32,9 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		[TestInitialize]
 		public void Setup()
 		{
-			_productRepo = new ProductRepository(ConnectionString.Get());
-			_sut = new AssetRepository(ConnectionString.Get(), _productRepo);
+			var connString = new ConnectionString();
+			_productRepo = new ProductRepository(connString);
+			_sut = new AssetRepository(connString, _productRepo);
 
 			var product = InsertProduct();
 

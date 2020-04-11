@@ -22,7 +22,7 @@ namespace LinkIT.Data.Repositories
 			AssetRepository.REMARK_COLUMN, AssetRepository.TEAMASSET_COLUMN
 		};
 
-		public AssetHistoryRepository(string connectionString) : base(connectionString, TableNames.ASSET_HISTORY_TABLE) { }
+		public AssetHistoryRepository(ConnectionString connString) : base(connString, TableNames.ASSET_HISTORY_TABLE) { }
 
 		protected override void AddParametersFor(AssetHistoryDto input, SqlParameterBuilder builder) =>
 			throw new NotImplementedException();

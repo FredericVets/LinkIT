@@ -20,7 +20,7 @@ namespace LinkIT.Data.Repositories
 			BRAND_COLUMN, TYPE_COLUMN
 		};
 
-		public ProductRepository(string connectionString) : base(connectionString, TableNames.PRODUCT_TABLE) { }
+		public ProductRepository(ConnectionString connString) : base(connString, TableNames.PRODUCT_TABLE) { }
 
 		protected override void AddParametersFor(ProductDto input, SqlParameterBuilder builder) =>
 			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)

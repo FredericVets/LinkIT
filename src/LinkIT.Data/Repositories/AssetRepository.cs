@@ -37,10 +37,10 @@ namespace LinkIT.Data.Repositories
 		private readonly IRepository<ProductDto, ProductQuery> _productRepo;
 
 		public AssetRepository(
-			string connectionString,
+			ConnectionString connString,
 			IRepository<ProductDto, ProductQuery> productRepo) : base(
-				connectionString, TableNames.ASSET_TABLE, hasSoftDelete: true) =>
-			_productRepo = productRepo;
+				connString, TableNames.ASSET_TABLE, hasSoftDelete: true) =>
+			_productRepo = productRepo ?? throw new ArgumentNullException(nameof(productRepo));
 
 		private void LinkProductsTo(IEnumerable<AssetDto> assets)
 		{
@@ -233,7 +233,7 @@ namespace LinkIT.Data.Repositories
 				throw new ArgumentNullException(nameof(owners));
 
 			IList<AssetDto> assets;
-			using (var con = new SqlConnection(ConnectionString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())

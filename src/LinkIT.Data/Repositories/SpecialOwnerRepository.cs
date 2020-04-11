@@ -20,7 +20,7 @@ namespace LinkIT.Data.Repositories
 			REMARK_COLUMN
 		};
 
-		public SpecialOwnerRepository(string connectionString) : base(connectionString, TableNames.SPECIAL_OWNER_TABLE) { }
+		public SpecialOwnerRepository(ConnectionString connString) : base(connString, TableNames.SPECIAL_OWNER_TABLE) { }
 
 		protected override void AddParametersFor(SpecialOwnerDto input, SqlParameterBuilder builder) =>
 			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)

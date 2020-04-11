@@ -15,7 +15,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.UserRoleRepo
 		public void Setup()
 		{
 			new DatabaseHelper().InsertTestUserRoles();
-			var sut = new UserRoleRepository(ConnectionString.Get());
+			var sut = new UserRoleRepository(new ConnectionString());
 
 			_actual = sut.GetAll();
 		}

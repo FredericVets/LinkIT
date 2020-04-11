@@ -2,7 +2,6 @@
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
-using LinkIT.Web.Infrastructure.Api;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
@@ -18,9 +17,9 @@ namespace LinkIT.Web.Controllers.Api
 		private readonly IRepository<ProductDto, ProductQuery> _repo;
 		private readonly ILog _log;
 
-		public ProductsController()
+		public ProductsController(IRepository<ProductDto, ProductQuery> repo)
 		{
-			_repo = new ProductRepository(ConnectionString.Get());
+			_repo = repo;
 			_log = LogManager.GetLogger(GetType());
 		}
 

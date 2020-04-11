@@ -2,7 +2,7 @@
 
 namespace LinkIT.Data.Repositories
 {
-	interface IUserRoleRepository
+	public interface IUserRoleRepository
 	{
 		UserRolesDto GetAll();
 	}

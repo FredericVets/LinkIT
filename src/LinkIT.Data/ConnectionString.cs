@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Configuration;
 
-namespace LinkIT.Data.IntegrationTests.RepositoryTests.Helpers
+namespace LinkIT.Data
 {
 	public class ConnectionString
 	{
 		private const string NAME = "LinkITConnectionString";
 
-		public static string Get()
+		public ConnectionString()
 		{
 			string value = ConfigurationManager.ConnectionStrings[NAME]?.ConnectionString;
 			if (string.IsNullOrWhiteSpace(value))
 				throw new InvalidOperationException($"Connection string '{NAME}' was not found in config file.");
 
-			return value;
+			Value = value;
 		}
+
+		public string Value { get; }
 	}
 }

@@ -62,7 +62,6 @@
     <Compile Include="RepositoryTests\AssetRepo\WhenUpdatingAnAsset.cs" />
     <Compile Include="RepositoryTests\AssetRepo\WhenDeletingAnAsset.cs" />
     <Compile Include="RepositoryTests\AssetRepo\WhenInsertingANewAsset.cs" />
-    <Compile Include="RepositoryTests\Helpers\ConnectionString.cs" />
     <Compile Include="RepositoryTests\ProductRepo\WhenDeletingAProduct.cs" />
     <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithOneConditionAndPaging.cs" />
     <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithNoCondition.cs" />

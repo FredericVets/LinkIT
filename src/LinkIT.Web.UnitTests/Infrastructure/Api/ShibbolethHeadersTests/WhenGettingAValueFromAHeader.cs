@@ -15,7 +15,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethHeadersTests
 			var request = new HttpRequestMessage();
 			request.Headers.Add("whatever", "whatever");
 			request.Headers.Add(ShibbolethVariablesBase.UID_KEY, "u0000001");
-			request.Headers.Add(ShibbolethVariablesBase.UID_KEY, "u0000001");
+			request.Headers.Add(ShibbolethVariablesBase.UID_KEY, "u0000002");
 			request.Headers.Add("bla", "bla");
 
 			return request.Headers;

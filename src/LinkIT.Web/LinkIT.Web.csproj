@@ -151,6 +151,7 @@
     <Compile Include="App_Start\MVCFilterConfig.cs" />
     <Compile Include="App_Start\MVCRouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="App_Start\WebApiDependencies.cs" />
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
     <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
     <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />
@@ -190,7 +191,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infrastructure\Api\ConnectionString.cs" />
     <Compile Include="Infrastructure\Api\Log4NetExceptionLogger.cs" />
     <Compile Include="Infrastructure\Api\ShibbolethVariablesBase.cs" />
     <Compile Include="Infrastructure\Api\ShibbolethHeaders.cs" />

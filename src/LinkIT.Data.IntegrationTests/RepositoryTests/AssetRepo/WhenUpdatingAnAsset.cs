@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LinkIT.Data.DTO;
+﻿using LinkIT.Data.DTO;
 using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 
 namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 {
@@ -32,8 +31,9 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		[TestInitialize]
 		public void Setup()
 		{
-			_productRepo = new ProductRepository(ConnectionString.Get());
-			_sut = new AssetRepository(ConnectionString.Get(), _productRepo);
+			var connString = new ConnectionString();
+			_productRepo = new ProductRepository(connString);
+			_sut = new AssetRepository(connString, _productRepo);
 
 			var product = InsertProduct();
 

@@ -18,7 +18,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 		[TestInitialize]
 		public void Setup()
 		{
-			_sut = new ProductRepository(ConnectionString.Get());
+			_sut = new ProductRepository(new ConnectionString());
 
 			_products = new List<ProductDto>()
 			{

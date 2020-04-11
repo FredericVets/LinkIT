@@ -2,7 +2,6 @@
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
-using LinkIT.Web.Infrastructure.Api;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
@@ -16,16 +15,18 @@ namespace LinkIT.Web.Controllers.Api
 	public class AssetHistoriesController : ApiController
 	{
 		private readonly IRepository<AssetHistoryDto, AssetHistoryQuery> _assetHistoryRepo;
-		private readonly IRepository<ProductDto, ProductQuery> _productRepo;
 		private readonly IAssetRepository _assetRepo;
+		private readonly IRepository<ProductDto, ProductQuery> _productRepo;
 		private readonly ILog _log;
 
-		public AssetHistoriesController()
+		public AssetHistoriesController(
+			IRepository<AssetHistoryDto, AssetHistoryQuery> assetHistoryRepo,
+			IAssetRepository assetRepo,
+			 IRepository<ProductDto, ProductQuery> productRepo)
 		{
-			_assetHistoryRepo = new AssetHistoryRepository(ConnectionString.Get());
-			
-			_productRepo = new ProductRepository(ConnectionString.Get());
-			_assetRepo = new AssetRepository(ConnectionString.Get(), _productRepo);
+			_assetHistoryRepo = assetHistoryRepo;
+			_productRepo = productRepo;
+			_assetRepo = assetRepo;
 
 			_log = LogManager.GetLogger(GetType());
 		}

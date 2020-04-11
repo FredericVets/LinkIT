@@ -13,10 +13,10 @@ namespace LinkIT.Data.Repositories
 		public const string USER_NAME_COLUMN = "UserName";
 		public const string ROLES_COLUMN = "Roles";
 
-		private readonly string _connectionString;
+		private readonly ConnectionString _connectionString;
 
-		public UserRoleRepository(string connectionString) =>
-			_connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+		public UserRoleRepository(ConnectionString connString) =>
+			_connectionString = connString ?? throw new ArgumentNullException(nameof(connString));
 
 		private static string CreateSelectStatement() =>
 			$"SELECT * FROM [{TableNames.USER_ROLE_TABLE}]";
@@ -44,7 +44,7 @@ namespace LinkIT.Data.Repositories
 
 		public UserRolesDto GetAll()
 		{
-			using (var con = new SqlConnection(_connectionString))
+			using (var con = new SqlConnection(_connectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())

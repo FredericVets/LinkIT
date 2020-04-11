@@ -97,9 +97,10 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetHistoryRepo
 		[TestInitialize]
 		public void Setup()
 		{
-			_productRepo = new ProductRepository(ConnectionString.Get());
-			_assetRepo = new AssetRepository(ConnectionString.Get(), _productRepo);
-			_sut = new AssetHistoryRepository(ConnectionString.Get());
+			var connString = new ConnectionString();
+			_productRepo = new ProductRepository(connString);
+			_assetRepo = new AssetRepository(connString, _productRepo);
+			_sut = new AssetHistoryRepository(connString);
 
 			_expectedHistory = new List<AssetDto>();
 

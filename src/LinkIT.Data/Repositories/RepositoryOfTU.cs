@@ -21,14 +21,12 @@ namespace LinkIT.Data.Repositories
 		public const string MODIFICATION_DATE_COLUMN = "ModificationDate";
 		public const string MODIFIED_BY_COLUMN = "ModifiedBy";
 
-		public Repository(string connectionString, string tableName, bool hasSoftDelete = false)
+		public Repository(ConnectionString connString, string tableName, bool hasSoftDelete = false)
 		{
-			if (string.IsNullOrWhiteSpace(connectionString))
-				throw new ArgumentNullException(nameof(connectionString));
 			if (string.IsNullOrWhiteSpace(tableName))
 				throw new ArgumentNullException(nameof(tableName));
 
-			ConnectionString = connectionString;
+			ConnectionString = connString ?? throw new ArgumentNullException(nameof(connString));
 			TableName = tableName;
 			HasSoftDelete = hasSoftDelete;
 		}
@@ -43,7 +41,7 @@ namespace LinkIT.Data.Repositories
 
 		protected abstract string CreateUpdateStatement();
 
-		protected string ConnectionString { get; }
+		protected ConnectionString ConnectionString { get; }
 
 		protected string TableName { get; }
 
@@ -77,7 +75,7 @@ namespace LinkIT.Data.Repositories
 			// Filter out possible duplicates.
 			var distinctIds = ids.Distinct().ToArray();
 
-			using (var con = new SqlConnection(ConnectionString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -108,7 +106,7 @@ namespace LinkIT.Data.Repositories
 			// Filter out possible duplicates.
 			var distinctIds = ids.Distinct().ToArray();
 
-			using (var con = new SqlConnection(ConnectionString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -139,7 +137,7 @@ namespace LinkIT.Data.Repositories
 
 		public virtual IEnumerable<TDto> Query(TQuery query = null)
 		{
-			using (var con = new SqlConnection(ConnectionString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -166,7 +164,7 @@ namespace LinkIT.Data.Repositories
 			if (!pageInfo.OrderBy.IsValidFor(Columns))
 				throw new ArgumentException($"'{pageInfo.OrderBy.Name}' is an unrecognized column.");
 
-			using (var con = new SqlConnection(ConnectionString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -204,7 +202,7 @@ namespace LinkIT.Data.Repositories
 			if (item.Id.HasValue)
 				throw new ArgumentException("Id can not be specified.");
 
-			using (var con = new SqlConnection(ConnectionString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -242,7 +240,7 @@ namespace LinkIT.Data.Repositories
 					throw new ArgumentException("Id is a required field.");
 			}
 
-			using (var con = new SqlConnection(ConnectionString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
@@ -266,7 +264,7 @@ namespace LinkIT.Data.Repositories
 
 		public virtual void Delete(long id)
 		{
-			using (var con = new SqlConnection(ConnectionString))
+			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())

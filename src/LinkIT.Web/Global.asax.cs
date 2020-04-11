@@ -9,17 +9,15 @@ namespace LinkIT.Web
 {
 	public class WebApiApplication : System.Web.HttpApplication
 	{
+		private static void RegisterWebApi() =>
+			GlobalConfiguration.Configure(WebApiConfig.Register);
+
 		private static void RegisterMvc()
 		{
 			AreaRegistration.RegisterAllAreas();
 			MVCFilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			MVCRouteConfig.RegisterRoutes(RouteTable.Routes);
 			MVCBundleConfig.RegisterBundles(BundleTable.Bundles);
-		}
-
-		private static void RegisterWebApi()
-		{
-			GlobalConfiguration.Configure(WebApiConfig.Register);
 		}
 
 		protected void Application_Start()
