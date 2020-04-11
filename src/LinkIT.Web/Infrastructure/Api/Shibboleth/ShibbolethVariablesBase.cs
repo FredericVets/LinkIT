@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LinkIT.Web.Infrastructure.Api
+namespace LinkIT.Web.Infrastructure.Api.Shibboleth
 {
 	public abstract class ShibbolethVariablesBase
 	{

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 
-namespace LinkIT.Web.Infrastructure.Api
+namespace LinkIT.Web.Infrastructure.Api.Shibboleth
 {
 	public class ShibbolethServerVariables : ShibbolethVariablesBase
 	{

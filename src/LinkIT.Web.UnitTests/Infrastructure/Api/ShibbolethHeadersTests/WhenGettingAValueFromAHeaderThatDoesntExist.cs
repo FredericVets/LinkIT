@@ -1,4 +1,4 @@
-﻿using LinkIT.Web.Infrastructure.Api;
+﻿using LinkIT.Web.Infrastructure.Api.Shibboleth;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Net.Http;

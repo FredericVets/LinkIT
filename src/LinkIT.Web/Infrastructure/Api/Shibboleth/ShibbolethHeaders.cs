@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 
-namespace LinkIT.Web.Infrastructure.Api
+namespace LinkIT.Web.Infrastructure.Api.Shibboleth
 {
 	public class ShibbolethHeaders : ShibbolethVariablesBase
 	{
