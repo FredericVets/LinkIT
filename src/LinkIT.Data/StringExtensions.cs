@@ -13,7 +13,7 @@ namespace LinkIT.Data
 
 			return input.Split(new[] { separator }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(x => x.Trim())
-				.Except(new[] { string.Empty })
+				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.ToArray();
 		}
 

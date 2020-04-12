@@ -10,16 +10,16 @@ namespace LinkIT.Data.UnitTests.StringExtensionTests
 		[TestMethod]
 		public void ThenTheSplittingBehavesAsExpected()
 		{
-			var actual = "a: b, c: d,   e  :  f".SplitKeyValuePairs().ToArray();
+			var actual = "a: b, c: d,   e  :  f".SplitKeyValuePairs();
 
-			Assert.AreEqual(3, actual.Length);
+			Assert.AreEqual(3, actual.Count);
 			
-			Assert.AreEqual("a", actual[0].Key);
-			Assert.AreEqual("b", actual[0].Value);
-			Assert.AreEqual("c", actual[1].Key);
-			Assert.AreEqual("d", actual[1].Value);
-			Assert.AreEqual("e", actual[2].Key);
-			Assert.AreEqual("f", actual[2].Value);
+			Assert.AreEqual("a", actual.ElementAt(0).Key);
+			Assert.AreEqual("b", actual.ElementAt(0).Value);
+			Assert.AreEqual("c", actual.ElementAt(1).Key);
+			Assert.AreEqual("d", actual.ElementAt(1).Value);
+			Assert.AreEqual("e", actual.ElementAt(2).Key);
+			Assert.AreEqual("f", actual.ElementAt(2).Value);
 		}
 	}
 }
