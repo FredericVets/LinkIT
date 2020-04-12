@@ -26,7 +26,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethHeadersTests
 			_sut = new ShibbolethHeaders(CreateHeaders());
 
 		[TestMethod]
-		public void TheAnExistingHeaderIsFound()
+		public void ThenAnExistingHeaderIsFound()
 		{
 			string uid = _sut.Get(ShibbolethAttributesBase.UID_KEY);
 			Assert.AreEqual("u0000001", uid);

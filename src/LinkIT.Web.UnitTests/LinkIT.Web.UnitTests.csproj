@@ -65,6 +65,7 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\Api\ShibbolethAttributesMockTests\WhenGettingAMockedValue.cs" />
     <Compile Include="Infrastructure\Api\ShibbolethHeadersTests\WhenGettingAValueFromAHeaderThatDoesntExist.cs" />
     <Compile Include="Infrastructure\Api\ShibbolethHeadersTests\WhenGettingAValueFromAHeader.cs" />
     <Compile Include="Infrastructure\Api\ShibbolethServerVariablesTests\MockFactory.cs" />
@@ -79,6 +80,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LinkIT.Data\LinkIT.Data.csproj">
+      <Project>{CAF7189D-D1FE-4DEE-A156-20D980D54135}</Project>
+      <Name>LinkIT.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinkIT.Web\LinkIT.Web.csproj">
       <Project>{eb4ac3bc-d510-43a5-95c6-0e4f9146eed5}</Project>
       <Name>LinkIT.Web</Name>
