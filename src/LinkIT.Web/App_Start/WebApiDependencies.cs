@@ -20,19 +20,14 @@ namespace LinkIT.Web
 		private void RegisterServices(ContainerBuilder builder)
 		{
 			builder.RegisterType<Log4NetExceptionLogger>().As<IExceptionLogger>();
-			RegisterShibboleth();
-
-			void RegisterShibboleth()
+			if (ShibbolethAttributesMock.ShouldMock)
 			{
-				if (ShibbolethContextMock.ShouldMock)
-				{
-					builder.Register(x => ShibbolethContextMock.FromConfig).As<IShibbolethContext>().SingleInstance();
-				}
-				else
-				{
-					builder.RegisterType<ShibbolethContext>().As<IShibbolethContext>().SingleInstance();
-				}
-			};
+				builder.Register(x => ShibbolethAttributesMock.FromConfig()).As<ShibbolethAttributes>().SingleInstance();
+			}
+			else
+			{
+				builder.Register(x => ShibbolethAttributes.FromHeader());
+			}
 		}
 
 		private void RegisterRepositories(ContainerBuilder builder)

@@ -5,30 +5,26 @@ using System.Collections.Specialized;
 namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
 {
 	[TestClass]
-	public class WhenGettingAVariable
+	public class WhenGettingAnAttribute
 	{
-		private ShibbolethServerVariables _sut;
+		private ShibbolethAttributes _sut;
 
 		private NameValueCollection CreateVariables() =>
 			new NameValueCollection()
 			{
 				{ "whatever", "whatever" },
-				{ ShibbolethAttributesBase.UID_KEY, "u0000001" },
+				{ ShibbolethAttributes.UID_KEY, "u0000001" },
 				{ "bla", "bla" }
 			};
 
 		[TestInitialize]
-		public void Setup()
-		{
-			var mock = MockFactory.Create(CreateVariables);
-
-			_sut = new ShibbolethServerVariables(mock.Object);
-		}
+		public void Setup() =>
+			_sut = new ShibbolethAttributes(CreateVariables());
 
 		[TestMethod]
-		public void ThenAnExistingVariableIsFound()
+		public void ThenTheAttributeIsFound()
 		{
-			string uid = _sut.Get(ShibbolethAttributesBase.UID_KEY);
+			string uid = _sut.Get(ShibbolethAttributes.UID_KEY);
 			Assert.AreEqual("u0000001", uid);
 
 			uid = _sut.GetUid();
@@ -36,7 +32,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
 
 			var result = _sut.GetAll();
 			Assert.AreEqual(1, result.Count);
-			Assert.AreEqual("u0000001", result[ShibbolethAttributesBase.UID_KEY]);
+			Assert.AreEqual("u0000001", result[ShibbolethAttributes.UID_KEY]);
 		}
 	}
 }

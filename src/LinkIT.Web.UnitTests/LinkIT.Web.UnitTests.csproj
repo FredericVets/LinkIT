@@ -65,12 +65,9 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Infrastructure\Api\ShibbolethAttributesMockTests\WhenGettingAMockedValue.cs" />
-    <Compile Include="Infrastructure\Api\ShibbolethHeadersTests\WhenGettingAValueFromAHeaderThatDoesntExist.cs" />
-    <Compile Include="Infrastructure\Api\ShibbolethHeadersTests\WhenGettingAValueFromAHeader.cs" />
-    <Compile Include="Infrastructure\Api\ShibbolethServerVariablesTests\MockFactory.cs" />
-    <Compile Include="Infrastructure\Api\ShibbolethServerVariablesTests\WhenGettingAVariableThatDoesntExist.cs" />
-    <Compile Include="Infrastructure\Api\ShibbolethServerVariablesTests\WhenGettingAVariable.cs" />
+    <Compile Include="Infrastructure\Api\ShibbolethAttributesMockTests\WhenGettingAMockedAttribute.cs" />
+    <Compile Include="Infrastructure\Api\ShibbolethAttributesTests\WhenGettingAnAttributeThatDoesntExist.cs" />
+    <Compile Include="Infrastructure\Api\ShibbolethAttributesTests\WhenGettingAnAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValidationTests\WhenValidatingIfAStringIsAnElementOfAList.cs" />
   </ItemGroup>

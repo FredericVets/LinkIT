@@ -6,9 +6,9 @@ using System.Collections.Specialized;
 namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
 {
 	[TestClass]
-	public class WhenGettingAVariableThatDoesntExist
+	public class WhenGettingAnAttributeThatDoesntExist
 	{
-		private ShibbolethServerVariables _sut;
+		private ShibbolethAttributes _sut;
 
 		private NameValueCollection CreateVariables() =>
 			new NameValueCollection()
@@ -17,15 +17,11 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
 			};
 
 		[TestInitialize]
-		public void Setup()
-		{
-			var mock = MockFactory.Create(CreateVariables);
-
-			_sut = new ShibbolethServerVariables(mock.Object);
-		}
+		public void Setup() =>
+			_sut = new ShibbolethAttributes(CreateVariables());
 
 		[TestMethod]
-		public void ThenTheVariableIsNotFound()
+		public void ThenTheAttributeIsNotFound()
 		{
 			bool result = _sut.TryGet("iDontExist", out _);
 			Assert.IsFalse(result);
