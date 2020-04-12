@@ -3,7 +3,6 @@ using LinkIT.Data.Queries;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace LinkIT.Data.Repositories
 {
@@ -33,10 +32,7 @@ namespace LinkIT.Data.Repositories
 				if (string.IsNullOrWhiteSpace(roles))
 					throw new InvalidOperationException($"Roles not specified for record with id : '{id}'.");
 
-				data[user] = roles
-					.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-					.Select(x => x.Trim())
-					.Except(new[] { string.Empty });
+				data[user] = roles.SplitCommaSeparated();
 			}
 
 			return new UserRolesDto(data);

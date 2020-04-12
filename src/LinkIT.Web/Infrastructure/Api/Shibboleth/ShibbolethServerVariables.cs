@@ -4,14 +4,12 @@ using System.Web;
 
 namespace LinkIT.Web.Infrastructure.Api.Shibboleth
 {
-	public class ShibbolethServerVariables : ShibbolethVariablesBase
+	public class ShibbolethServerVariables : ShibbolethAttributesBase
 	{
 		private readonly HttpRequestBase _request;
 
-		public ShibbolethServerVariables() : this(new HttpRequestWrapper(HttpContext.Current.Request)) { }
-
-		public ShibbolethServerVariables(HttpRequestBase request) =>
-			_request = request ?? throw new ArgumentNullException(nameof(request));
+		public ShibbolethServerVariables(HttpRequestBase request = null) =>
+			_request = request ?? new HttpRequestWrapper(HttpContext.Current.Request);
 
 		private bool HasServerVariables() =>
 			_request.ServerVariables?.HasKeys() == true;

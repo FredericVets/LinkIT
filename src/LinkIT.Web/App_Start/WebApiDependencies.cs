@@ -5,6 +5,7 @@ using LinkIT.Data.DTO;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Infrastructure.Api;
+using LinkIT.Web.Infrastructure.Api.Shibboleth;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
@@ -13,16 +14,31 @@ namespace LinkIT.Web
 {
 	public class WebApiDependencies
 	{
+		private void RegisterControllers(ContainerBuilder builder) =>
+			builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+
 		private void RegisterServices(ContainerBuilder builder)
 		{
 			builder.RegisterType<Log4NetExceptionLogger>().As<IExceptionLogger>();
+			RegisterShibboleth();
+
+			void RegisterShibboleth()
+			{
+				if (ShibbolethContextMock.ShouldMock)
+				{
+					builder.Register(x => ShibbolethContextMock.FromConfig).As<IShibbolethContext>().SingleInstance();
+				}
+				else
+				{
+					builder.RegisterType<ShibbolethContext>().As<IShibbolethContext>().SingleInstance();
+				}
+			};
 		}
 
 		private void RegisterRepositories(ContainerBuilder builder)
 		{
 			builder.RegisterType<ConnectionString>().SingleInstance();
 
-			// TODO : Play around with generic registration.
 			builder.RegisterType<SpecialOwnerRepository>().As<IRepository<SpecialOwnerDto, SpecialOwnerQuery>>();
 			builder.RegisterType<ProductRepository>().As<IRepository<ProductDto, ProductQuery>>();
 			builder.RegisterType<AssetRepository>().As<IAssetRepository>();
@@ -34,7 +50,7 @@ namespace LinkIT.Web
 		{
 			var builder = new ContainerBuilder();
 
-			builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+			RegisterControllers(builder);
 			RegisterServices(builder);
 			RegisterRepositories(builder);
 

@@ -192,9 +192,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Api\Log4NetExceptionLogger.cs" />
-    <Compile Include="Infrastructure\Api\Shibboleth\ShibbolethVariablesBase.cs" />
+    <Compile Include="Infrastructure\Api\Shibboleth\Auth\IShibbolethAuthorizer.cs" />
+    <Compile Include="Infrastructure\Api\Shibboleth\IShibbolethContext.cs" />
+    <Compile Include="Infrastructure\Api\Shibboleth\ShibbolethAttributesBase.cs" />
+    <Compile Include="Infrastructure\Api\Shibboleth\ShibbolethAttributesMock.cs" />
+    <Compile Include="Infrastructure\Api\Shibboleth\ShibbolethContextMock.cs" />
     <Compile Include="Infrastructure\Api\Shibboleth\ShibbolethHeaders.cs" />
     <Compile Include="Infrastructure\Api\Shibboleth\ShibbolethServerVariables.cs" />
+    <Compile Include="Infrastructure\Api\Shibboleth\ShibbolethContext.cs" />
     <Compile Include="Models\Api\AssetHistoryReadModel.cs" />
     <Compile Include="Models\Api\AssetReadModel.cs" />
     <Compile Include="Models\Api\AssetWriteModel.cs" />

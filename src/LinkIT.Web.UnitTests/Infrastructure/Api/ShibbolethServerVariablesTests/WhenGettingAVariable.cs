@@ -13,7 +13,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
 			new NameValueCollection()
 			{
 				{ "whatever", "whatever" },
-				{ ShibbolethVariablesBase.UID_KEY, "u0000001" },
+				{ ShibbolethAttributesBase.UID_KEY, "u0000001" },
 				{ "bla", "bla" }
 			};
 
@@ -28,7 +28,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
 		[TestMethod]
 		public void ThenAnExistingVariableIsFound()
 		{
-			string uid = _sut.Get(ShibbolethVariablesBase.UID_KEY);
+			string uid = _sut.Get(ShibbolethAttributesBase.UID_KEY);
 			Assert.AreEqual("u0000001", uid);
 
 			uid = _sut.GetUid();
@@ -36,7 +36,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
 
 			var result = _sut.GetAll();
 			Assert.AreEqual(1, result.Count);
-			Assert.AreEqual("u0000001", result[ShibbolethVariablesBase.UID_KEY]);
+			Assert.AreEqual("u0000001", result[ShibbolethAttributesBase.UID_KEY]);
 		}
 	}
 }

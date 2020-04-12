@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LinkIT.Web.Infrastructure.Api.Shibboleth
 {
-	public abstract class ShibbolethVariablesBase
+	public abstract class ShibbolethAttributesBase
 	{
 		protected const string SHIBBOLETH_PREFIX = "SHIB";
 		protected const string IGNORE_SHIBBOLETH_KEY = "HTTP_SHIB_ATTRIBUTES";
@@ -47,7 +47,7 @@ namespace LinkIT.Web.Infrastructure.Api.Shibboleth
 			if (!IsShibbolethKey(key))
 				throw new ArgumentException($"{key} is not a valid Shibboleth attribute.");
 
-			if (!TryGet(key, out var value))
+			if (!InnerTryGet(key, out var value))
 				throw new ArgumentException($"Key with value '{key}' is not present as a server variable.");
 
 			return value;

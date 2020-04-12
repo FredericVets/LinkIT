@@ -15,14 +15,14 @@ namespace LinkIT.Data.DTO
 				throw new ArgumentException($"User '{user}' not found.");
 		}
 
-		public IDictionary<string, IEnumerable<string>> Data { get; private set; }
+		public IDictionary<string, IEnumerable<string>> Data { get; }
 
 		public bool HasUser(string user)
 		{
 			if (string.IsNullOrWhiteSpace(user))
 				throw new ArgumentNullException(nameof(user));
 
-			return Data.ContainsKey(user);
+			return Data.ContainsKey(user.ToLower());
 		}
 
 		public bool TryGetRolesFor(string user, out IEnumerable<string> roles)
@@ -32,7 +32,7 @@ namespace LinkIT.Data.DTO
 			if (!HasUser(user))
 				return false;
 
-			roles = Data[user];
+			roles = Data[user.ToLower()];
 			if (roles == null || !roles.Any())
 				return false;
 
@@ -49,17 +49,17 @@ namespace LinkIT.Data.DTO
 			return roles;
 		}
 
-		public bool HasRole(string user, string role)
+		public bool HasRole(string user, params string[] roles)
 		{
 			GuardUser(user);
 
-			if (string.IsNullOrWhiteSpace(role))
-				throw new ArgumentNullException(nameof(role));
+			if (roles == null || !roles.Any())
+				throw new ArgumentNullException(nameof(roles));
 
-			if (!TryGetRolesFor(user, out var roles))
+			if (!TryGetRolesFor(user, out var actualRoles))
 				return false;
 
-			return roles.Contains(role);
+			return roles.All(r => actualRoles.Contains(r, StringComparer.InvariantCultureIgnoreCase));
 		}
 	}
 }

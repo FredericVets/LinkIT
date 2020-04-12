@@ -89,6 +89,7 @@
     <Compile Include="Builders\WhereClauseBuilder.cs" />
     <Compile Include="Builders\WhereInClauseBuilder.cs" />
     <Compile Include="Repositories\UserRoleRepository.cs" />
+    <Compile Include="StringExtensions.cs" />
     <Compile Include="TableNames.cs" />
   </ItemGroup>
   <ItemGroup>

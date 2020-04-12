@@ -14,8 +14,8 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethHeadersTests
 		{
 			var request = new HttpRequestMessage();
 			request.Headers.Add("whatever", "whatever");
-			request.Headers.Add(ShibbolethVariablesBase.UID_KEY, "u0000001");
-			request.Headers.Add(ShibbolethVariablesBase.UID_KEY, "u0000002");
+			request.Headers.Add(ShibbolethAttributesBase.UID_KEY, "u0000001");
+			request.Headers.Add(ShibbolethAttributesBase.UID_KEY, "u0000002");
 			request.Headers.Add("bla", "bla");
 
 			return request.Headers;
@@ -28,7 +28,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethHeadersTests
 		[TestMethod]
 		public void TheAnExistingHeaderIsFound()
 		{
-			string uid = _sut.Get(ShibbolethVariablesBase.UID_KEY);
+			string uid = _sut.Get(ShibbolethAttributesBase.UID_KEY);
 			Assert.AreEqual("u0000001", uid);
 
 			uid = _sut.GetUid();
@@ -36,7 +36,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethHeadersTests
 
 			var result = _sut.GetAll();
 			Assert.AreEqual(1, result.Count);
-			Assert.AreEqual("u0000001", result[ShibbolethVariablesBase.UID_KEY]);
+			Assert.AreEqual("u0000001", result[ShibbolethAttributesBase.UID_KEY]);
 		}
 	}
 }

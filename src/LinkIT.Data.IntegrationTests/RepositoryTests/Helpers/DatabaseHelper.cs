@@ -15,8 +15,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.Helpers
 		private static string CreateUserRoleInsertStatement() =>
 			$@"INSERT INTO [{TableNames.USER_ROLE_TABLE}] ([{UserRoleRepository.USER_NAME_COLUMN}], [{UserRoleRepository.ROLES_COLUMN}])
 			VALUES
-			('user1', 'select,create   ,     update,delete'),
-			('user2', 'select,,  ,  update'),
+			('user1', 'select, create, update, delete'),
+			('user2', 'select, update'),
 			('user3', 'select');";
 
 		internal ConnectionString ConnectionString { get; private set; }

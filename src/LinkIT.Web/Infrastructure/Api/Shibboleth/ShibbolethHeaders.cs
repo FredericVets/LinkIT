@@ -5,7 +5,11 @@ using System.Net.Http.Headers;
 
 namespace LinkIT.Web.Infrastructure.Api.Shibboleth
 {
-	public class ShibbolethHeaders : ShibbolethVariablesBase
+	/// <summary>
+	/// Shibboleth documentation at https://wiki.shibboleth.net/confluence/display/SP3/AttributeAccess
+	/// recommends to use the headers to retrieve the Shibbolet attributes instead of the server variables collection.
+	/// </summary>
+	public class ShibbolethHeaders : ShibbolethAttributesBase
 	{
 		private readonly HttpRequestHeaders _headers;
 

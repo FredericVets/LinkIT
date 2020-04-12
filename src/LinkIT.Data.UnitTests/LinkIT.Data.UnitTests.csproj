@@ -72,6 +72,8 @@
     <Compile Include="PagingTests\WhenConvertingAStringToAnOrderByInstance.cs" />
     <Compile Include="PagingTests\WhenCreatingAnOrderByInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StringExtensionTests\WhenSplittingKeyValuePairs.cs" />
+    <Compile Include="StringExtensionTests\WhenSplittingCommaSeparated.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="nuget.config" />

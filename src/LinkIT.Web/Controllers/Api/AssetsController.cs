@@ -1,4 +1,5 @@
-﻿using LinkIT.Data.DTO;
+﻿using LinkIT.Data;
+using LinkIT.Data.DTO;
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
@@ -144,15 +145,11 @@ namespace LinkIT.Web.Controllers.Api
 			if (string.IsNullOrWhiteSpace(owners))
 				throw new ArgumentNullException(nameof(owners));
 
-			var trimmed = owners
-				.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-				.Select(x => x.Trim())
-				.Except(new[] { string.Empty })
-				.ToList();
-			if (trimmed.Count > MAX_NUMBER_OWNERS_ALLOWED)
+			var splitted = owners.SplitCommaSeparated();
+			if (splitted.Length > MAX_NUMBER_OWNERS_ALLOWED)
 				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
 
-			var dtos = _repo.ForOwners(trimmed);
+			var dtos = _repo.ForOwners(splitted);
 			if (!dtos.Any())
 				return StatusCode(HttpStatusCode.NoContent);
 			
