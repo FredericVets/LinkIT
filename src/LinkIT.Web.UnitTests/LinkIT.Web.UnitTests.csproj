@@ -65,7 +65,6 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Infrastructure\Api\ShibbolethAttributesMockTests\WhenGettingAMockedAttribute.cs" />
     <Compile Include="Infrastructure\Api\ShibbolethAttributesTests\WhenGettingAnAttributeThatDoesntExist.cs" />
     <Compile Include="Infrastructure\Api\ShibbolethAttributesTests\WhenGettingAnAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

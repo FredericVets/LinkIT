@@ -10,7 +10,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
 		private ShibbolethAttributes _sut;
 
 		private NameValueCollection CreateVariables() =>
-			new NameValueCollection()
+			new NameValueCollection
 			{
 				{ "whatever", "whatever" },
 				{ ShibbolethAttributes.UID_KEY, "u0000001" },

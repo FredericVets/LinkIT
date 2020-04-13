@@ -29,10 +29,10 @@ namespace LinkIT.Data
 		{
 			var result = new Dictionary<string, string>();
 
-			var rawPairs = input.SplitCommaSeparated();
-			foreach (var p in rawPairs)
+			var pairs = input.SplitCommaSeparated();
+			foreach (var pair in pairs)
 			{
-				var splitted = p.SplitForSeparator(':');
+				var splitted = pair.SplitForSeparator(':');
 				result.Add(splitted[0], splitted[1]);
 			}
 
