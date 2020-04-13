@@ -6,8 +6,10 @@ namespace LinkIT.Data.DTO
 {
 	public class UserRolesDto
 	{
+		private readonly IDictionary<string, IEnumerable<string>> _data;
+
 		public UserRolesDto(IDictionary<string, IEnumerable<string>> data) =>
-			Data = data ?? throw new ArgumentNullException(nameof(data));
+			_data = data ?? throw new ArgumentNullException(nameof(data));
 
 		private void GuardUser(string user)
 		{
@@ -15,14 +17,19 @@ namespace LinkIT.Data.DTO
 				throw new ArgumentException($"User '{user}' not found.");
 		}
 
-		public IDictionary<string, IEnumerable<string>> Data { get; }
+		private bool InnerTryGetRolesFor(string user, out IEnumerable<string> roles)
+		{
+			roles = _data[user.ToLower()];
+
+			return roles != null && roles.Any();
+		}
 
 		public bool HasUser(string user)
 		{
 			if (string.IsNullOrWhiteSpace(user))
-				throw new ArgumentNullException(nameof(user));
+				return false;
 
-			return Data.ContainsKey(user.ToLower());
+			return _data.ContainsKey(user.ToLower());
 		}
 
 		public bool TryGetRolesFor(string user, out IEnumerable<string> roles)
@@ -32,18 +39,14 @@ namespace LinkIT.Data.DTO
 			if (!HasUser(user))
 				return false;
 
-			roles = Data[user.ToLower()];
-			if (roles == null || !roles.Any())
-				return false;
-
-			return true;
+			return InnerTryGetRolesFor(user, out roles);
 		}
 
 		public IEnumerable<string> GetRolesFor(string user)
 		{
 			GuardUser(user);
 
-			if (!TryGetRolesFor(user, out var roles))
+			if (!InnerTryGetRolesFor(user, out var roles))
 				throw new ArgumentException($"No roles found for user '{user}'.");
 
 			return roles;
@@ -56,7 +59,7 @@ namespace LinkIT.Data.DTO
 			if (roles == null || !roles.Any())
 				throw new ArgumentNullException(nameof(roles));
 
-			if (!TryGetRolesFor(user, out var actualRoles))
+			if (!InnerTryGetRolesFor(user, out var actualRoles))
 				return false;
 
 			return roles.All(r => actualRoles.Contains(r, StringComparer.InvariantCultureIgnoreCase));

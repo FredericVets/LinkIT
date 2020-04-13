@@ -6,7 +6,7 @@ namespace LinkIT.Web.Infrastructure.Api.Shibboleth
 {
 	public static class ShibbolethAttributesMock
 	{
-		private const string APP_SETTINGS_KEY = "ShibbolethAttributesMock";
+		private const string APP_SETTINGS_KEY = "ShibbolethAttributesMock.values";
 
 		public static bool ShouldMock
 		{

@@ -6,6 +6,7 @@ using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Infrastructure.Api;
 using LinkIT.Web.Infrastructure.Api.Shibboleth;
+using LinkIT.Web.Infrastructure.Api.Shibboleth.Auth;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
@@ -22,11 +23,20 @@ namespace LinkIT.Web
 			builder.RegisterType<Log4NetExceptionLogger>().As<IExceptionLogger>();
 			if (ShibbolethAttributesMock.ShouldMock)
 			{
-				builder.Register(x => ShibbolethAttributesMock.FromConfig()).As<ShibbolethAttributes>().SingleInstance();
+				builder.Register(x => ShibbolethAttributesMock.FromConfig()).SingleInstance();
 			}
 			else
 			{
-				builder.Register(x => ShibbolethAttributes.FromHeader());
+				builder.Register(x => ShibbolethAttributes.FromHeader()).InstancePerRequest();
+			}
+
+			if (ShibbolethAuthorizerMock.ShouldMock)
+			{
+				builder.Register(x => ShibbolethAuthorizerMock.FromConfig()).As<IShibbolethAuthorizer>().SingleInstance();
+			}
+			else
+			{
+				builder.RegisterType<ShibbolethAuthorizer>().As<IShibbolethAuthorizer>();
 			}
 		}
 

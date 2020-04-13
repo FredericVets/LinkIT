@@ -30,34 +30,29 @@ namespace LinkIT.Data.DTO.UnitTests
 			Assert.IsTrue(_sut.HasUser(user));
 
 		[DataTestMethod]
-		[DataRow("user1", "select")]
-		[DataRow("user1", "create")]
-		[DataRow("user2", "select")]
-		public void ThenTheUserRolesAreRetrievedCorrectly(string user, string role) =>
-			Assert.IsTrue(_sut.HasRole(user, role));
-
-		[DataTestMethod]
+		[DataRow("user1", new object[] { new[] { "select" } })]
 		[DataRow("user1", new object[] { new[] { "select", "create" } })]
 		[DataRow("user2", new object[] { new[] { "select" } })]
-		public void ThenMultipleUserRolesAreRetrievedCorrectly(string user, params string[] roles) =>
+		public void ThenTheUserRolesAreRetrievedCorrectly(string user, params string[] roles) =>
 			Assert.IsTrue(_sut.HasRole(user, roles));
 
-		[TestMethod]
-		public void ThenNonExistentDataIsHandledCorrectly()
-		{
-			Assert.IsFalse(_sut.HasUser("idontexist"));
-			Assert.IsFalse(_sut.HasRole("user1", "idontexist"));
-			Assert.IsFalse(_sut.HasRole("user1", string.Empty));
-			Assert.IsFalse(_sut.HasRole("user3", "idontexist"));
-		}
+		[DataTestMethod]
+		[DataRow("")]
+		[DataRow(null)]
+		[DataRow("idontexist")]
+		public void ThenNonExistentUsersAreHandledCorrectly(string user) =>
+			Assert.IsFalse(_sut.HasUser(user));
+
+		[DataTestMethod]
+		[DataRow("user1", "idontexist")]
+		[DataRow("user1", "")]
+		[DataRow("user3", "idontexist")]
+		public void ThenNonExistentUserRolesAreHandledCorrectly(string user, string role) =>
+			Assert.IsFalse(_sut.HasRole(user, role));
 
 		[TestMethod]
 		public void ThenExpectedExceptionsAreThrown()
 		{
-			Assert.ThrowsException<ArgumentNullException>(
-				() => _sut.HasUser(string.Empty),
-				"user");
-
 			Assert.ThrowsException<ArgumentException>(
 				() => _sut.HasRole("idontexist", string.Empty),
 				"User 'idontexist' not found.");
