@@ -10,14 +10,10 @@ namespace LinkIT.Web.Infrastructure.Api
 	{
 		private readonly ILog _log;
 
-		public Log4NetExceptionLogger()
-		{
+		public Log4NetExceptionLogger() =>
 			_log = LogManager.GetLogger(GetType());
-		}
 
-		public override void Log(ExceptionLoggerContext context)
-		{
+		public override void Log(ExceptionLoggerContext context) =>
 			_log.Fatal($"An unhandled exception occurred in '{context.CatchBlock}'.", context.Exception);
-		}
 	}
 }
