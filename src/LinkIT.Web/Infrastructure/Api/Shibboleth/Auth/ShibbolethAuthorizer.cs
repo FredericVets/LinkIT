@@ -3,7 +3,7 @@ using System;
 
 namespace LinkIT.Web.Infrastructure.Api.Shibboleth.Auth
 {
-	public class ShibbolethAuthorizer : IShibbolethAuthorizer
+	public class ShibbolethAuthorizer
 	{
 		private readonly IUserRoleRepository _repo;
 

@@ -21,6 +21,8 @@ namespace LinkIT.Web
 		private void RegisterServices(ContainerBuilder builder)
 		{
 			builder.RegisterType<Log4NetExceptionLogger>().As<IExceptionLogger>();
+
+			builder.RegisterType<ShibbolethAuthorizer>();
 			if (ShibbolethAttributesMock.ShouldMock)
 			{
 				builder.Register(x => ShibbolethAttributesMock.FromConfig()).SingleInstance();
@@ -28,15 +30,6 @@ namespace LinkIT.Web
 			else
 			{
 				builder.Register(x => ShibbolethAttributes.FromHeader()).InstancePerRequest();
-			}
-
-			if (ShibbolethAuthorizerMock.ShouldMock)
-			{
-				builder.Register(x => ShibbolethAuthorizerMock.FromConfig()).As<IShibbolethAuthorizer>().SingleInstance();
-			}
-			else
-			{
-				builder.RegisterType<ShibbolethAuthorizer>().As<IShibbolethAuthorizer>();
 			}
 		}
 

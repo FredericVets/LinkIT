@@ -22,8 +22,8 @@ namespace LinkIT.Web.Filters.Api
 		private ShibbolethAttributes GetAttributes(IDependencyScope scope) =>
 			scope.GetService(typeof(ShibbolethAttributes)) as ShibbolethAttributes;
 
-		private IShibbolethAuthorizer GetAuthorizer(IDependencyScope scope) =>
-			scope.GetService(typeof(IShibbolethAuthorizer)) as IShibbolethAuthorizer;
+		private ShibbolethAuthorizer GetAuthorizer(IDependencyScope scope) =>
+			scope.GetService(typeof(ShibbolethAuthorizer)) as ShibbolethAuthorizer;
 
 		private ILog GetLog() =>
 			LogManager.GetLogger(GetType());
