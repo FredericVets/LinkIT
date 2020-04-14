@@ -6,12 +6,6 @@ namespace LinkIT.Web.Models.Api
 	public class AssetWriteModel
 	{
 		[MaxLength(30)]
-		public string CreatedBy { get; set; }
-
-		[MaxLength(30)]
-		public string ModifiedBy { get; set; }
-
-		[MaxLength(30)]
 		public string IctsReference { get; set; }
 
 		[Required]

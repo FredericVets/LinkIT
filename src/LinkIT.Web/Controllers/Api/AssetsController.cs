@@ -4,6 +4,7 @@ using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Filters.Api;
+using LinkIT.Web.Infrastructure.Api.Shibboleth;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
@@ -20,20 +21,23 @@ namespace LinkIT.Web.Controllers.Api
 		private const int MAX_NUMBER_OWNERS_ALLOWED = 50;
 
 		private readonly IAssetRepository _repo;
+		private readonly ShibbolethAttributes _shibbolethAttribs;
 		private readonly ILog _log;
 
-		public AssetsController(IAssetRepository repo)
+		public AssetsController(IAssetRepository repo, ShibbolethAttributes shibbolethAttribs)
 		{
 			_repo = repo;
+			_shibbolethAttribs = shibbolethAttribs;
 			_log = LogManager.GetLogger(GetType());
 		}
 
-		private static AssetDto MapToDto(AssetWriteModel input, long? id = null) =>
+		private static AssetDto MapToDto(
+			AssetWriteModel input, long? id = null, string createdBy = null, string modifiedBy = null) =>
 			new AssetDto
 			{
 				Id = id,
-				CreatedBy = input.CreatedBy,
-				ModifiedBy = input.ModifiedBy,
+				CreatedBy = createdBy,
+				ModifiedBy = modifiedBy,
 				IctsReference = input.IctsReference,
 				Tag = input.Tag,
 				Serial = input.Serial,
@@ -181,10 +185,8 @@ namespace LinkIT.Web.Controllers.Api
 		{
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
-			if (string.IsNullOrWhiteSpace(model.CreatedBy))
-				return BadRequest("CreatedBy is required.");
 
-			var dto = MapToDto(model);
+			var dto = MapToDto(model, createdBy: _shibbolethAttribs.GetUid());
 			long id = _repo.Insert(dto);
 
 			// Refetch the data.
@@ -201,13 +203,11 @@ namespace LinkIT.Web.Controllers.Api
 		{
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
-			if (string.IsNullOrWhiteSpace(model.ModifiedBy))
-				return BadRequest("ModifiedBy is required.");
 
 			if (!_repo.Exists(id))
 				return NotFound();
 
-			var dto = MapToDto(model, id);
+			var dto = MapToDto(model, id, modifiedBy: _shibbolethAttribs.GetUid());
 
 			_repo.Update(dto);
 
