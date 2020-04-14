@@ -21,7 +21,7 @@ namespace LinkIT.Data
 			SplitForSeparator(input, ',');
 
 		/// <summary>
-		/// Splits an input string formatted like "key1: value1, key2: value2" into KeyValuePair instances.
+		/// Splits an input string formatted like "key1: value1, key2: value2" into a dictionary.
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>

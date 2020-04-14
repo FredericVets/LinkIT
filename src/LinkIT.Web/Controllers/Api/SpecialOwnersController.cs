@@ -70,7 +70,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/special-owners/{id:long:min(1)}", Name = "GetSpecialOwnerById")]
-		[ShibbolethAuthorize(Roles = "read")]
+		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(long id)
 		{
 			if (!_repo.Exists(id))
@@ -83,7 +83,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/special-owners")]
-		[ShibbolethAuthorize(Roles = "read")]
+		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(
 			[FromUri]SpecialOwnerFilterModel filter,
 			[FromUri]PageInfoModel pageInfo)
@@ -111,7 +111,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/special-owners")]
-		[ShibbolethAuthorize(Roles = "create")]
+		[ShibbolethAuthorize(Roles = Constants.Roles.CREATE)]
 		public IHttpActionResult Post(SpecialOwnerWriteModel model)
 		{
 			if (model == null)
@@ -131,7 +131,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		// Fully updates the product.
 		[Route("api/special-owners/{id:long:min(1)}")]
-		[ShibbolethAuthorize(Roles = "modify")]
+		[ShibbolethAuthorize(Roles = Constants.Roles.MODIFY)]
 		public IHttpActionResult Put(long id, SpecialOwnerWriteModel model)
 		{
 			if (model == null)
@@ -154,7 +154,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/special-owners/{id:long:min(1)}")]
-		[ShibbolethAuthorize(Roles = "delete")]
+		[ShibbolethAuthorize(Roles = Constants.Roles.DELETE)]
 		public IHttpActionResult Delete(long id)
 		{
 			if (!_repo.Exists(id))

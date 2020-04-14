@@ -2,6 +2,7 @@
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
+using LinkIT.Web.Filters.Api;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
@@ -69,6 +70,7 @@ namespace LinkIT.Web.Controllers.Api
 			};
 
 		[Route("api/products/{id:long:min(1)}", Name = "GetProductById")]
+		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(long id)
 		{
 			if (!_repo.Exists(id))
@@ -81,6 +83,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/products")]
+		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(
 			[FromUri]ProductFilterModel filter,
 			[FromUri]PageInfoModel pageInfo)
@@ -108,6 +111,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/products")]
+		[ShibbolethAuthorize(Roles = Constants.Roles.CREATE)]
 		public IHttpActionResult Post(ProductWriteModel model)
 		{
 			if (model == null)
@@ -127,6 +131,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		// Fully updates the product.
 		[Route("api/products/{id:long:min(1)}")]
+		[ShibbolethAuthorize(Roles = Constants.Roles.MODIFY)]
 		public IHttpActionResult Put(long id, ProductWriteModel model)
 		{
 			if (model == null)

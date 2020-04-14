@@ -29,9 +29,6 @@ namespace LinkIT.Web.Infrastructure.Api.Shibboleth.Auth
 
 		public bool IsAuthorized(string user, params string[] requiredRoles)
 		{
-			if (string.IsNullOrWhiteSpace(user))
-				return false;
-
 			if (requiredRoles == null || !requiredRoles.Any())
 				throw new ArgumentNullException(nameof(requiredRoles));
 
