@@ -185,7 +185,7 @@
     <Compile Include="Controllers\Api\ProductsController.cs" />
     <Compile Include="Controllers\Api\ServerDataController.cs" />
     <Compile Include="Controllers\Api\SpecialOwnersController.cs" />
-    <Compile Include="Controllers\Api\UserRolesController.cs" />
+    <Compile Include="Controllers\Api\RolesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Filters\Api\ShibbolethAuthorizeAttribute.cs" />
     <Compile Include="Filters\Api\ValidateModelAttribute.cs" />

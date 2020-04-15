@@ -7,18 +7,18 @@ using System.Web.Http;
 
 namespace LinkIT.Web.Controllers.Api
 {
-	public class UserRolesController : ApiController
+	public class RolesController : ApiController
 	{
 		private readonly IUserRoleRepository _repo;
 		private readonly ShibbolethAttributes _shibbolethAttribs;
 
-		public UserRolesController(IUserRoleRepository repo, ShibbolethAttributes shibbolethAttribs)
+		public RolesController(IUserRoleRepository repo, ShibbolethAttributes shibbolethAttribs)
 		{
 			_repo = repo;
 			_shibbolethAttribs = shibbolethAttribs;
 		}
 
-		[Route("api/user-roles/current-user")]
+		[Route("api/roles/current-user")]
 		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult GetForCurrentUser()
 		{

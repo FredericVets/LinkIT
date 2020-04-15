@@ -1,7 +1,5 @@
 ﻿using LinkIT.Data;
-using LinkIT.Web.Infrastructure.Api.Shibboleth;
 using LinkIT.Web.Infrastructure.Api.Shibboleth.Auth;
-using log4net;
 using System;
 using System.Net.Http;
 using System.Web.Http;
@@ -19,14 +17,8 @@ namespace LinkIT.Web.Filters.Api
 	/// </summary>
 	public class ShibbolethAuthorizeAttribute : AuthorizeAttribute
 	{
-		private ShibbolethAttributes GetAttributes(IDependencyScope scope) =>
-			scope.GetService(typeof(ShibbolethAttributes)) as ShibbolethAttributes;
-
 		private ShibbolethAuthorizer GetAuthorizer(IDependencyScope scope) =>
 			scope.GetService(typeof(ShibbolethAuthorizer)) as ShibbolethAuthorizer;
-
-		private ILog GetLog() =>
-			LogManager.GetLogger(GetType());
 
 		protected override bool IsAuthorized(HttpActionContext actionContext)
 		{
@@ -35,15 +27,9 @@ namespace LinkIT.Web.Filters.Api
 
 			// Get the request lifetime scope so you can resolve services.
 			var requestScope = actionContext.Request.GetDependencyScope();
-
-			if (!GetAttributes(requestScope).TryGetUid(out string uid))
-				return false;
-
 			var splitted = Roles.SplitCommaSeparated();
-			if (!GetAuthorizer(requestScope).IsAuthorized(uid, splitted))
-				return false;
 
-			return true;
+			return GetAuthorizer(requestScope).IsCurrentUserAuthorized(splitted);
 		}
 	}
 }
