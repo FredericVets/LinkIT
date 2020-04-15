@@ -33,14 +33,8 @@ namespace LinkIT.Web
 			formatters.Add(new BsonMediaTypeFormatter());
 		}
 
-		private static void BootStrapLog4Net() =>
-			log4net.Config.XmlConfigurator.Configure();
-
 		private static void RegisterGlobalFilters(HttpConfiguration config) =>
 			config.Filters.Add(new ValidateModelAttribute());
-
-		private static void RegisterDependencies(HttpConfiguration config) =>
-			new WebApiDependencies().Register(config);
 
 		public static void Register(HttpConfiguration config)
 		{
@@ -48,9 +42,7 @@ namespace LinkIT.Web
 
 			RegisterRouting(config);
 			RegisterFormatters(config.Formatters);
-			BootStrapLog4Net();
 			RegisterGlobalFilters(config);
-			RegisterDependencies(config);
 		}
 	}
 }

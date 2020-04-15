@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
 using LinkIT.Data;
 using LinkIT.Data.DTO;
@@ -8,17 +9,22 @@ using LinkIT.Web.Infrastructure.Api;
 using LinkIT.Web.Infrastructure.Api.Shibboleth;
 using LinkIT.Web.Infrastructure.Api.Shibboleth.Auth;
 using System.Reflection;
-using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 
 namespace LinkIT.Web
 {
-	public class WebApiDependencies
+	public class DependencyContainerBuilder
 	{
-		private void RegisterControllers(ContainerBuilder builder) =>
+		private static void RegisterApiControllers(ContainerBuilder builder) =>
 			builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 
-		private void RegisterServices(ContainerBuilder builder)
+		private static void RegisterMvcControllers(ContainerBuilder builder) =>
+			builder.RegisterControllers(Assembly.GetExecutingAssembly());
+
+		private static void RegisterMvcFilterProvider(ContainerBuilder builder) =>
+			builder.RegisterFilterProvider();
+
+		private static void RegisterServices(ContainerBuilder builder)
 		{
 			builder.RegisterType<Log4NetExceptionLogger>().As<IExceptionLogger>();
 
@@ -33,7 +39,7 @@ namespace LinkIT.Web
 			}
 		}
 
-		private void RegisterRepositories(ContainerBuilder builder)
+		private static void RegisterRepositories(ContainerBuilder builder)
 		{
 			builder.RegisterType<ConnectionString>().SingleInstance();
 
@@ -44,16 +50,17 @@ namespace LinkIT.Web
 			builder.RegisterType<UserRoleRepository>().As<IUserRoleRepository>();
 		}
 
-		public void Register(HttpConfiguration config)
+		public IContainer Build()
 		{
 			var builder = new ContainerBuilder();
 
-			RegisterControllers(builder);
+			RegisterApiControllers(builder);
+			RegisterMvcControllers(builder);
+			RegisterMvcFilterProvider(builder);
 			RegisterServices(builder);
 			RegisterRepositories(builder);
 
-			var container = builder.Build();
-			config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+			return builder.Build();
 		}
 	}
 }

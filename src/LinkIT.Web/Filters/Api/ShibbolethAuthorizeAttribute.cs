@@ -9,6 +9,7 @@ using System.Web.Http.Dependencies;
 namespace LinkIT.Web.Filters.Api
 {
 	/// <summary>
+	/// To be used in Web Api Controllers.
 	/// Use ServiceLocation to get the dependencies. 
 	/// Dependencies can not be injected via the constructor since attributes are instantiated by reflection.
 	/// Property injection is also a problem since webapi filters are singletons.
