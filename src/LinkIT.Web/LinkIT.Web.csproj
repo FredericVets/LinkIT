@@ -183,10 +183,11 @@
     <Compile Include="Controllers\Api\AssetsController.cs" />
     <Compile Include="Controllers\Api\MappingHelper.cs" />
     <Compile Include="Controllers\Api\ProductsController.cs" />
-    <Compile Include="Controllers\Api\ServerDataController.cs" />
+    <Compile Include="Controllers\Api\RequestDataController.cs" />
     <Compile Include="Controllers\Api\SpecialOwnersController.cs" />
     <Compile Include="Controllers\Api\RolesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\RequestDataController.cs" />
     <Compile Include="Filters\Api\ShibbolethAuthorizeAttribute.cs" />
     <Compile Include="Filters\Api\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -211,6 +212,7 @@
     <Compile Include="Models\Api\SpecialOwnerReadModel.cs" />
     <Compile Include="Models\Api\SpecialOwnerWriteModel.cs" />
     <Compile Include="Models\Api\UserRoleReadModel.cs" />
+    <Compile Include="Models\RequestDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validation\StringElementOfAttribute.cs" />
   </ItemGroup>
@@ -268,6 +270,11 @@
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
@@ -368,6 +375,7 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Views\RequestData\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

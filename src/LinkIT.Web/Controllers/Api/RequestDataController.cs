@@ -9,18 +9,18 @@ namespace LinkIT.Web.Controllers.Api
     /// <summary>
     /// To test what values are available in the headers and the ServerData collection.
     /// </summary>
-    public class ServerDataController : ApiController
+    public class RequestDataController : ApiController
     {
         private readonly ILog _log;
         private readonly ShibbolethAttributes _shibbolethAttributes;
 
-        public ServerDataController(ShibbolethAttributes shibbolethAttributes)
+        public RequestDataController(ShibbolethAttributes shibbolethAttributes)
         {
             _log = LogManager.GetLogger(GetType());
             _shibbolethAttributes = shibbolethAttributes;
         }
 
-        [Route("api/server-data")]
+        [Route("api/request-data")]
         public void Get()
         {
             var sb = new StringBuilder();

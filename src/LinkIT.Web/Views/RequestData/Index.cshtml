@@ -1,0 +1,26 @@
+﻿@using System.Collections.Specialized;
+
+@model LinkIT.Web.Models.RequestDataModel
+
+@{
+	ViewBag.Title = "Index";
+}
+
+<h2>Request Data</h2>
+
+<h3>Request.ServerVariables :</h3>
+	@UnorderedList(Model.ServerVariables)
+
+<h3>Request.Headers :</h3>
+	@UnorderedList(Model.Headers)
+
+
+@helper UnorderedList(NameValueCollection col)
+{
+	<ul>
+		@foreach (string key in col.AllKeys)
+		{
+			<li>key: @key - value:  @col[key]</li>
+		}
+	</ul>
+}
