@@ -2,7 +2,7 @@
 using log4net;
 using System;
 
-namespace LinkIT.Web.Infrastructure.Api.Shibboleth.Auth
+namespace LinkIT.Web.Infrastructure.Shibboleth.Auth
 {
 	public class ShibbolethAuthorizer
 	{

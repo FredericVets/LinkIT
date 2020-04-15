@@ -2,7 +2,7 @@
 using System.Collections.Specialized;
 using System.Configuration;
 
-namespace LinkIT.Web.Infrastructure.Api.Shibboleth
+namespace LinkIT.Web.Infrastructure.Shibboleth
 {
 	public static class ShibbolethAttributesMock
 	{

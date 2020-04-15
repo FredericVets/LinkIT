@@ -6,8 +6,8 @@ using LinkIT.Data.DTO;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Infrastructure.Api;
-using LinkIT.Web.Infrastructure.Api.Shibboleth;
-using LinkIT.Web.Infrastructure.Api.Shibboleth.Auth;
+using LinkIT.Web.Infrastructure.Shibboleth;
+using LinkIT.Web.Infrastructure.Shibboleth.Auth;
 using System.Reflection;
 using System.Web.Http.ExceptionHandling;
 

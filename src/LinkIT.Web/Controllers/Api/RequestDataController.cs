@@ -1,4 +1,4 @@
-﻿using LinkIT.Web.Infrastructure.Api.Shibboleth;
+﻿using LinkIT.Web.Infrastructure.Shibboleth;
 using log4net;
 using System.Text;
 using System.Web;

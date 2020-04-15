@@ -4,7 +4,7 @@ using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Filters.Api;
-using LinkIT.Web.Infrastructure.Api.Shibboleth;
+using LinkIT.Web.Infrastructure.Shibboleth;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;

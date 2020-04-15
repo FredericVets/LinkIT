@@ -65,8 +65,8 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Infrastructure\Api\ShibbolethAttributesTests\WhenGettingAnAttributeThatDoesntExist.cs" />
-    <Compile Include="Infrastructure\Api\ShibbolethAttributesTests\WhenGettingAnAttribute.cs" />
+    <Compile Include="Infrastructure\ShibbolethAttributesTests\WhenGettingAnAttributeThatDoesntExist.cs" />
+    <Compile Include="Infrastructure\ShibbolethAttributesTests\WhenGettingAnAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValidationTests\WhenValidatingIfAStringIsAnElementOfAList.cs" />
   </ItemGroup>

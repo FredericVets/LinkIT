@@ -1,6 +1,6 @@
 ﻿using LinkIT.Data.Repositories;
 using LinkIT.Web.Filters.Api;
-using LinkIT.Web.Infrastructure.Api.Shibboleth;
+using LinkIT.Web.Infrastructure.Shibboleth;
 using LinkIT.Web.Models.Api;
 using System.Linq;
 using System.Web.Http;

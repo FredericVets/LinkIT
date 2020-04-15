@@ -1,9 +1,9 @@
-﻿using LinkIT.Web.Infrastructure.Api.Shibboleth;
+﻿using LinkIT.Web.Infrastructure.Shibboleth;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Specialized;
 
-namespace LinkIT.Web.UnitTests.Infrastructure.Api.ShibbolethServerVariablesTests
+namespace LinkIT.Web.UnitTests.Infrastructure.ShibbolethAttributesTests
 {
 	[TestClass]
 	public class WhenGettingAnAttributeThatDoesntExist

@@ -1,5 +1,5 @@
 ﻿using LinkIT.Data;
-using LinkIT.Web.Infrastructure.Api.Shibboleth.Auth;
+using LinkIT.Web.Infrastructure.Shibboleth.Auth;
 using System;
 using System.Web;
 using System.Web.Mvc;

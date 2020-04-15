@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Web;
 
-namespace LinkIT.Web.Infrastructure.Api.Shibboleth
+namespace LinkIT.Web.Infrastructure.Shibboleth
 {
 	/// <summary>
 	/// These attributes are available in datastructures of the current Request object.
