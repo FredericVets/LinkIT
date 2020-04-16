@@ -6,6 +6,7 @@ namespace LinkIT.Web.Controllers
 {
 	public class RequestDataController : Controller
 	{
+		[ShibbolethAuthorize(Roles = "read")]
 		public ActionResult Index()
 		{
 			var model = new RequestDataModel

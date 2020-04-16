@@ -5,7 +5,7 @@ namespace LinkIT.Web.Controllers
 {
     public class HomeController : Controller
     {
-        [ShibbolethAuthorize(Roles = "read")]
+        //[ShibbolethAuthorize(Roles = "read")]
         public ActionResult Index()
         {
             ViewBag.Title = "Home Page";
