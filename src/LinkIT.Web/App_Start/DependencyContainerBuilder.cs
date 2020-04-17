@@ -35,7 +35,7 @@ namespace LinkIT.Web
 			}
 			else
 			{
-				builder.Register(x => ShibbolethAttributes.FromHeader()).InstancePerRequest();
+				builder.Register(x => ShibbolethAttributes.FromServerVariables()).InstancePerRequest();
 			}
 		}
 

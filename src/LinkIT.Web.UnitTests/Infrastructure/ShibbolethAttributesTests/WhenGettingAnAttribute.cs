@@ -27,7 +27,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure.ShibbolethAttributesTests
 			string uid = _sut.Get(ShibbolethAttributes.UID_KEY);
 			Assert.AreEqual("u0000001", uid);
 
-			uid = _sut.GetUid();
+			uid = _sut.UId;
 			Assert.AreEqual("u0000001", uid);
 
 			var result = _sut.GetAll();

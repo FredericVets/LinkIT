@@ -20,7 +20,7 @@ namespace LinkIT.Web.Controllers.Api
             _shibbolethAttributes = shibbolethAttributes;
         }
 
-        [Route("api/request-data")]
+        //[Route("api/request-data")]
         public void Get()
         {
             var sb = new StringBuilder();

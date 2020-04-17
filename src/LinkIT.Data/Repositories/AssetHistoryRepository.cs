@@ -8,6 +8,11 @@ using System.Data.SqlClient;
 
 namespace LinkIT.Data.Repositories
 {
+	/// <summary>
+	/// In the database, there are 2 triggers defined on the Asset table : AFTER INSERT and AFTER UPDATE.
+	/// These triggers will create a new row in the AssetHistory table.
+	/// The scripts are present in the database/sql folder.
+	/// </summary>
 	public class AssetHistoryRepository : Repository<AssetHistoryDto, AssetHistoryQuery>
 	{
 		public const string ASSET_ID_COLUMN = "AssetId";

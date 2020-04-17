@@ -188,7 +188,7 @@
     <Compile Include="Controllers\Api\ProductsController.cs" />
     <Compile Include="Controllers\Api\RequestDataController.cs" />
     <Compile Include="Controllers\Api\SpecialOwnersController.cs" />
-    <Compile Include="Controllers\Api\RolesController.cs" />
+    <Compile Include="Controllers\Api\UsersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RequestDataController.cs" />
     <Compile Include="Filters\Api\ShibbolethAuthorizeAttribute.cs" />
@@ -215,7 +215,7 @@
     <Compile Include="Models\Api\ProductWriteModel.cs" />
     <Compile Include="Models\Api\SpecialOwnerReadModel.cs" />
     <Compile Include="Models\Api\SpecialOwnerWriteModel.cs" />
-    <Compile Include="Models\Api\UserRoleReadModel.cs" />
+    <Compile Include="Models\Api\UserReadModel.cs" />
     <Compile Include="Models\RequestDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validation\StringElementOfAttribute.cs" />

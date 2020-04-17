@@ -121,7 +121,7 @@ namespace LinkIT.Web.Controllers.Api
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
 
-			var dto = MapToDto(model, createdBy: _shibbolethAttribs.GetUid());
+			var dto = MapToDto(model, createdBy: _shibbolethAttribs.UId);
 			long id = _repo.Insert(dto);
 
 			// Refetch the data.
@@ -142,7 +142,7 @@ namespace LinkIT.Web.Controllers.Api
 			if (!_repo.Exists(id))
 				return NotFound();
 
-			var dto = MapToDto(model, id, modifiedBy: _shibbolethAttribs.GetUid());
+			var dto = MapToDto(model, id, modifiedBy: _shibbolethAttribs.UId);
 
 			_repo.Update(dto);
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinkIT.Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Web;
@@ -14,10 +15,14 @@ namespace LinkIT.Web.Infrastructure.Shibboleth
 	/// </summary>
 	public class ShibbolethAttributes
 	{
-		private const string SHIBBOLETH_PREFIX = "SHIB";
-		private const string IGNORE_SHIBBOLETH_KEY = "HTTP_SHIB_ATTRIBUTES";
+		private const string SHIBBOLETH_PREFIX = "Shib";
 
-		public const string UID_KEY = "SHIB_uid";
+		public const string UID_KEY = "Shib-Person-uid";
+		public const string SURNAME_KEY = "Shib-Person-surname";
+		public const string GIVEN_NAME_KEY = "Shib-Person-givenName";
+		public const string MAIL_KEY = "Shib-Person-mail";
+		public const string PRIMARY_OU_KEY = "Shib-EP-PrimaryOrgUnitDN"; // ; separated.
+		public const string ALL_OU_KEY = "Shib-EP-OrgUnitDN"; // ; separated.
 
 		private readonly NameValueCollection _data;
 
@@ -38,9 +43,6 @@ namespace LinkIT.Web.Infrastructure.Shibboleth
 		private static bool IsShibbolethKey(string input)
 		{
 			if (string.IsNullOrWhiteSpace(input))
-				return false;
-
-			if (input.Equals(IGNORE_SHIBBOLETH_KEY, StringComparison.InvariantCultureIgnoreCase))
 				return false;
 
 			return input.StartsWith(SHIBBOLETH_PREFIX, StringComparison.InvariantCultureIgnoreCase);
@@ -90,8 +92,17 @@ namespace LinkIT.Web.Infrastructure.Shibboleth
 		public bool TryGetUid(out string uid) =>
 			TryGet(UID_KEY, out uid);
 
-		public string GetUid() =>
-			Get(UID_KEY);
+		public string UId => Get(UID_KEY);
+
+		public string SurName => Get(SURNAME_KEY);
+
+		public string GivenName => Get(GIVEN_NAME_KEY);
+
+		public string Email => Get(MAIL_KEY);
+
+		public string[] PrimaryOrganizationalUnits => Get(PRIMARY_OU_KEY).SplitForSeparator(';');
+
+		public string[] AllOrganizationalUnits => Get(ALL_OU_KEY).SplitForSeparator(';');
 
 		public IDictionary<string, string> GetAll()
 		{
