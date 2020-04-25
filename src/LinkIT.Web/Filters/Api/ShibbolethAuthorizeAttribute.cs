@@ -1,4 +1,4 @@
-﻿using LinkIT.Data;
+﻿using LinkIT.Data.Extensions;
 using LinkIT.Web.Infrastructure.Shibboleth.Auth;
 using System;
 using System.Net.Http;

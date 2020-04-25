@@ -1,4 +1,4 @@
-﻿using LinkIT.Data;
+﻿using LinkIT.Data.Extensions;
 using System.Collections.Specialized;
 using System.Configuration;
 

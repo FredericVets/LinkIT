@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using LinkIT.Data.Extensions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LinkIT.Data.UnitTests.StringExtensionTests
 {

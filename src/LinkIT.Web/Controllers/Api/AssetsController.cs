@@ -1,5 +1,5 @@
-﻿using LinkIT.Data;
-using LinkIT.Data.DTO;
+﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Extensions;
 using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;

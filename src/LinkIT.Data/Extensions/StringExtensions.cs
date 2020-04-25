@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinkIT.Data
+namespace LinkIT.Data.Extensions
 {
 	public static class StringExtensions
 	{
@@ -18,7 +18,7 @@ namespace LinkIT.Data
 		}
 
 		public static string[] SplitCommaSeparated(this string input) =>
-			SplitForSeparator(input, ',');
+			input.SplitForSeparator(',');
 
 		/// <summary>
 		/// Splits an input string formatted like "key1: value1, key2: value2" into a dictionary.

@@ -1,4 +1,5 @@
 ﻿using LinkIT.Data.DTO;
+using LinkIT.Data.Extensions;
 using LinkIT.Data.Queries;
 using System;
 using System.Collections.Generic;

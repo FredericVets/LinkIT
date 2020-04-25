@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using LinkIT.Data.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LinkIT.Data.UnitTests.StringExtensionTests
