@@ -170,7 +170,7 @@ namespace LinkIT.Data.Repositories
 			{
 				con.Open();
 				
-				// Protect against phantom reads between the select statements.
+				// Protect against phantom reads when data gets inserted inbetween the select statements.
 				using (var tx = con.BeginTransaction(IsolationLevel.Serializable))
 				{
 					long totalCount;

@@ -67,6 +67,8 @@
     <Compile Include="RepositoryTests\ProductRepo\WhenQueryingTheProductsWithNoCondition.cs" />
     <Compile Include="RepositoryTests\ProductRepo\WhenUpdatingAProduct.cs" />
     <Compile Include="RepositoryTests\ProductRepo\WhenInsertingANewProduct.cs" />
+    <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenQueryingTheSpecialOwnersWithOneConditionWithDateTime.cs" />
+    <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenQueryingTheSpecialOwnersWithOneConditionWithStringWildcard.cs" />
     <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenQueryingTheSpecialOwnersWithNoConditionAndPaging.cs" />
     <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenQueryingTheSpecialOwnersWithOneCondition.cs" />
     <Compile Include="RepositoryTests\SpecialOwnerRepo\WhenQueryingTheSpecialOwnersWithTwoConditions.cs" />

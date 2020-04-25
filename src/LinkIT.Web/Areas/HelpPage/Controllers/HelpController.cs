@@ -1,14 +1,16 @@
+using LinkIT.Web.Areas.HelpPage.ModelDescriptions;
+using LinkIT.Web.Areas.HelpPage.Models;
+using LinkIT.Web.Filters;
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using LinkIT.Web.Areas.HelpPage.ModelDescriptions;
-using LinkIT.Web.Areas.HelpPage.Models;
 
 namespace LinkIT.Web.Areas.HelpPage.Controllers
 {
     /// <summary>
     /// The controller that will handle requests for the help page.
     /// </summary>
+    [ShibbolethAuthorize(Roles = "read")]
     public class HelpController : Controller
     {
         private const string ErrorViewName = "Error";

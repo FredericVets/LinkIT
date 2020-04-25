@@ -43,8 +43,25 @@ namespace LinkIT.Data.Builders
 				_builder.AppendLine("WHERE");
 				_isFirstParameter = false;
 			}
-
+			
 			string paramName = $"@{columnName}";
+			if (value is string)
+			{
+				_builder.AppendLine($"[{columnName}] like {paramName}");
+				_command.AddSqlParameter(paramName, value, sqlType);
+
+				return this;
+			}
+
+			if (value is DateTime)
+			{
+				// Only take the date part into account.
+				_builder.AppendLine($"DATEDIFF(day, [{columnName}], {paramName}) = 0");
+				_command.AddSqlParameter(paramName, value, sqlType);
+
+				return this;
+			}
+
 			_builder.AppendLine($"[{columnName}] = {paramName}");
 			_command.AddSqlParameter(paramName, value, sqlType);
 
