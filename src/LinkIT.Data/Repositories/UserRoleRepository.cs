@@ -53,6 +53,8 @@ namespace LinkIT.Data.Repositories
 					{
 						return ReadDtoFrom(reader);
 					}
+
+					//tx.Commit();
 				}
 			}
 		}

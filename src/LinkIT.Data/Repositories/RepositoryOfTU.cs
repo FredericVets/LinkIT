@@ -10,6 +10,8 @@ using System.Linq;
 
 namespace LinkIT.Data.Repositories
 {
+	// Select statements are also wrapped in transactions that are implicitly rollbacked.
+	// So there is always a consistent view of the database inside the transaction.
 	public abstract class Repository<TDto, TQuery> : IRepository<TDto, TQuery> 
 		where TDto : Dto 
 		where TQuery : Query
@@ -167,7 +169,9 @@ namespace LinkIT.Data.Repositories
 			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
-				using (var tx = con.BeginTransaction())
+				
+				// Protect against phantom reads between the select statements.
+				using (var tx = con.BeginTransaction(IsolationLevel.Serializable))
 				{
 					long totalCount;
 					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
