@@ -72,7 +72,11 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 		}
 
 		[TestCleanup]
-		public void CleanUp() =>
+		public void CleanUp()
+		{
+			DateTimeProvider.ResetDateTime();
 			new DatabaseHelper().HardDeleteAll();
+		}
+			
 	}
 }

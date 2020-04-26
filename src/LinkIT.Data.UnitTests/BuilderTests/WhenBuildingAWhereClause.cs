@@ -31,12 +31,13 @@ namespace LinkIT.Data.UnitTests.BuilderTests
 				.ForParameter("Leuven", "Location", SqlDbType.VarChar)
 				.ForParameter((string)null, "ShouldBeOmitted", SqlDbType.VarChar);
 
-			string expected = $"WHERE{Environment.NewLine}";
-			expected += $"[Name] = @Name{Environment.NewLine}";
+			string expected = $"WHERE ({Environment.NewLine}";
+			expected += $"[Name] like @Name{Environment.NewLine}";
 			expected += $"AND{Environment.NewLine}";
 			expected += $"[Age] = @Age{Environment.NewLine}";
 			expected += $"AND{Environment.NewLine}";
-			expected += $"[Location] = @Location{Environment.NewLine}";
+			expected += $"[Location] like @Location{Environment.NewLine}";
+			expected += $"){Environment.NewLine}";
 
 			string actual = _sut.ToString();
 

@@ -40,7 +40,7 @@ namespace LinkIT.Data.Builders
 
 			if (_isFirstParameter)
 			{
-				_builder.AppendLine("WHERE");
+				_builder.AppendLine("WHERE (");
 				_isFirstParameter = false;
 			}
 			
@@ -70,6 +70,9 @@ namespace LinkIT.Data.Builders
 
 		public override string ToString()
 		{
+			if (!_isFirstParameter)
+				_builder.AppendLine(")");
+
 			if (_hasSoftDelete && _isFirstParameter)
 			{
 				_builder.AppendLine("WHERE");
