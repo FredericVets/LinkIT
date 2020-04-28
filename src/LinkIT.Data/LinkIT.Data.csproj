@@ -67,6 +67,7 @@
     <Compile Include="Paging\OrderExtensions.cs" />
     <Compile Include="Queries\AssetHistoryQuery.cs" />
     <Compile Include="Queries\AssetQuery.cs" />
+    <Compile Include="Queries\DateRange.cs" />
     <Compile Include="Queries\ProductQuery.cs" />
     <Compile Include="Queries\SpecialOwnerQuery.cs" />
     <Compile Include="Repositories\AssetHistoryRepository.cs" />

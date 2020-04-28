@@ -30,20 +30,26 @@ namespace LinkIT.Data.Builders
 			_isFirstParameter = true;
 		}
 
+		private void HandleFirstParameter()
+		{
+			if (_isFirstParameter)
+			{
+				_builder.AppendLine("WHERE (");
+				_isFirstParameter = false;
+
+				return;
+			}
+
+			_builder.AppendLine(_logicalOperator.ToString());
+		}
+
 		public WhereClauseBuilder ForParameter<T>(T value, string columnName, SqlDbType sqlType)
 		{
 			if (value == null)
 				return this;
 
-			if (!_isFirstParameter)
-				_builder.AppendLine(_logicalOperator.ToString());
+			HandleFirstParameter();
 
-			if (_isFirstParameter)
-			{
-				_builder.AppendLine("WHERE (");
-				_isFirstParameter = false;
-			}
-			
 			string paramName = $"@{columnName}";
 			if (value is string)
 			{
@@ -64,6 +70,46 @@ namespace LinkIT.Data.Builders
 
 			_builder.AppendLine($"[{columnName}] = {paramName}");
 			_command.AddSqlParameter(paramName, value, sqlType);
+
+			return this;
+		}
+
+		/// <summary>
+		/// Adds a date range to the where clause.
+		/// Since a datetime without a specified time segment will have a value of date 00:00:00.000, if you want to be 
+		/// sure you get all the dates in your range, you must either supply the time for your ending date or increase your 
+		/// ending date and use '<'.
+		/// </summary>
+		/// <param name="range"></param>
+		/// <param name="columnName"></param>
+		/// <param name="sqlType"></param>
+		/// <returns></returns>
+		public WhereClauseBuilder ForDateRange(
+			DateRange range, string columnName, SqlDbType sqlType = SqlDbType.DateTime2)
+		{
+			if (range == null)
+				return this;
+
+			HandleFirstParameter();
+
+			if (range.StartDate.HasValue)
+			{
+				string paramName = $"@{columnName}Start";
+				_builder.Append($"[{columnName}] >= {paramName}");
+				_command.AddSqlParameter(paramName, range.StartDate.Value.Date, sqlType);
+			}
+
+			if (range.EndDate.HasValue)
+			{
+				if (range.StartDate.HasValue)
+					_builder.Append(" AND ");
+
+				string paramName = $"@{columnName}End";
+				_builder.Append($"[{columnName}] < {paramName}");
+				_command.AddSqlParameter(paramName, range.EndDate.Value.Date.AddDays(1), sqlType);
+			}
+
+			_builder.AppendLine();
 
 			return this;
 		}

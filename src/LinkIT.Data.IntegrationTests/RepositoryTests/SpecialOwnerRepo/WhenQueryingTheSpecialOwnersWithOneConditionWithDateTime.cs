@@ -77,6 +77,5 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.SpecialOwnerRepo
 			DateTimeProvider.ResetDateTime();
 			new DatabaseHelper().HardDeleteAll();
 		}
-			
 	}
 }

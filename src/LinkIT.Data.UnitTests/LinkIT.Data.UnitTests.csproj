@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuilderTests\WhenBuildingAWhereClauseWithDateRangeAndSoftDelete.cs" />
     <Compile Include="BuilderTests\WhenBuildingAWhereClauseWithNoArgumentsAndSoftDelete.cs" />
     <Compile Include="BuilderTests\WhenBuildingAWhereClauseWithNoArguments.cs" />
     <Compile Include="BuilderTests\WhenBuildingAWhereInClause.cs" />

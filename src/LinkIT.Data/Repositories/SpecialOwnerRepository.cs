@@ -35,6 +35,7 @@ namespace LinkIT.Data.Repositories
 		protected override void AddParametersFor(SpecialOwnerQuery input, WhereClauseBuilder builder) =>
 			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)
 				.ForParameter(input.CreationDate, CREATION_DATE_COLUMN, SqlDbType.DateTime2)
+				.ForDateRange(input.CreationDateRange, CREATION_DATE_COLUMN, SqlDbType.DateTime2)
 				.ForParameter(input.CreatedBy, CREATED_BY_COLUMN, SqlDbType.VarChar)
 				.ForParameter(input.ModificationDate, MODIFICATION_DATE_COLUMN, SqlDbType.DateTime2)
 				.ForParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar)
