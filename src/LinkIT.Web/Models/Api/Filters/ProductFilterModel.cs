@@ -16,10 +16,14 @@ namespace LinkIT.Web.Models.Api.Filters
 		[MaxLength(30)]
 		public string Type { get; set; }
 
+		[MaxLength(30)]
+		public string Group { get; set; }
+
 		public bool IsEmpty() =>
 			string.IsNullOrWhiteSpace(CreatedBy) &&
 			string.IsNullOrWhiteSpace(ModifiedBy) &&
 			string.IsNullOrWhiteSpace(Brand) &&
-			string.IsNullOrWhiteSpace(Type);
+			string.IsNullOrWhiteSpace(Type) &&
+			string.IsNullOrWhiteSpace(Group);
 	}
 }

@@ -13,11 +13,12 @@ namespace LinkIT.Data.Repositories
 	{
 		public const string BRAND_COLUMN = "Brand";
 		public const string TYPE_COLUMN = "Type";
+		public const string GROUP_COLUMN = "Group";
 
 		private static readonly string[] COLUMNS = new[]
 		{
 			ID_COLUMN, CREATION_DATE_COLUMN, CREATED_BY_COLUMN, MODIFICATION_DATE_COLUMN, MODIFIED_BY_COLUMN,
-			BRAND_COLUMN, TYPE_COLUMN
+			BRAND_COLUMN, TYPE_COLUMN, GROUP_COLUMN
 		};
 
 		public ProductRepository(ConnectionString connString) : base(connString, TableNames.PRODUCT_TABLE) { }
@@ -30,7 +31,8 @@ namespace LinkIT.Data.Repositories
 				.ForParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar)
 
 				.ForParameter(input.Brand, BRAND_COLUMN, SqlDbType.VarChar)
-				.ForParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
+				.ForParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Group, GROUP_COLUMN, SqlDbType.VarChar);
 
 		protected override void AddParametersFor(ProductQuery input, WhereClauseBuilder builder) =>
 			builder.ForParameter(input.Id, ID_COLUMN, SqlDbType.BigInt)
@@ -40,7 +42,8 @@ namespace LinkIT.Data.Repositories
 				.ForParameter(input.ModifiedBy, MODIFIED_BY_COLUMN, SqlDbType.VarChar)
 
 				.ForParameter(input.Brand, BRAND_COLUMN, SqlDbType.VarChar)
-				.ForParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar);
+				.ForParameter(input.Type, TYPE_COLUMN, SqlDbType.VarChar)
+				.ForParameter(input.Group, GROUP_COLUMN, SqlDbType.VarChar);
 
 		protected override IEnumerable<ProductDto> ReadDtosFrom(SqlDataReader reader)
 		{
@@ -55,7 +58,8 @@ namespace LinkIT.Data.Repositories
 					ModifiedBy = GetColumnValue<string>(reader, MODIFIED_BY_COLUMN),
 
 					Brand = GetColumnValue<string>(reader, BRAND_COLUMN),
-					Type = GetColumnValue<string>(reader, TYPE_COLUMN)
+					Type = GetColumnValue<string>(reader, TYPE_COLUMN),
+					Group = GetColumnValue<string>(reader, GROUP_COLUMN)
 				};
 			}
 		}
@@ -63,14 +67,14 @@ namespace LinkIT.Data.Repositories
 		protected override string CreateInsertStatement() =>
 			$@"INSERT INTO [{TableName}] 
 					([{CREATION_DATE_COLUMN}], [{CREATED_BY_COLUMN}], [{MODIFICATION_DATE_COLUMN}], [{MODIFIED_BY_COLUMN}], 
-					[{BRAND_COLUMN}], [{TYPE_COLUMN}]) 
+					[{BRAND_COLUMN}], [{TYPE_COLUMN}], [{GROUP_COLUMN}]) 
 				VALUES (@{CREATION_DATE_COLUMN}, @{CREATED_BY_COLUMN}, @{MODIFICATION_DATE_COLUMN}, @{MODIFIED_BY_COLUMN}, 
-					@{BRAND_COLUMN}, @{TYPE_COLUMN})";
+					@{BRAND_COLUMN}, @{TYPE_COLUMN}, @{GROUP_COLUMN})";
 
 		protected override string CreateUpdateStatement() =>
 			$@"UPDATE [{TableName}] SET 
 					[{MODIFICATION_DATE_COLUMN}]=@{MODIFICATION_DATE_COLUMN}, [{MODIFIED_BY_COLUMN}]=@{MODIFIED_BY_COLUMN}, 
-					[{BRAND_COLUMN}]=@{BRAND_COLUMN}, [{TYPE_COLUMN}]=@{TYPE_COLUMN}
+					[{BRAND_COLUMN}]=@{BRAND_COLUMN}, [{TYPE_COLUMN}]=@{TYPE_COLUMN}, [{GROUP_COLUMN}]=@{GROUP_COLUMN}
 				WHERE [{ID_COLUMN}]=@{ID_COLUMN}";
 
 		public override IEnumerable<string> Columns =>

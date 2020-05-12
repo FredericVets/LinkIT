@@ -11,5 +11,9 @@ namespace LinkIT.Web.Models.Api
 		[Required]
 		[MaxLength(30)]
 		public string Type { get; set; }
+
+		[Required]
+		[MaxLength(30)]
+		public string Group { get; set; }
 	}
 }

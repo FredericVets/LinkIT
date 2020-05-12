@@ -17,6 +17,8 @@ namespace LinkIT.Data.DTO
 
 		public string Type { get; set; }
 
+		public string Group { get; set; }
+
 		public static bool operator ==(ProductDto left, ProductDto right) =>
 			EqualityComparer<ProductDto>.Default.Equals(left, right);
 
@@ -36,6 +38,7 @@ namespace LinkIT.Data.DTO
 			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(ModifiedBy);
 			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Brand);
 			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Type);
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Group);
 
 			return hashCode;
 		}
@@ -48,6 +51,7 @@ namespace LinkIT.Data.DTO
 			ModificationDate == other.ModificationDate &&
 			ModifiedBy == other.ModifiedBy &&
 			Brand == other.Brand &&
-			Type == other.Type;
+			Type == other.Type &&
+			Group == other.Group;
 	}
 }

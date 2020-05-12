@@ -35,7 +35,8 @@ namespace LinkIT.Web.Controllers.Api
 				CreatedBy = createdBy,
 				ModifiedBy = modifiedBy,
 				Brand = input.Brand,
-				Type = input.Type
+				Type = input.Type,
+				Group = input.Group
 			};
 
 		private static ProductQuery MapToQuery(ProductFilterModel filter) =>
@@ -44,7 +45,8 @@ namespace LinkIT.Web.Controllers.Api
 				CreatedBy = filter.CreatedBy,
 				ModifiedBy = filter.ModifiedBy,
 				Brand = filter.Brand,
-				Type = filter.Type
+				Type = filter.Type,
+				Group = filter.Group
 			};
 
 		private IHttpActionResult CreateActionResultFor(PagedResult<ProductDto> pagedResult)
@@ -70,7 +72,8 @@ namespace LinkIT.Web.Controllers.Api
 				ModificationDate = input.ModificationDate.Value,
 				ModifiedBy = input.ModifiedBy,
 				Brand = input.Brand,
-				Type = input.Type
+				Type = input.Type,
+				Group = input.Group
 			};
 
 		[Route("api/products/{id:long:min(1)}", Name = "GetProductById")]

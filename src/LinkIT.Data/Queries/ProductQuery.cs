@@ -15,5 +15,7 @@ namespace LinkIT.Data.Queries
 		public string Brand { get; set; }
 
 		public string Type { get; set; }
+
+		public string Group { get; set; }
 	}
 }

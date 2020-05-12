@@ -21,7 +21,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 			{
 				CreatedBy = "user1",
 				Brand = "HP",
-				Type = "EliteBook"
+				Type = "EliteBook",
+				Group = "Laptop"
 			};
 
 			product.Id = _sut.Insert(product);
@@ -36,9 +37,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 		}
 
 		[TestCleanup]
-		public void Cleanup()
-		{
+		public void Cleanup() =>
 			new DatabaseHelper().HardDeleteAll();
-		}
 	}
 }

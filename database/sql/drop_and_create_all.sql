@@ -35,7 +35,8 @@ CREATE TABLE [dbo].[Product](
 	[ModificationDate] DateTime2 NOT NULL,
 	[ModifiedBy] varchar(30) NOT NULL,
 	[Brand] varchar(30) NOT NULL,
-	[Type] varchar(30) NOT NULL
+	[Type] varchar(30) NOT NULL,
+	[Group] varchar(30) NOT NULL
 );
 
 GO

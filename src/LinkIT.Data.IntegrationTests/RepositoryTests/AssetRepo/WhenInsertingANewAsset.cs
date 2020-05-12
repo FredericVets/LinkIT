@@ -19,7 +19,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 			{
 				CreatedBy = "user1",
 				Brand = "HP",
-				Type = "EliteBook"
+				Type = "EliteBook",
+				Group = "Laptop"
 			};
 
 			product.Id = _productRepo.Insert(product);

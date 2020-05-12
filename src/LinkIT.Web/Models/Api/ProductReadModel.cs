@@ -17,5 +17,7 @@ namespace LinkIT.Web.Models.Api
 		public string Brand { get; set; }
 
 		public string Type { get; set; }
+
+		public string Group { get; set; }
 	}
 }

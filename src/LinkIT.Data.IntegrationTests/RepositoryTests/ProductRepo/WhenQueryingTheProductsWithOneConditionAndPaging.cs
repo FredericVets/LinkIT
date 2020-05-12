@@ -26,31 +26,36 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 				{
 					CreatedBy = "user1",
 					Brand = "HP",
-					Type = "EliteBook"
+					Type = "EliteBook",
+					Group = "Laptop"
 				},
 				new ProductDto
 				{
 					CreatedBy = "user1",
 					Brand = "Dell",
-					Type = "Latitude 7280"
+					Type = "Latitude 7280",
+					Group = "Laptop"
 				},
 				new ProductDto
 				{
 					CreatedBy = "user1",
 					Brand = "Dell",
-					Type = "Latitude 7390"
+					Type = "Latitude 7390",
+					Group = "Laptop"
 				},
 				new ProductDto
 				{
 					CreatedBy = "user1",
 					Brand = "Dell",
-					Type = "Latitude 7490"
+					Type = "Latitude 7490",
+					Group = "Laptop"
 				},
 				new ProductDto
 				{
 					CreatedBy = "user1",
 					Brand = "Dell",
-					Type = "Latitude 5590"
+					Type = "Latitude 5590",
+					Group = "Laptop"
 				},
 			};
 
@@ -81,9 +86,7 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.ProductRepo
 		}
 
 		[TestCleanup]
-		public void CleanUp()
-		{
+		public void CleanUp() =>
 			new DatabaseHelper().HardDeleteAll();
-		}
 	}
 }
