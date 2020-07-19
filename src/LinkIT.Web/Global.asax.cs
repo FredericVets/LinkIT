@@ -42,6 +42,8 @@ namespace LinkIT.Web
 			RegisterMvc();
 			RegisterDependencies();
 			BootStrapLog4Net();
+
+			LogManager.GetLogger(GetType()).Debug("Application started");
 		}
 
 		protected void Application_Error(object sender, EventArgs e)
