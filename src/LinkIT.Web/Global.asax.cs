@@ -48,8 +48,11 @@ namespace LinkIT.Web
 
 		protected void Application_Error(object sender, EventArgs e)
 		{
-			// ASP.NET MVC error handling.
+			// General ASP.NET error handling.
 			// For ASP.NET WebApi, a separate IExceptionLogger is used. See WebApiConfig for registration.
+			if (Server == null)
+				return;
+
 			var ex = Server.GetLastError();
 			if (ex == null)
 				return;

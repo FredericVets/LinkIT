@@ -6,7 +6,8 @@ namespace LinkIT.Web
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new HandleErrorAttribute());
+            // When no filter is applied, errors are passed on to the Application_Error() method in global.asax.
+            // filters.Add(new HandleErrorAttribute());
         }
     }
 }

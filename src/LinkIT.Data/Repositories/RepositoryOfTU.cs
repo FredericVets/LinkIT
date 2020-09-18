@@ -169,8 +169,9 @@ namespace LinkIT.Data.Repositories
 			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
-				
+
 				// Protect against phantom reads when data gets inserted inbetween the select statements.
+				// https://stackoverflow.com/questions/3467613/isolation-level-serializable-when-should-i-use-this
 				using (var tx = con.BeginTransaction(IsolationLevel.Serializable))
 				{
 					long totalCount;
