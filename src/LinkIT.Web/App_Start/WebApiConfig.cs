@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using System.Net.Http.Formatting;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace LinkIT.Web
 {
@@ -39,6 +40,9 @@ namespace LinkIT.Web
 		public static void Register(HttpConfiguration config)
 		{
 			config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly;
+
+			var cors = new EnableCorsAttribute("*", "*", "*");
+			config.EnableCors(cors);
 
 			RegisterRouting(config);
 			RegisterFormatters(config.Formatters);

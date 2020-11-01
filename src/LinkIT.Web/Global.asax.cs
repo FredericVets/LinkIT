@@ -49,7 +49,7 @@ namespace LinkIT.Web
 		protected void Application_Error(object sender, EventArgs e)
 		{
 			// General ASP.NET error handling.
-			// For ASP.NET WebApi, a separate IExceptionLogger is used. See WebApiConfig for registration.
+			// For ASP.NET WebApi, a separate IExceptionLogger is used. See WebApi dependencies for registration.
 			if (Server == null)
 				return;
 
