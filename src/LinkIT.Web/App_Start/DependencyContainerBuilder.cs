@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
 using LinkIT.Data;
 using LinkIT.Data.DTO;
@@ -17,12 +16,6 @@ namespace LinkIT.Web
 	{
 		private static void RegisterApiControllers(ContainerBuilder builder) =>
 			builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-
-		private static void RegisterMvcControllers(ContainerBuilder builder) =>
-			builder.RegisterControllers(Assembly.GetExecutingAssembly());
-
-		private static void RegisterMvcFilterProvider(ContainerBuilder builder) =>
-			builder.RegisterFilterProvider();
 
 		private static void RegisterServices(ContainerBuilder builder)
 		{
@@ -55,8 +48,6 @@ namespace LinkIT.Web
 			var builder = new ContainerBuilder();
 
 			RegisterApiControllers(builder);
-			RegisterMvcControllers(builder);
-			RegisterMvcFilterProvider(builder);
 			RegisterServices(builder);
 			RegisterRepositories(builder);
 

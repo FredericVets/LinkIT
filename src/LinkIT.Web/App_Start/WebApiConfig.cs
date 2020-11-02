@@ -8,6 +8,12 @@ namespace LinkIT.Web
 {
 	public static class WebApiConfig
 	{
+		private static void EnableCors(HttpConfiguration config)
+		{
+			var cors = new EnableCorsAttribute("*", "*", "*");
+			config.EnableCors(cors);
+		}
+
 		private static void RegisterRouting(HttpConfiguration config)
 		{
 			// Attribute based routing.
@@ -41,9 +47,7 @@ namespace LinkIT.Web
 		{
 			config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly;
 
-			var cors = new EnableCorsAttribute("*", "*", "*");
-			config.EnableCors(cors);
-
+			EnableCors(config);
 			RegisterRouting(config);
 			RegisterFormatters(config.Formatters);
 			RegisterGlobalFilters(config);

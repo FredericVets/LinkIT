@@ -1,11 +1,7 @@
-﻿using Autofac.Integration.Mvc;
-using Autofac.Integration.WebApi;
+﻿using Autofac.Integration.WebApi;
 using log4net;
 using System;
 using System.Web.Http;
-using System.Web.Mvc;
-using System.Web.Optimization;
-using System.Web.Routing;
 
 namespace LinkIT.Web
 {
@@ -14,20 +10,9 @@ namespace LinkIT.Web
 		private static void RegisterWebApi() =>
 			GlobalConfiguration.Configure(WebApiConfig.Register);
 
-		private static void RegisterMvc()
-		{
-			AreaRegistration.RegisterAllAreas();
-			MVCFilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-			MVCRouteConfig.RegisterRoutes(RouteTable.Routes);
-			MVCBundleConfig.RegisterBundles(BundleTable.Bundles);
-		}
-
 		private static void RegisterDependencies()
 		{
 			var container = new DependencyContainerBuilder().Build();
-
-			// Set the MVC DependencyResolver
-			DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
 			// Set the WebApi DependencyResolver
 			GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
@@ -39,7 +24,6 @@ namespace LinkIT.Web
 		protected void Application_Start()
 		{
 			RegisterWebApi();
-			RegisterMvc();
 			RegisterDependencies();
 			BootStrapLog4Net();
 
