@@ -29,9 +29,10 @@ namespace LinkIT.Web.Controllers.Api
 
 			var readModel = new UserReadModel
 			{
-				UserName = userId,
-				SurName = _jwt.Name,
+				UserId = userId,
+				Name = _jwt.Name,
 				GivenName = _jwt.GivenName,
+				FamilyName = _jwt.FamilyName,
 				Email = _jwt.Email,
 				Roles = actualRoles.ToArray()
 			};
