@@ -143,8 +143,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Api\Log4NetExceptionLogger.cs" />
+    <Compile Include="Infrastructure\Auth\IJsonWebTokenWrapper.cs" />
     <Compile Include="Infrastructure\Auth\JsonWebKeySetWrapper.cs" />
+    <Compile Include="Infrastructure\Auth\JsonWebTokenAuthorizer.cs" />
     <Compile Include="Infrastructure\Auth\JsonWebTokenWrapper.cs" />
+    <Compile Include="Infrastructure\Auth\JsonWebTokenWrapperMock.cs" />
     <Compile Include="Infrastructure\Shibboleth\Auth\ShibbolethAuthorizer.cs" />
     <Compile Include="Infrastructure\Shibboleth\ShibbolethAttributes.cs" />
     <Compile Include="Infrastructure\Shibboleth\ShibbolethAttributesMock.cs" />

@@ -9,9 +9,7 @@ namespace LinkIT.Web.Infrastructure.Auth
 {
 	public class JsonWebKeySetWrapper
 	{
-		private const string APP_SETTINGS_KEY = "jwksJson";
-
-		public JsonWebKeySetWrapper() : this(ConfigurationManager.AppSettings[APP_SETTINGS_KEY]) { }
+		public const string APP_SETTINGS_KEY = "jwks.url";
 
 		public JsonWebKeySetWrapper(string jwksJson)
 		{
@@ -21,14 +19,21 @@ namespace LinkIT.Web.Infrastructure.Auth
 			JsonWebKeySet = new JsonWebKeySet(jwksJson);
 		}
 
+		public static Task<JsonWebKeySetWrapper> FromUrl() =>
+			FromUrl(ConfigurationManager.AppSettings[APP_SETTINGS_KEY]);
 
-		public static async Task<JsonWebKeySetWrapper> Fetch(string jwksUrl)
+		public static async Task<JsonWebKeySetWrapper> FromUrl(string jwksUrl)
 		{
-			using (var client = new HttpClient())
+			if (string.IsNullOrWhiteSpace(jwksUrl))
+				throw new ArgumentNullException(nameof(jwksUrl));
+
+			var handler = new HttpClientHandler { UseProxy = false };
+			using (var client = new HttpClient(handler))
 			{
 				var response = await client.GetAsync(jwksUrl);
 				if (response.StatusCode != HttpStatusCode.OK)
-					throw new InvalidOperationException($"Failed to fetch the jwks from {jwksUrl}.");
+					throw new InvalidOperationException(
+						$"Failed to fetch the jwks from {jwksUrl} with status code : {response.StatusCode}.");
 
 				return new JsonWebKeySetWrapper(await response.Content.ReadAsStringAsync());
 			}

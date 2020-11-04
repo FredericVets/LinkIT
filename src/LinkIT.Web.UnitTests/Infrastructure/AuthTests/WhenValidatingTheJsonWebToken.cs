@@ -1,14 +1,17 @@
 ﻿using LinkIT.Web.Infrastructure.Auth;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Specialized;
 
 namespace LinkIT.Web.UnitTests.Infrastructure
 {
 	[TestClass]
 	public class WhenValidatingTheJsonWebToken
 	{
-		private const string _rawJwt = @"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmbWtCMTdqSXB4SmpJWVFOWjlGQ3FpckN1ejk4aDdpUzZLZWdMbmN5SXpRIn0.eyJleHAiOjE2MDQzMzI4MDcsImlhdCI6MTYwNDMzMjUwNywiYXV0aF90aW1lIjoxNjA0MzMyNTAzLCJqdGkiOiIzZTEwNjZiYy02ZTczLTQ4MjMtYjUwMy03OWZiNTA5ZmNhYzMiLCJpc3MiOiJodHRwczovL2lkcC50LmljdHMua3VsZXV2ZW4uYmUvYXV0aC9yZWFsbXMva3VsZXV2ZW4iLCJzdWIiOiI3ODg0NGFkYy00ZGRlLTRlMTMtYWI5NC00NGVkZmI1MDI1YWUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwb3N0bWFuIiwic2Vzc2lvbl9zdGF0ZSI6ImI1MWU4YTA5LTc1NGEtNGQ5Zi04ODVjLWRjMTUxNjM5NTA0NyIsImFjciI6IjEiLCJzY29wZSI6Im9wZW5pZCBpYW0tZmFjaWxpdHltZ210LndyaXRlIGVtYWlsIGxpb28taGFyZHdhcmUubWFuYWdlIGlhbS1hY2NvdW50LnJlYWQgcHJvZmlsZSIsIm5hbWUiOiJGcmVkZXJpYyBWZXRzIiwicHJlZmVycmVkX3VzZXJuYW1lIjoidTAxMjI3MTMiLCJnaXZlbl9uYW1lIjoiRnJlZGVyaWMiLCJmYW1pbHlfbmFtZSI6IlZldHMiLCJlbWFpbCI6ImZyZWRlcmljLnZldHNAa3VsZXV2ZW4uYmUifQ.L4tqEc4HnFHbHT-n6G3_sPDqaIATQJeJ93A889CNfDcE0CsOc3mDkKFZvBDkfBqfDDUMuECcIYlP34voYZ4oMxLPxpoLEmLRtk9qAJ2l1DRhij7sMk9Oh7JixoGmgyh8UUCU6kGUsIedhaydbJOoiKFaKSohffFIuGBoN6qVn7pmc_EfB4CBRl_ibGaLv2om3FPD0NqrirA0WstNJaeh9B79XZliKSATQUpZRbsvGftdGm7Zjk4KGIe-lV-yQtIsArRzGL-0bIQt_j3XGedbhIAu_GHE9SfHynq0M20m6c_m4ndU2QEdsKhZ1Ubbo_d-3N59T5h2_Abcn30Ed0G18w";
+		private const string RAW_JWT = @"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmbWtCMTdqSXB4SmpJWVFOWjlGQ3FpckN1ejk4aDdpUzZLZWdMbmN5SXpRIn0.eyJleHAiOjE2MDQzMzI4MDcsImlhdCI6MTYwNDMzMjUwNywiYXV0aF90aW1lIjoxNjA0MzMyNTAzLCJqdGkiOiIzZTEwNjZiYy02ZTczLTQ4MjMtYjUwMy03OWZiNTA5ZmNhYzMiLCJpc3MiOiJodHRwczovL2lkcC50LmljdHMua3VsZXV2ZW4uYmUvYXV0aC9yZWFsbXMva3VsZXV2ZW4iLCJzdWIiOiI3ODg0NGFkYy00ZGRlLTRlMTMtYWI5NC00NGVkZmI1MDI1YWUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwb3N0bWFuIiwic2Vzc2lvbl9zdGF0ZSI6ImI1MWU4YTA5LTc1NGEtNGQ5Zi04ODVjLWRjMTUxNjM5NTA0NyIsImFjciI6IjEiLCJzY29wZSI6Im9wZW5pZCBpYW0tZmFjaWxpdHltZ210LndyaXRlIGVtYWlsIGxpb28taGFyZHdhcmUubWFuYWdlIGlhbS1hY2NvdW50LnJlYWQgcHJvZmlsZSIsIm5hbWUiOiJGcmVkZXJpYyBWZXRzIiwicHJlZmVycmVkX3VzZXJuYW1lIjoidTAxMjI3MTMiLCJnaXZlbl9uYW1lIjoiRnJlZGVyaWMiLCJmYW1pbHlfbmFtZSI6IlZldHMiLCJlbWFpbCI6ImZyZWRlcmljLnZldHNAa3VsZXV2ZW4uYmUifQ.L4tqEc4HnFHbHT-n6G3_sPDqaIATQJeJ93A889CNfDcE0CsOc3mDkKFZvBDkfBqfDDUMuECcIYlP34voYZ4oMxLPxpoLEmLRtk9qAJ2l1DRhij7sMk9Oh7JixoGmgyh8UUCU6kGUsIedhaydbJOoiKFaKSohffFIuGBoN6qVn7pmc_EfB4CBRl_ibGaLv2om3FPD0NqrirA0WstNJaeh9B79XZliKSATQUpZRbsvGftdGm7Zjk4KGIe-lV-yQtIsArRzGL-0bIQt_j3XGedbhIAu_GHE9SfHynq0M20m6c_m4ndU2QEdsKhZ1Ubbo_d-3N59T5h2_Abcn30Ed0G18w";
 
-		private const string _jwksJson = @"
+		private const string JWKS_URL = "https://idp.t.icts.kuleuven.be/auth/realms/kuleuven/protocol/openid-connect/certs";
+
+		private const string JWKS_JSON = @"
 			{ ""keys"": [
 				{
 					""kid"":""fmkB17jIpxJjIYQNZ9FCqirCuz98h7iS6KegLncyIzQ"",
@@ -27,11 +30,20 @@ namespace LinkIT.Web.UnitTests.Infrastructure
 
 		private JsonWebTokenWrapper _sut;
 
+		private NameValueCollection CreateHeaders() =>
+			new NameValueCollection
+			{
+				{ JsonWebTokenWrapper.AUTHORIZATION_HEADER, $"{JsonWebTokenWrapper.BEARER} {RAW_JWT}" }
+			};
+
 		[TestInitialize]
 		public void Setup()
 		{
-			var keySetWrapper = new JsonWebKeySetWrapper(_jwksJson);
-			_sut = new JsonWebTokenWrapper(_rawJwt, keySetWrapper, false);
+			var keySetWrapper = JsonWebKeySetWrapper.FromUrl(JWKS_URL).Result;
+			_sut = new JsonWebTokenWrapper(
+				CreateHeaders(), 
+				keySetWrapper, 
+				false);
 		}
 
 		[TestMethod]
@@ -42,7 +54,7 @@ namespace LinkIT.Web.UnitTests.Infrastructure
 		{
 			Assert.AreEqual("openid iam-facilitymgmt.write email lioo-hardware.manage iam-account.read profile", _sut.Scope);
 			Assert.AreEqual("Frederic Vets", _sut.Name);
-			Assert.AreEqual("u0122713", _sut.userId);
+			Assert.AreEqual("u0122713", _sut.UserId);
 			Assert.AreEqual("Frederic", _sut.GivenName);
 			Assert.AreEqual("Vets", _sut.FamilyName);
 			Assert.AreEqual("frederic.vets@kuleuven.be", _sut.Email);
