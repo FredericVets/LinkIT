@@ -134,7 +134,6 @@
     <Compile Include="Controllers\Api\AssetsController.cs" />
     <Compile Include="Controllers\Api\MappingHelper.cs" />
     <Compile Include="Controllers\Api\ProductsController.cs" />
-    <Compile Include="Controllers\Api\RequestDataController.cs" />
     <Compile Include="Controllers\Api\SpecialOwnersController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
     <Compile Include="Filters\Api\JwtAuthorizeAttribute.cs" />
