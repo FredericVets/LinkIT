@@ -1,6 +1,6 @@
 ﻿using LinkIT.Data.Repositories;
 using LinkIT.Web.Filters.Api;
-using LinkIT.Web.Infrastructure.Shibboleth;
+using LinkIT.Web.Infrastructure.Auth;
 using LinkIT.Web.Models.Api;
 using System.Linq;
 using System.Web.Http;
@@ -10,29 +10,29 @@ namespace LinkIT.Web.Controllers.Api
 	public class UsersController : ApiController
 	{
 		private readonly IUserRoleRepository _repo;
-		private readonly ShibbolethAttributes _shibbolethAttribs;
+		private readonly IJsonWebTokenWrapper _jwt;
 
-		public UsersController(IUserRoleRepository repo, ShibbolethAttributes shibbolethAttribs)
+		public UsersController(IUserRoleRepository repo, IJsonWebTokenWrapper jwt)
 		{
 			_repo = repo;
-			_shibbolethAttribs = shibbolethAttribs;
+			_jwt = jwt;
 		}
 
 		[Route("api/users/current")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult GetForCurrentUser()
 		{
 			// User is already authenticated and authorized for the read role.
-			var uid = _shibbolethAttribs.UId;
+			var userId = _jwt.UserId;
 			var userRoles = _repo.GetAll();
-			var actualRoles = userRoles.GetRolesFor(uid);
+			var actualRoles = userRoles.GetRolesFor(userId);
 
 			var readModel = new UserReadModel
 			{
-				UserName = uid,
-				SurName = _shibbolethAttribs.SurName,
-				GivenName = _shibbolethAttribs.GivenName,
-				Email = _shibbolethAttribs.Email,
+				UserName = userId,
+				SurName = _jwt.Name,
+				GivenName = _jwt.GivenName,
+				Email = _jwt.Email,
 				Roles = actualRoles.ToArray()
 			};
 

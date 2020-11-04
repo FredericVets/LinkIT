@@ -33,16 +33,15 @@ namespace LinkIT.Web.UnitTests.Infrastructure
 		private NameValueCollection CreateHeaders() =>
 			new NameValueCollection
 			{
-				{ JsonWebTokenWrapper.AUTHORIZATION_HEADER, $"{JsonWebTokenWrapper.BEARER} {RAW_JWT}" }
+				{ HttpHeadersWrapper.AUTHORIZATION_HEADER, $"{HttpHeadersWrapper.BEARER} {RAW_JWT}" }
 			};
 
 		[TestInitialize]
 		public void Setup()
 		{
-			var keySetWrapper = JsonWebKeySetWrapper.FromUrl(JWKS_URL).Result;
 			_sut = new JsonWebTokenWrapper(
-				CreateHeaders(), 
-				keySetWrapper, 
+				new HttpHeadersWrapper(CreateHeaders()),
+				JsonWebKeySetWrapper.FromUrl(JWKS_URL).Result, 
 				false);
 		}
 

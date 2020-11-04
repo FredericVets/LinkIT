@@ -137,12 +137,14 @@
     <Compile Include="Controllers\Api\RequestDataController.cs" />
     <Compile Include="Controllers\Api\SpecialOwnersController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
+    <Compile Include="Filters\Api\JwtAuthorizeAttribute.cs" />
     <Compile Include="Filters\Api\ShibbolethAuthorizeAttribute.cs" />
     <Compile Include="Filters\Api\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Api\Log4NetExceptionLogger.cs" />
+    <Compile Include="Infrastructure\Auth\HttpHeadersWrapper.cs" />
     <Compile Include="Infrastructure\Auth\IJsonWebTokenWrapper.cs" />
     <Compile Include="Infrastructure\Auth\JsonWebKeySetWrapper.cs" />
     <Compile Include="Infrastructure\Auth\JsonWebTokenAuthorizer.cs" />

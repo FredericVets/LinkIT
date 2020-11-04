@@ -3,7 +3,7 @@ using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Filters.Api;
-using LinkIT.Web.Infrastructure.Shibboleth;
+using LinkIT.Web.Infrastructure.Auth;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
@@ -17,13 +17,13 @@ namespace LinkIT.Web.Controllers.Api
 	public class ProductsController : ApiController
 	{
 		private readonly IRepository<ProductDto, ProductQuery> _repo;
-		private readonly ShibbolethAttributes _shibbolethAttribs;
+		private readonly IJsonWebTokenWrapper _jwt;
 		private readonly ILog _log;
 
-		public ProductsController(IRepository<ProductDto, ProductQuery> repo, ShibbolethAttributes shibbolethAttribs)
+		public ProductsController(IRepository<ProductDto, ProductQuery> repo, IJsonWebTokenWrapper jwt)
 		{
 			_repo = repo;
-			_shibbolethAttribs = shibbolethAttribs;
+			_jwt = jwt;
 			_log = LogManager.GetLogger(GetType());
 		}
 
@@ -77,7 +77,7 @@ namespace LinkIT.Web.Controllers.Api
 			};
 
 		[Route("api/products/{id:long:min(1)}", Name = "GetProductById")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(long id)
 		{
 			if (!_repo.Exists(id))
@@ -90,7 +90,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/products")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(
 			[FromUri]ProductFilterModel filter,
 			[FromUri]PageInfoModel pageInfo)
@@ -118,13 +118,13 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/products")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.CREATE)]
+		[JwtAuthorize(Roles = Constants.Roles.CREATE)]
 		public IHttpActionResult Post(ProductWriteModel model)
 		{
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
 
-			var dto = MapToDto(model, createdBy: _shibbolethAttribs.UId);
+			var dto = MapToDto(model, createdBy: _jwt.UserId);
 			long id = _repo.Insert(dto);
 
 			// Refetch the data.
@@ -136,7 +136,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		// Fully updates the product.
 		[Route("api/products/{id:long:min(1)}")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.MODIFY)]
+		[JwtAuthorize(Roles = Constants.Roles.MODIFY)]
 		public IHttpActionResult Put(long id, ProductWriteModel model)
 		{
 			if (model == null)
@@ -145,7 +145,7 @@ namespace LinkIT.Web.Controllers.Api
 			if (!_repo.Exists(id))
 				return NotFound();
 
-			var dto = MapToDto(model, id, modifiedBy: _shibbolethAttribs.UId);
+			var dto = MapToDto(model, id, modifiedBy: _jwt.UserId);
 
 			_repo.Update(dto);
 

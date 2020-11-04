@@ -1,4 +1,4 @@
-﻿using LinkIT.Web.Infrastructure.Shibboleth;
+﻿using LinkIT.Web.Infrastructure.Auth;
 using log4net;
 using System.Text;
 using System.Web;
@@ -12,12 +12,12 @@ namespace LinkIT.Web.Controllers.Api
     public class RequestDataController : ApiController
     {
         private readonly ILog _log;
-        private readonly ShibbolethAttributes _shibbolethAttributes;
+        private readonly IJsonWebTokenWrapper _jwt;
 
-        public RequestDataController(ShibbolethAttributes shibbolethAttributes)
+        public RequestDataController(IJsonWebTokenWrapper jwt)
         {
             _log = LogManager.GetLogger(GetType());
-            _shibbolethAttributes = shibbolethAttributes;
+            _jwt = jwt;
         }
 
         //[Route("api/request-data")]
@@ -44,11 +44,11 @@ namespace LinkIT.Web.Controllers.Api
             foreach (var kvp in Request.Headers)
                 sb.AppendLine($"key: {kvp.Key}, value: {string.Join(",", kvp.Value)}");
 
-            sb.AppendLine();
-            sb.AppendLine("ShibbolethAttributes :");
-            foreach (var kvp in _shibbolethAttributes.GetAll())
-                sb.AppendLine($"key: {kvp.Key}, value: {kvp.Value}");
-            sb.AppendLine();
+            //sb.AppendLine();
+            //sb.AppendLine("ShibbolethAttributes :");
+            //foreach (var kvp in _jwt.GetAll())
+            //    sb.AppendLine($"key: {kvp.Key}, value: {kvp.Value}");
+            //sb.AppendLine();
 
             _log.Info(sb.ToString());
         }

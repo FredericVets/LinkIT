@@ -4,7 +4,7 @@ using LinkIT.Data.Paging;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Filters.Api;
-using LinkIT.Web.Infrastructure.Shibboleth;
+using LinkIT.Web.Infrastructure.Auth;
 using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
@@ -21,13 +21,13 @@ namespace LinkIT.Web.Controllers.Api
 		private const int MAX_NUMBER_OWNERS_ALLOWED = 50;
 
 		private readonly IAssetRepository _repo;
-		private readonly ShibbolethAttributes _shibbolethAttribs;
+		private readonly IJsonWebTokenWrapper _jwt;
 		private readonly ILog _log;
 
-		public AssetsController(IAssetRepository repo, ShibbolethAttributes shibbolethAttribs)
+		public AssetsController(IAssetRepository repo, IJsonWebTokenWrapper jwt)
 		{
 			_repo = repo;
-			_shibbolethAttribs = shibbolethAttribs;
+			_jwt = jwt;
 			_log = LogManager.GetLogger(GetType());
 		}
 
@@ -101,7 +101,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/assets/{id:long:min(1)}", Name = "GetAssetById")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(long id)
 		{
 			if (!_repo.Exists(id))
@@ -114,7 +114,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/assets")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(
 			[FromUri]AssetFilterModel filter,
 			[FromUri]PageInfoModel pageInfo)
@@ -147,7 +147,7 @@ namespace LinkIT.Web.Controllers.Api
 		/// <param name="owners">A comma separated list of owners.</param>
 		/// <returns></returns>
 		[Route("api/assets")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult GetForOwners(string owners)
 		{
 			if (string.IsNullOrWhiteSpace(owners))
@@ -167,7 +167,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/assets/{id:long:min(1)}/product")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult GetProductFor(long id)
 		{
 			if (!_repo.Exists(id))
@@ -180,13 +180,13 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/assets")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.CREATE)]
+		[JwtAuthorize(Roles = Constants.Roles.CREATE)]
 		public IHttpActionResult Post(AssetWriteModel model)
 		{
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
 
-			var dto = MapToDto(model, createdBy: _shibbolethAttribs.UId);
+			var dto = MapToDto(model, createdBy: _jwt.UserId);
 			long id = _repo.Insert(dto);
 
 			// Refetch the data.
@@ -198,7 +198,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		// Fully updates the asset.
 		[Route("api/assets/{id:long:min(1)}")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.MODIFY)]
+		[JwtAuthorize(Roles = Constants.Roles.MODIFY)]
 		public IHttpActionResult Put(long id, AssetWriteModel model)
 		{
 			if (model == null)
@@ -207,7 +207,7 @@ namespace LinkIT.Web.Controllers.Api
 			if (!_repo.Exists(id))
 				return NotFound();
 
-			var dto = MapToDto(model, id, modifiedBy: _shibbolethAttribs.UId);
+			var dto = MapToDto(model, id, modifiedBy: _jwt.UserId);
 
 			_repo.Update(dto);
 
@@ -219,7 +219,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/assets/{id:long:min(1)}")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.DELETE)]
+		[JwtAuthorize(Roles = Constants.Roles.DELETE)]
 		public IHttpActionResult Delete(long id)
 		{
 			if (!_repo.Exists(id))

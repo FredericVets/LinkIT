@@ -5,8 +5,7 @@ using LinkIT.Data.DTO;
 using LinkIT.Data.Queries;
 using LinkIT.Data.Repositories;
 using LinkIT.Web.Infrastructure.Api;
-using LinkIT.Web.Infrastructure.Shibboleth;
-using LinkIT.Web.Infrastructure.Shibboleth.Auth;
+using LinkIT.Web.Infrastructure.Auth;
 using System.Reflection;
 using System.Web.Http.ExceptionHandling;
 
@@ -21,15 +20,25 @@ namespace LinkIT.Web
 		{
 			builder.RegisterType<Log4NetExceptionLogger>().As<IExceptionLogger>();
 
-			builder.RegisterType<ShibbolethAuthorizer>();
-			if (ShibbolethAttributesMock.ShouldMock)
+			RegisterJsonWebTokenValidation(builder);
+		}
+
+		private static void RegisterJsonWebTokenValidation(ContainerBuilder builder)
+		{
+			builder.RegisterType<JsonWebTokenAuthorizer>();
+
+			if (JsonWebTokenWrapperMock.ShouldMock)
 			{
-				builder.Register(x => ShibbolethAttributesMock.FromConfig()).SingleInstance();
+				builder.RegisterType<JsonWebTokenWrapperMock>().As<IJsonWebTokenWrapper>().SingleInstance();
+
+				return;
 			}
-			else
-			{
-				builder.Register(x => ShibbolethAttributes.FromServerVariables()).InstancePerRequest();
-			}
+
+			var jwks = JsonWebKeySetWrapper.FromUrl().Result;
+			builder.Register(_ => jwks).SingleInstance();
+
+			builder.Register(_ => HttpHeadersWrapper.FromCurrentContext()).InstancePerRequest();
+			builder.RegisterType<JsonWebTokenWrapper>().As<IJsonWebTokenWrapper>().InstancePerRequest();
 		}
 
 		private static void RegisterRepositories(ContainerBuilder builder)

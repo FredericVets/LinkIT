@@ -66,7 +66,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/asset-histories/{id:long:min(1)}", Name = "GetAssetHistoryById")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(long id)
 		{
 			if (!_assetHistoryRepo.Exists(id))
@@ -79,7 +79,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/asset-histories")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(
 			[FromUri]AssetHistoryFilterModel filter,
 			[FromUri]PageInfoModel pageInfo)
@@ -107,7 +107,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/asset-histories/{id:long:min(1)}/asset")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult GetAssetFor(long id)
 		{
 			if (!_assetHistoryRepo.Exists(id))
@@ -122,7 +122,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		[Route("api/asset-histories/{id:long:min(1)}/product")]
-		[ShibbolethAuthorize(Roles = Constants.Roles.READ)]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult GetProductFor(long id)
 		{
 			if (!_assetHistoryRepo.Exists(id))
