@@ -138,7 +138,6 @@
     <Compile Include="Controllers\Api\SpecialOwnersController.cs" />
     <Compile Include="Controllers\Api\UsersController.cs" />
     <Compile Include="Filters\Api\JwtAuthorizeAttribute.cs" />
-    <Compile Include="Filters\Api\ShibbolethAuthorizeAttribute.cs" />
     <Compile Include="Filters\Api\ValidateModelAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -150,9 +149,6 @@
     <Compile Include="Infrastructure\Auth\JsonWebTokenAuthorizer.cs" />
     <Compile Include="Infrastructure\Auth\JsonWebTokenWrapper.cs" />
     <Compile Include="Infrastructure\Auth\JsonWebTokenWrapperMock.cs" />
-    <Compile Include="Infrastructure\Shibboleth\Auth\ShibbolethAuthorizer.cs" />
-    <Compile Include="Infrastructure\Shibboleth\ShibbolethAttributes.cs" />
-    <Compile Include="Infrastructure\Shibboleth\ShibbolethAttributesMock.cs" />
     <Compile Include="Models\Api\AssetHistoryReadModel.cs" />
     <Compile Include="Models\Api\AssetReadModel.cs" />
     <Compile Include="Models\Api\AssetWriteModel.cs" />
