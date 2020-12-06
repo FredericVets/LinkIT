@@ -24,17 +24,18 @@ namespace LinkIT.Web.Controllers.Api
 		{
 			// User is already authenticated and authorized for the read role.
 			var userId = _jwt.UserId;
-			var userRoles = _repo.GetAll();
-			var actualRoles = userRoles.GetRolesFor(userId);
+			var allUserRoles = _repo.GetAll();
+			var currentUserRoles = allUserRoles.GetRolesFor(userId);
 
 			var readModel = new UserReadModel
 			{
+				Scope = _jwt.Scope,
 				UserId = userId,
 				Name = _jwt.Name,
 				GivenName = _jwt.GivenName,
 				FamilyName = _jwt.FamilyName,
 				Email = _jwt.Email,
-				Roles = actualRoles.ToArray()
+				Roles = currentUserRoles.ToArray()
 			};
 
 			return Ok(readModel);

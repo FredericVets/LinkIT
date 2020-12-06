@@ -2,10 +2,8 @@
 {
 	public abstract class Query
 	{
-		public Query()
-		{
+		public Query() =>
 			LogicalOperator = LogicalOperator.AND;
-		}
 
 		public long? Id { get; set;}
 

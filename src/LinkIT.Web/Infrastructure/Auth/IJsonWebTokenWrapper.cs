@@ -4,9 +4,9 @@
 	{
 		string Scope { get; }
 
-		string Name { get; }
-
 		string UserId { get; }
+
+		string Name { get; }
 
 		string GivenName { get; }
 

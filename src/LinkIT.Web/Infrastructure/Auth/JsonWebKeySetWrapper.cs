@@ -30,7 +30,7 @@ namespace LinkIT.Web.Infrastructure.Auth
 			if (string.IsNullOrWhiteSpace(jwksUrl))
 				throw new ArgumentNullException(nameof(jwksUrl));
 
-			var handler = new HttpClientHandler { UseProxy = false };
+			using (var handler = new HttpClientHandler { UseProxy = false, UseCookies = false })
 			using (var client = new HttpClient(handler))
 			{
 				var response = await client.GetAsync(jwksUrl);

@@ -40,6 +40,8 @@ namespace LinkIT.Web.Infrastructure.Auth
 				return false;
 
 			value = (string)_validatedToken.Payload[key];
+			if (string.IsNullOrWhiteSpace(value))
+				return false;
 
 			return true;
 		}
@@ -51,17 +53,17 @@ namespace LinkIT.Web.Infrastructure.Auth
 		/// </summary>
 		/// <returns></returns>
 
-		public string Scope { get => GetPayloadValue("scope"); }
+		public string Scope => GetPayloadValue("scope");
 
-		public string Name { get => GetPayloadValue("name"); }
+		public string UserId => GetPayloadValue("preferred_username");
 
-		public string UserId { get => GetPayloadValue("preferred_username"); }
+		public string Name => GetPayloadValue("name");
 
-		public string GivenName { get => GetPayloadValue("given_name"); }
+		public string GivenName => GetPayloadValue("given_name");
 
-		public string FamilyName { get => GetPayloadValue("family_name"); }
+		public string FamilyName => GetPayloadValue("family_name");
 
-		public string Email { get => GetPayloadValue("email"); }
+		public string Email => GetPayloadValue("email");
 
 		// Throws when not valid.
 		public void Validate()
