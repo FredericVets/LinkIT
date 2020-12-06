@@ -35,5 +35,12 @@ namespace LinkIT.Web.Infrastructure.Auth
 
 			return true;
 		}
+
+		public bool TryGetScope(out string scope)
+		{
+			scope = Scope;
+
+			return true;
+		}
 	}
 }

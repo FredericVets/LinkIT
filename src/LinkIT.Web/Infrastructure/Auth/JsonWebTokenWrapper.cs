@@ -85,5 +85,7 @@ namespace LinkIT.Web.Infrastructure.Auth
 		}
 
 		public bool TryGetUserId(out string userId) => TryGetPayloadValue("preferred_username", out userId);
+
+		public bool TryGetScope(out string scope) => TryGetPayloadValue("scope", out scope);
 	}
 }

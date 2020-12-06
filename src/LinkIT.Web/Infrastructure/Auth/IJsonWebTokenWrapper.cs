@@ -17,5 +17,7 @@
 		void Validate();
 
 		bool TryGetUserId(out string userId);
+
+		bool TryGetScope(out string scope);
 	}
 }

@@ -18,8 +18,27 @@ namespace LinkIT.Web.Infrastructure.Auth
 			_log = LogManager.GetLogger(GetType());
 		}
 
-		private bool HasRequiredScope() =>
-			_jwt.Scope.ToLowerInvariant().Contains(RequiredScope.ToLowerInvariant());
+		private static bool HasRequiredScope(string actual, string required) =>
+			actual.ToLowerInvariant().Contains(required.ToLowerInvariant());
+
+		private bool ValidateScope(string currentUser)
+		{
+			if (!_jwt.TryGetScope(out string scope))
+			{
+				_log.Info("No scope found in the JWT token.");
+
+				return false;
+			}
+
+			if (!HasRequiredScope(scope, RequiredScope))
+			{
+				_log.Info($"Scope for user : '{currentUser}' doesn't contain '{RequiredScope}'.");
+
+				return false;
+			}
+
+			return true;
+		}
 
 		public static string RequiredScope
 		{
@@ -42,7 +61,7 @@ namespace LinkIT.Web.Infrastructure.Auth
 			}
 			catch (Exception ex)
 			{
-				_log.Info($"Jwt validation failed : {ex.Message}");
+				_log.Info($"JWT validation failed : {ex.Message}.");
 
 				return false;
 			}
@@ -54,12 +73,8 @@ namespace LinkIT.Web.Infrastructure.Auth
 				return false;
 			}
 
-			if (!HasRequiredScope())
-			{
-				_log.Info($"Scope for user : '{currentUser}' doesn't contain '{RequiredScope}'.");
-
+			if (!ValidateScope(currentUser))
 				return false;
-			}
 
 			var userRoles = _repo.GetAll();
 			if (!userRoles.HasUser(currentUser))
