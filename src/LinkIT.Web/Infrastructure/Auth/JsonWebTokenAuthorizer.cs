@@ -7,6 +7,8 @@ namespace LinkIT.Web.Infrastructure.Auth
 {
 	public class JsonWebTokenAuthorizer
 	{
+		private const string JWT_REQUIRED_SCOPE_KEY = "jwt.required_scope";
+
 		private readonly IUserRoleRepository _repo;
 		private readonly IJsonWebTokenWrapper _jwt;
 		private readonly ILog _log;
@@ -44,10 +46,9 @@ namespace LinkIT.Web.Infrastructure.Auth
 		{
 			get
 			{
-				string key = "jwt.required_scope";
-				string value = ConfigurationManager.AppSettings[key];
+				string value = ConfigurationManager.AppSettings[JWT_REQUIRED_SCOPE_KEY];
 				if (string.IsNullOrWhiteSpace(value))
-					throw new InvalidOperationException($"'{key}' was not found in config file.");
+					throw new InvalidOperationException($"'{JWT_REQUIRED_SCOPE_KEY}' was not found in config file.");
 
 				return value;
 			}
