@@ -41,7 +41,8 @@ namespace LinkIT.Web.UnitTests.Infrastructure
 		{
 			_sut = new JsonWebTokenWrapper(
 				new HttpHeadersWrapper(CreateHeaders()),
-				JsonWebKeySetWrapper.FromUrl(JWKS_URL).Result, 
+				// JsonWebKeySetWrapper.FromUrl(JWKS_URL).Result, 
+				new JsonWebKeySetWrapper(JWKS_JSON),
 				false);
 		}
 
