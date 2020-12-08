@@ -19,14 +19,20 @@ namespace LinkIT.Web.Controllers.Api
 	public class AssetsController : ApiController
 	{
 		private const int MAX_NUMBER_OWNERS_ALLOWED = 50;
+		private const string UNKNOWN_PRODUCT = "Unknown product.";
 
-		private readonly IAssetRepository _repo;
+		private readonly IAssetRepository _assetRepo;
+		private readonly IRepository<ProductDto, ProductQuery> _productRepo;
 		private readonly IJsonWebTokenWrapper _jwt;
 		private readonly ILog _log;
 
-		public AssetsController(IAssetRepository repo, IJsonWebTokenWrapper jwt)
+		public AssetsController(
+			IAssetRepository assetRepo,
+			IRepository<ProductDto, ProductQuery> productRepo,
+			IJsonWebTokenWrapper jwt)
 		{
-			_repo = repo;
+			_assetRepo = assetRepo;
+			_productRepo = productRepo;
 			_jwt = jwt;
 			_log = LogManager.GetLogger(GetType());
 		}
@@ -104,10 +110,10 @@ namespace LinkIT.Web.Controllers.Api
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(long id)
 		{
-			if (!_repo.Exists(id))
+			if (!_assetRepo.Exists(id))
 				return NotFound();
 
-			var dto = _repo.GetById(id);
+			var dto = _assetRepo.GetById(id);
 			var readModel = MapToModel(dto);
 
 			return Ok(readModel);
@@ -116,27 +122,27 @@ namespace LinkIT.Web.Controllers.Api
 		[Route("api/assets")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult Get(
-			[FromUri]AssetFilterModel filter,
-			[FromUri]PageInfoModel pageInfo)
+			[FromUri] AssetFilterModel filter,
+			[FromUri] PageInfoModel pageInfo)
 		{
 			filter = filter ?? new AssetFilterModel();
 			pageInfo = pageInfo ?? new PageInfoModel();
 			PagedResult<AssetDto> pagedResult;
 
 			var paging = MappingHelper.MapToPageInfo(pageInfo);
-			if (!paging.OrderBy.IsValidFor(_repo.Columns))
+			if (!paging.OrderBy.IsValidFor(_assetRepo.Columns))
 				return BadRequest($"Unknown field : {paging.OrderBy.Name}.");
 
 			if (filter.IsEmpty())
 			{
-				pagedResult = _repo.PagedQuery(paging);
+				pagedResult = _assetRepo.PagedQuery(paging);
 
 				return CreateActionResultFor(pagedResult);
 			}
 
 			// Apply filter.
 			var query = MapToQuery(filter);
-			pagedResult = _repo.PagedQuery(paging, query);
+			pagedResult = _assetRepo.PagedQuery(paging, query);
 
 			return CreateActionResultFor(pagedResult);
 		}
@@ -157,10 +163,10 @@ namespace LinkIT.Web.Controllers.Api
 			if (splitted.Length > MAX_NUMBER_OWNERS_ALLOWED)
 				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
 
-			var dtos = _repo.ForOwners(splitted);
+			var dtos = _assetRepo.ForOwners(splitted);
 			if (!dtos.Any())
 				return StatusCode(HttpStatusCode.NoContent);
-			
+
 			var readModels = dtos.Select(MapToModel);
 
 			return Ok(readModels);
@@ -170,10 +176,10 @@ namespace LinkIT.Web.Controllers.Api
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
 		public IHttpActionResult GetProductFor(long id)
 		{
-			if (!_repo.Exists(id))
+			if (!_assetRepo.Exists(id))
 				return NotFound();
 
-			var dto = _repo.GetById(id);
+			var dto = _assetRepo.GetById(id);
 			var readModel = ProductsController.MapToModel(dto.Product);
 
 			return Ok(readModel);
@@ -186,11 +192,14 @@ namespace LinkIT.Web.Controllers.Api
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
 
+			if (!_productRepo.Exists(model.ProductId.Value))
+				return BadRequest(UNKNOWN_PRODUCT);
+
 			var dto = MapToDto(model, createdBy: _jwt.UserId);
-			long id = _repo.Insert(dto);
+			long id = _assetRepo.Insert(dto);
 
 			// Refetch the data.
-			dto = _repo.GetById(id);
+			dto = _assetRepo.GetById(id);
 			var readModel = MapToModel(dto);
 
 			return CreatedAtRoute("GetAssetById", new { id = readModel.Id }, readModel);
@@ -204,15 +213,18 @@ namespace LinkIT.Web.Controllers.Api
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
 
-			if (!_repo.Exists(id))
+			if (!_assetRepo.Exists(id))
 				return NotFound();
+
+			if (!_productRepo.Exists(model.ProductId.Value))
+				return BadRequest(UNKNOWN_PRODUCT);
 
 			var dto = MapToDto(model, id, modifiedBy: _jwt.UserId);
 
-			_repo.Update(dto);
+			_assetRepo.Update(dto);
 
 			// Refetch the data.
-			dto = _repo.GetById(id);
+			dto = _assetRepo.GetById(id);
 			var readModel = MapToModel(dto);
 
 			return Ok(readModel);
@@ -222,10 +234,10 @@ namespace LinkIT.Web.Controllers.Api
 		[JwtAuthorize(Roles = Constants.Roles.DELETE)]
 		public IHttpActionResult Delete(long id)
 		{
-			if (!_repo.Exists(id))
+			if (!_assetRepo.Exists(id))
 				return NotFound();
 
-			_repo.Delete(id);
+			_assetRepo.Delete(id);
 
 			return StatusCode(HttpStatusCode.NoContent);
 		}

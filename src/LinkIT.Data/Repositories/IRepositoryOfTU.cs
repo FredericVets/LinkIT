@@ -49,6 +49,10 @@ namespace LinkIT.Data.Repositories
 
 		long Insert(TDto item);
 
+		/// <summary>
+		/// This is a full-update. So all required fields should be supplied.
+		/// </summary>
+		/// <param name="item"></param>
 		void Update(TDto item);
 
 		/// <summary>
