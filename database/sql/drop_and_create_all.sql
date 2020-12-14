@@ -12,8 +12,6 @@ DROP TABLE IF EXISTS [dbo].[UserRole];
 
 GO
 
-
-
 CREATE TABLE [dbo].[SpecialOwner](
 	[Id] bigint PRIMARY KEY IDENTITY(1,1) NOT NULL,
 	[CreationDate] DateTime2 NOT NULL,
@@ -25,8 +23,6 @@ CREATE TABLE [dbo].[SpecialOwner](
 );
 
 GO
-
-
 
 CREATE TABLE [dbo].[Product](
 	[Id] bigint PRIMARY KEY IDENTITY(1,1) NOT NULL,
@@ -41,7 +37,10 @@ CREATE TABLE [dbo].[Product](
 
 GO
 
+-- Add the unique constraint.
+ALTER TABLE [dbo].[Product] ADD CONSTRAINT UQ_Product_Brand_Type_Group UNIQUE([Brand], [Type], [Group]);
 
+GO
 
 CREATE TABLE [dbo].[Asset](
 	[Id] bigint PRIMARY KEY IDENTITY(1,1) NOT NULL,
@@ -70,8 +69,6 @@ CREATE TABLE [dbo].[Asset](
 );
 
 GO
-
-
 
 CREATE TABLE [dbo].[AssetHistory](
 	[Id] bigint PRIMARY KEY IDENTITY(1,1) NOT NULL,
@@ -103,8 +100,6 @@ CREATE TABLE [dbo].[AssetHistory](
 
 GO
 
-
-
 DROP INDEX IF EXISTS IX_AssetHistory_AssetId ON [dbo].[AssetHistory];
 CREATE NONCLUSTERED INDEX IX_AssetHistory_AssetId ON [dbo].[AssetHistory](AssetId);
 
@@ -113,21 +108,9 @@ CREATE NONCLUSTERED INDEX IX_AssetHistory_Tag ON [dbo].[AssetHistory](Tag);
 
 GO
 
--- Create the AfterUpdate and AfterInsert triggers on the Asset table
-DROP TRIGGER IF EXISTS [dbo].[AfterAssetInsertTrigger];
+-- Create the AfterUpdate trigger on the Asset table.
+-- Whenever an Asset is updated, the previous values are inserted into the AssetHistory table. So the is a trace of the changes.
 DROP TRIGGER IF EXISTS [dbo].[AfterAssetUpdateTrigger];
-
-GO
-
-CREATE TRIGGER [dbo].[AfterAssetInsertTrigger] on [dbo].[Asset]
-AFTER INSERT
-AS
-	INSERT INTO [dbo].[AssetHistory] ([AssetId], [CreationDate], [CreatedBy], [ModificationDate], [ModifiedBy], [IctsReference], [Tag], [Serial], [ProductId], [Description], 
-		[InvoiceDate], [InvoiceNumber], [Price], [PaidBy], [Owner], [InstallDate], [InstalledBy], [Remark], [TeamAsset], [Deleted])
-	SELECT ins.Id, ins.CreationDate, ins.CreatedBy, ins.ModificationDate, ins.ModifiedBy, ins.IctsReference, ins.Tag, ins.Serial, ins.ProductId, ins.Description, 
-		ins.InvoiceDate, ins.InvoiceNumber, ins.Price, ins.PaidBy, ins.Owner, ins.InstallDate, ins.InstalledBy, ins.Remark, ins.TeamAsset, ins.Deleted 
-	FROM INSERTED ins
-;
 
 GO
 
@@ -136,14 +119,12 @@ AFTER UPDATE
 AS
 	INSERT INTO [dbo].[AssetHistory] ([AssetId], [CreationDate], [CreatedBy], [ModificationDate], [ModifiedBy], [IctsReference], [Tag], [Serial], [ProductId], [Description], 
 		[InvoiceDate], [InvoiceNumber], [Price], [PaidBy], [Owner], [InstallDate], [InstalledBy], [Remark], [TeamAsset], [Deleted])
-	SELECT ins.Id, ins.CreationDate, ins.CreatedBy, ins.ModificationDate, ins.ModifiedBy, ins.IctsReference, ins.Tag, ins.Serial, ins.ProductId, ins.Description, 
-		ins.InvoiceDate, ins.InvoiceNumber, ins.Price, ins.PaidBy, ins.Owner, ins.InstallDate, ins.InstalledBy, ins.Remark, ins.TeamAsset, ins.Deleted 
-	FROM INSERTED ins
+	SELECT del.Id, del.CreationDate, del.CreatedBy, del.ModificationDate, del.ModifiedBy, del.IctsReference, del.Tag, del.Serial, del.ProductId, del.Description, 
+		del.InvoiceDate, del.InvoiceNumber, del.Price, del.PaidBy, del.Owner, del.InstallDate, del.InstalledBy, del.Remark, del.TeamAsset, del.Deleted 
+	FROM DELETED del
 ;
 
 GO
-
-
 
 CREATE TABLE [dbo].[UserRole](
 	[Id] bigint PRIMARY KEY IDENTITY(1,1) NOT NULL,

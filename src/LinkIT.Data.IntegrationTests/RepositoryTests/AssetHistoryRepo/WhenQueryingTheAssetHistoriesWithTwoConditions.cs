@@ -71,6 +71,8 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetHistoryRepo
 		private void UpdateAssets(IList<AssetDto> input)
 		{
 			// First modification for all assets.
+			AddToHistory(input);
+
 			input[0].Tag = "CRD-X-00004";
 			input[0].ModifiedBy = "userX";
 
@@ -84,15 +86,15 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetHistoryRepo
 			input[2].ModifiedBy = "userX";
 
 			_assetRepo.Update(input);
-			AddToHistory(input);
 
-			// And a second modification for one asset;
+			// And a second modification for one asset.
+			AddToHistory(new[] { input[1] });
+
 			input[1].Description = "Yet another modified description";
 			input[1].IctsReference = "Ref0123456789";
 			input[1].ModifiedBy = "userY";
 
 			_assetRepo.Update(input[1]);
-			AddToHistory(new[] { input[1] });
 		}
 
 		[TestInitialize]
@@ -147,8 +149,6 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetHistoryRepo
 			};
 
 			_assets.ToList().ForEach(x => x.Id = _assetRepo.Insert(x));
-			AddToHistory(_assets);
-
 			UpdateAssets(_assets);
 		}
 
@@ -162,9 +162,9 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetHistoryRepo
 					AssetId = _assets[1].Id.Value
 				}).ToList();
 
-			// In total there should be 3 AssetHistoryDto items.
-			// One for the insert and 2 for the subsequent updates.
-			Assert.AreEqual(3, actualHistory.Count);
+			// In total there should be 2 AssetHistoryDto items for CRD-X-00002.
+			// One for each update.
+			Assert.AreEqual(2, actualHistory.Count);
 
 			AssertAssetHistory(
 				_assets[1].Id.Value,
