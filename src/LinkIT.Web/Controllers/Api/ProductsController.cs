@@ -63,6 +63,19 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(result);
 		}
 
+		private bool AlreadyExists(ProductWriteModel model)
+		{
+			// All 3 properties are required.
+			var query = new ProductQuery
+			{
+				Brand = model.Brand,
+				Type = model.Type,
+				Group = model.Group
+			};
+
+			return _repo.Query(query).FirstOrDefault() != null;
+		}
+
 		public static ProductReadModel MapToModel(ProductDto input) =>
 			new ProductReadModel
 			{
@@ -123,6 +136,9 @@ namespace LinkIT.Web.Controllers.Api
 		{
 			if (model == null)
 				return BadRequest(Constants.MISSING_MESSAGE_BODY);
+
+			if (AlreadyExists(model))
+				return BadRequest("Product with the specified Brand, Type and Group already exists.");
 
 			var dto = MapToDto(model, createdBy: _jwt.UserId);
 			long id = _repo.Insert(dto);

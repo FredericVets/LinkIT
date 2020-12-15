@@ -79,6 +79,7 @@ namespace LinkIT.Data.Builders
 		/// Since a datetime without a specified time segment will have a value of date 00:00:00.000, if you want to be 
 		/// sure you get all the dates in your range, you must either supply the time for your ending date or increase your 
 		/// ending date and use '<'.
+		/// We use the latter approach.
 		/// </summary>
 		/// <param name="range"></param>
 		/// <param name="columnName"></param>

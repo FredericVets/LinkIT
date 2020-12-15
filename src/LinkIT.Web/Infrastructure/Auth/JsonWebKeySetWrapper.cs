@@ -38,7 +38,9 @@ namespace LinkIT.Web.Infrastructure.Auth
 					throw new InvalidOperationException(
 						$"Failed to fetch the jwks from {jwksUrl} with status code : {response.StatusCode}.");
 
-				return new JsonWebKeySetWrapper(await response.Content.ReadAsStringAsync());
+				var content = await response.Content.ReadAsStringAsync();
+
+				return new JsonWebKeySetWrapper(content);
 			}
 		}
 

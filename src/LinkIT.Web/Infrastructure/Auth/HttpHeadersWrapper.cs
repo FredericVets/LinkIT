@@ -39,11 +39,7 @@ namespace LinkIT.Web.Infrastructure.Auth
 		public static HttpHeadersWrapper FromCurrentContext() =>
 			new HttpHeadersWrapper(HttpContext.Current.Request.Headers);
 
-		public string GetRawJwt()
-		{
-			string authHeader = GetAuthorizationHeader();
-
-			return ExtractJwtFrom(authHeader);
-		}
+		public string GetRawJwt() =>
+			ExtractJwtFrom(GetAuthorizationHeader());
 	}
 }

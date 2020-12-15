@@ -34,8 +34,7 @@ namespace LinkIT.Web
 				return;
 			}
 
-			var jwks = JsonWebKeySetWrapper.FromConfig();
-			builder.Register(_ => jwks).SingleInstance();
+			builder.Register(_ => JsonWebKeySetWrapper.FromConfig()).SingleInstance();
 
 			builder.Register(_ => HttpHeadersWrapper.FromCurrentContext()).InstancePerRequest();
 			builder.RegisterType<JsonWebTokenWrapper>().As<IJsonWebTokenWrapper>().InstancePerRequest();

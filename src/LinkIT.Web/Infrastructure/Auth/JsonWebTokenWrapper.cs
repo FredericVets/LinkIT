@@ -78,8 +78,7 @@ namespace LinkIT.Web.Infrastructure.Auth
 				ValidateIssuer = false
 			};
 
-			var tokenHandler = new JwtSecurityTokenHandler();
-			tokenHandler.ValidateToken(rawJwt, validationParams, out var validatedToken);
+			new JwtSecurityTokenHandler().ValidateToken(rawJwt, validationParams, out var validatedToken);
 
 			_validatedToken = (JwtSecurityToken)validatedToken;
 		}
