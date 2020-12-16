@@ -77,7 +77,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		[Route("api/special-owners/{id:long:min(1)}", Name = "GetSpecialOwnerById")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		public IHttpActionResult Get(long id)
+		public IHttpActionResult GetSpecialOwnerById(long id)
 		{
 			if (!_repo.Exists(id))
 				return NotFound();
@@ -130,7 +130,7 @@ namespace LinkIT.Web.Controllers.Api
 			dto = _repo.GetById(id);
 			var readModel = MapToModel(dto);
 
-			return CreatedAtRoute("GetSpecialOwnerById", new { id = readModel.Id }, readModel);
+			return CreatedAtRoute(nameof(GetSpecialOwnerById), new { id = readModel.Id }, readModel);
 		}
 
 		// Fully updates the product.

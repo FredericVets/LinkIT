@@ -73,7 +73,7 @@ namespace LinkIT.Web.Controllers.Api
 				Group = model.Group
 			};
 
-			return _repo.Query(query).FirstOrDefault() != null;
+			return _repo.Query(query).Any();
 		}
 
 		public static ProductReadModel MapToModel(ProductDto input) =>
@@ -91,7 +91,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		[Route("api/products/{id:long:min(1)}", Name = "GetProductById")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		public IHttpActionResult Get(long id)
+		public IHttpActionResult GetProductById(long id)
 		{
 			if (!_repo.Exists(id))
 				return NotFound();
@@ -147,7 +147,7 @@ namespace LinkIT.Web.Controllers.Api
 			dto = _repo.GetById(id);
 			var readModel = MapToModel(dto);
 
-			return CreatedAtRoute("GetProductById", new { id = readModel.Id }, readModel);
+			return CreatedAtRoute(nameof(GetProductById), new { id = readModel.Id }, readModel);
 		}
 
 		// Fully updates the product.

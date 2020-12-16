@@ -65,9 +65,9 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(result);
 		}
 
-		[Route("api/asset-histories/{id:long:min(1)}", Name = "GetAssetHistoryById")]
+		[Route("api/asset-histories/{id:long:min(1)}")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		public IHttpActionResult Get(long id)
+		public IHttpActionResult GetAssetHistoryById(long id)
 		{
 			if (!_assetHistoryRepo.Exists(id))
 				return NotFound();

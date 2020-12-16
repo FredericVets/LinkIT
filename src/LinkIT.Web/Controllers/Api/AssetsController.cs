@@ -108,7 +108,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		[Route("api/assets/{id:long:min(1)}", Name = "GetAssetById")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		public IHttpActionResult Get(long id)
+		public IHttpActionResult GetAssetById(long id)
 		{
 			if (!_assetRepo.Exists(id))
 				return NotFound();
@@ -202,7 +202,7 @@ namespace LinkIT.Web.Controllers.Api
 			dto = _assetRepo.GetById(id);
 			var readModel = MapToModel(dto);
 
-			return CreatedAtRoute("GetAssetById", new { id = readModel.Id }, readModel);
+			return CreatedAtRoute(nameof(GetAssetById), new { id = readModel.Id }, readModel);
 		}
 
 		// Fully updates the asset.

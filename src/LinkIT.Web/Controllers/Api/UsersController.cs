@@ -20,7 +20,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		[Route("api/users/current")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		public IHttpActionResult GetForCurrentUser()
+		public IHttpActionResult GetCurrentUser()
 		{
 			// User is already authenticated and authorized for the read role.
 			var userId = _jwt.UserId;
