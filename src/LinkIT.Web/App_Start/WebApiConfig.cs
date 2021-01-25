@@ -1,5 +1,6 @@
 ﻿using LinkIT.Web.Filters.Api;
 using Newtonsoft.Json.Serialization;
+using System.Configuration;
 using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -8,10 +9,25 @@ namespace LinkIT.Web
 {
 	public static class WebApiConfig
 	{
+		private const string CORS_ALLOWED_ORIGINS = "cors.allowed_origins";
+
 		private static void EnableCors(HttpConfiguration config)
 		{
-			var cors = new EnableCorsAttribute("*", "*", "*");
+			var cors = new EnableCorsAttribute(GetAllowedCorsOrigins(), "*", "*");
 			config.EnableCors(cors);
+		}
+
+		/// <summary>
+		/// Comma separated list of allowed origins.
+		/// </summary>
+		/// <returns></returns>
+		private static string GetAllowedCorsOrigins()
+		{
+			string value = ConfigurationManager.AppSettings[CORS_ALLOWED_ORIGINS];
+			if (string.IsNullOrWhiteSpace(value))
+				throw new ConfigurationErrorsException($"'{CORS_ALLOWED_ORIGINS}' setting is required.");
+
+			return value;
 		}
 
 		private static void RegisterRouting(HttpConfiguration config)
