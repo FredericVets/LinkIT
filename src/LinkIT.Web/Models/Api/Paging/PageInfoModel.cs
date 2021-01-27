@@ -20,7 +20,7 @@ namespace LinkIT.Web.Models.Api.Paging
 		public int PageNumber { get; set; }
 
 		/// <summary>
-		/// Paging : the number of rows that are present in one page. Defaults to 25.
+		/// Paging : the number of rows that are present on one page. Defaults to 25.
 		/// </summary>
 		[Range(0, 1000)]
 		public int RowsPerPage { get; set; }
