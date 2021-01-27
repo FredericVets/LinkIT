@@ -23,8 +23,8 @@ namespace LinkIT.Web.Infrastructure.Auth
 		}
 
 		/// <summary>
-		/// Header should be of form 'Authorization: <type> <credentials>'.
-		/// So for us it must be : 'Authorization: Bearer <jwt>'.
+		/// Header should be of form 'Authorization: type credentials'.
+		/// So for us it must be : 'Authorization: Bearer jwt'.
 		/// </summary>
 		/// <returns></returns>
 		private string GetAuthorizationHeader()

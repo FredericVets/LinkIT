@@ -7,6 +7,7 @@ using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
 using log4net;
+using Swashbuckle.Swagger.Annotations;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -65,21 +66,21 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(result);
 		}
 
-		[Route("api/asset-histories/{id:long:min(1)}")]
-		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		public IHttpActionResult GetAssetHistoryById(long id)
-		{
-			if (!_assetHistoryRepo.Exists(id))
-				return NotFound();
-
-			var dto = _assetHistoryRepo.GetById(id);
-			var readModel = MapToModel(dto);
-
-			return Ok(readModel);
-		}
-
+		/// <summary>
+		/// Gets the asset-histories that match the filter criteria in a paging fashion.
+		/// Filter criteria are optional.
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <param name="pageInfo"></param>
+		/// <returns></returns>
 		[Route("api/asset-histories")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK,
+			Type = typeof(PagedResultModel<AssetHistoryReadModel>),
+			Description = Consts.SWAGGER_PAGING_RESPONSE_DESCRIPTION)]
+		[SwaggerResponse(HttpStatusCode.NoContent)]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult Get(
 			[FromUri]AssetHistoryFilterModel filter,
 			[FromUri]PageInfoModel pageInfo)
@@ -106,8 +107,37 @@ namespace LinkIT.Web.Controllers.Api
 			return CreateActionResultFor(pagedResult);
 		}
 
+		/// <summary>
+		/// Gets the asset-history with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the asset-history that is to be retrieved.</param>
+		/// <returns></returns>
+		[Route("api/asset-histories/{id:long:min(1)}")]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(AssetHistoryReadModel))]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		public IHttpActionResult GetAssetHistoryById(long id)
+		{
+			if (!_assetHistoryRepo.Exists(id))
+				return NotFound();
+
+			var dto = _assetHistoryRepo.GetById(id);
+			var readModel = MapToModel(dto);
+
+			return Ok(readModel);
+		}
+
+		/// <summary>
+		/// Gets the asset referenced by the asset-history with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the asset-history that is to be retrieved.</param>
+		/// <returns></returns>
 		[Route("api/asset-histories/{id:long:min(1)}/asset")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(AssetReadModel))]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult GetAssetFor(long id)
 		{
 			if (!_assetHistoryRepo.Exists(id))
@@ -121,8 +151,16 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(readModel);
 		}
 
+		/// <summary>
+		/// Gets the product referenced by the asset-history with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the asset-history that is to be retrieved.</param>
+		/// <returns></returns>
 		[Route("api/asset-histories/{id:long:min(1)}/product")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(ProductReadModel))]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult GetProductFor(long id)
 		{
 			if (!_assetHistoryRepo.Exists(id))

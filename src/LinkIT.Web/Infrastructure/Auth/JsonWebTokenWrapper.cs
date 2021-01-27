@@ -48,8 +48,8 @@ namespace LinkIT.Web.Infrastructure.Auth
 
 		/// <summary>
 		/// The user agent should send the JWT, typically in the Authorization header using the Bearer schema. 
-		/// The content of the header should look like the following:
-		/// Authorization: Bearer <token>
+		/// The content of this header should look like the following:
+		/// Authorization: Bearer token
 		/// </summary>
 		/// <returns></returns>
 

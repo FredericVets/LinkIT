@@ -109,7 +109,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		/// <summary>
-		/// Returns the assets that match the filter criteria in a paging fashion.
+		/// Gets the assets that match the filter criteria in a paging fashion.
 		/// Filter criteria are optional.
 		/// </summary>
 		/// <param name="filter"></param>
@@ -117,8 +117,8 @@ namespace LinkIT.Web.Controllers.Api
 		/// <returns></returns>
 		[Route("api/assets")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		[SwaggerResponse(HttpStatusCode.OK, 
-			Type = typeof(PagedResultModel<AssetReadModel>), 
+		[SwaggerResponse(HttpStatusCode.OK,
+			Type = typeof(PagedResultModel<AssetReadModel>),
 			Description = Consts.SWAGGER_PAGING_RESPONSE_DESCRIPTION)]
 		[SwaggerResponse(HttpStatusCode.NoContent)]
 		[SwaggerResponse(HttpStatusCode.BadRequest)]
@@ -199,7 +199,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		/// <summary>
-		/// Gets the product for the asset with the specified id.
+		/// Gets the product referenced by the asset with the specified id.
 		/// </summary>
 		/// <param name="id">The id of the asset that is to be retrieved.</param>
 		/// <returns></returns>

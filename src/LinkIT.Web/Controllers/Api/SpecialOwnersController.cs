@@ -8,6 +8,7 @@ using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
 using log4net;
+using Swashbuckle.Swagger.Annotations;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -75,21 +76,21 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(result);
 		}
 
-		[Route("api/special-owners/{id:long:min(1)}", Name = "GetSpecialOwnerById")]
-		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		public IHttpActionResult GetSpecialOwnerById(long id)
-		{
-			if (!_repo.Exists(id))
-				return NotFound();
-
-			var dto = _repo.GetById(id);
-			var readModel = MapToModel(dto);
-
-			return Ok(readModel);
-		}
-
+		/// <summary>
+		/// Gets the special-owners that match the filter criteria in a paging fashion.
+		/// Filter criteria are optional.
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <param name="pageInfo"></param>
+		/// <returns></returns>
 		[Route("api/special-owners")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK,
+			Type = typeof(PagedResultModel<SpecialOwnerReadModel>),
+			Description = Consts.SWAGGER_PAGING_RESPONSE_DESCRIPTION)]
+		[SwaggerResponse(HttpStatusCode.NoContent)]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult Get(
 			[FromUri]SpecialOwnerFilterModel filter,
 			[FromUri]PageInfoModel pageInfo)
@@ -116,8 +117,37 @@ namespace LinkIT.Web.Controllers.Api
 			return CreateActionResultFor(pagedResult);
 		}
 
+		/// <summary>
+		/// Gets the special-owner with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the special-owner that is to be retrieved.</param>
+		/// <returns></returns>
+		[Route("api/special-owners/{id:long:min(1)}", Name = "GetSpecialOwnerById")]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(SpecialOwnerReadModel))]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		public IHttpActionResult GetSpecialOwnerById(long id)
+		{
+			if (!_repo.Exists(id))
+				return NotFound();
+
+			var dto = _repo.GetById(id);
+			var readModel = MapToModel(dto);
+
+			return Ok(readModel);
+		}
+
+		/// <summary>
+		/// Creates a new special-owner.
+		/// </summary>
+		/// <param name="model">The new special-owner.</param>
+		/// <returns></returns>
 		[Route("api/special-owners")]
 		[JwtAuthorize(Roles = Constants.Roles.CREATE)]
+		[SwaggerResponse(HttpStatusCode.Created, Type = typeof(SpecialOwnerReadModel))]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult Post(SpecialOwnerWriteModel model)
 		{
 			if (model == null)
@@ -133,9 +163,18 @@ namespace LinkIT.Web.Controllers.Api
 			return CreatedAtRoute(nameof(GetSpecialOwnerById), new { id = readModel.Id }, readModel);
 		}
 
-		// Fully updates the product.
+		/// <summary>
+		/// Fully updates the special-owner with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the special-owner that is to be updated.</param>
+		/// <param name="model">The updated special-owner.</param>
+		/// <returns></returns>
 		[Route("api/special-owners/{id:long:min(1)}")]
 		[JwtAuthorize(Roles = Constants.Roles.MODIFY)]
+		[SwaggerResponse(HttpStatusCode.Created, Type = typeof(SpecialOwnerReadModel))]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult Put(long id, SpecialOwnerWriteModel model)
 		{
 			if (model == null)
@@ -155,8 +194,17 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(readModel);
 		}
 
+		/// <summary>
+		/// Deletes the special-owner with the specified id.
+		/// This is a hard-delete : the record will be physically deleted.
+		/// </summary>
+		/// <param name="id">The id of the special-owner that is to be deleted.</param>
+		/// <returns></returns>
 		[Route("api/special-owners/{id:long:min(1)}")]
 		[JwtAuthorize(Roles = Constants.Roles.DELETE)]
+		[SwaggerResponse(HttpStatusCode.NoContent)]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult Delete(long id)
 		{
 			if (!_repo.Exists(id))

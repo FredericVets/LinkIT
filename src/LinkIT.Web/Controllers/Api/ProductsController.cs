@@ -91,7 +91,7 @@ namespace LinkIT.Web.Controllers.Api
 			};
 
 		/// <summary>
-		/// Returns the products that match the filter criteria in a paging fashion.
+		/// Gets the products that match the filter criteria in a paging fashion.
 		/// Filter criteria are optional.
 		/// </summary>
 		/// <param name="filter"></param>
