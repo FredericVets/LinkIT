@@ -1,35 +1,15 @@
-using System.Web.Http;
-using WebActivatorEx;
-using LinkIT.Web;
-using Swashbuckle.Application;
-using System.Configuration;
-using System;
 using LinkIT.Web.Filters.Swagger;
+using Swashbuckle.Application;
+using System;
+using System.Web.Http;
 
-[assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 namespace LinkIT.Web
 {
-    public class SwaggerConfig
+	public static class SwaggerConfig
     {
-        private static bool EnableSwagger()
-		{
-            string value = ConfigurationManager.AppSettings["swagger_docs.enabled"];
-
-            if (string.IsNullOrWhiteSpace(value))
-                return false;
-
-            return string.Equals(value, "true", StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        public static void Register()
+        public static void Register(HttpConfiguration config)
         {
-            if (!EnableSwagger())
-                return;
-
-            var thisAssembly = typeof(SwaggerConfig).Assembly;
-
-            GlobalConfiguration.Configuration
-                .EnableSwagger(c =>
+            config.EnableSwagger(c =>
                     {
                         // By default, the service root url is inferred from the request used to access the docs.
                         // However, there may be situations (e.g. proxy and load-balanced environments) where this does not

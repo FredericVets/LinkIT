@@ -1,5 +1,6 @@
 ﻿using LinkIT.Web.Filters.Api;
 using Newtonsoft.Json.Serialization;
+using System;
 using System.Configuration;
 using System.Net.Http.Formatting;
 using System.Web.Http;
@@ -15,19 +16,16 @@ namespace LinkIT.Web
 		{
 			var cors = new EnableCorsAttribute(GetAllowedCorsOrigins(), "*", "*");
 			config.EnableCors(cors);
-		}
 
-		/// <summary>
-		/// Comma separated list of allowed origins.
-		/// </summary>
-		/// <returns></returns>
-		private static string GetAllowedCorsOrigins()
-		{
-			string value = ConfigurationManager.AppSettings[CORS_ALLOWED_ORIGINS];
-			if (string.IsNullOrWhiteSpace(value))
-				throw new ConfigurationErrorsException($"'{CORS_ALLOWED_ORIGINS}' setting is required.");
+			// Comma separated list of allowed origins.
+			string GetAllowedCorsOrigins()
+			{
+				string value = ConfigurationManager.AppSettings[CORS_ALLOWED_ORIGINS];
+				if (string.IsNullOrWhiteSpace(value))
+					throw new ConfigurationErrorsException($"'{CORS_ALLOWED_ORIGINS}' setting is required.");
 
-			return value;
+				return value;
+			}
 		}
 
 		private static void RegisterRouting(HttpConfiguration config)
@@ -57,6 +55,19 @@ namespace LinkIT.Web
 		private static void RegisterGlobalFilters(HttpConfiguration config) =>
 			config.Filters.Add(new ValidateModelAttribute());
 
+		private static bool ShouldRegisterSwagger()
+		{
+			string value = ConfigurationManager.AppSettings["swagger_docs.enabled"];
+
+			if (string.IsNullOrWhiteSpace(value))
+				return false;
+
+			return string.Equals(value, "true", StringComparison.InvariantCultureIgnoreCase);
+		}
+
+		private static void RegisterSwagger(HttpConfiguration config) =>
+			SwaggerConfig.Register(config);
+
 		public static void Register(HttpConfiguration config)
 		{
 			config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly;
@@ -65,6 +76,9 @@ namespace LinkIT.Web
 			RegisterRouting(config);
 			RegisterFormatters(config.Formatters);
 			RegisterGlobalFilters(config);
+
+			if (ShouldRegisterSwagger())
+				RegisterSwagger(config);
 		}
 	}
 }
