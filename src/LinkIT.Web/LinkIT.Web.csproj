@@ -144,6 +144,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\Api\AssetHistoriesController.cs" />
     <Compile Include="Controllers\Api\AssetsController.cs" />
+    <Compile Include="Controllers\Api\Consts.cs" />
     <Compile Include="Controllers\Api\MappingHelper.cs" />
     <Compile Include="Controllers\Api\ProductsController.cs" />
     <Compile Include="Controllers\Api\SpecialOwnersController.cs" />

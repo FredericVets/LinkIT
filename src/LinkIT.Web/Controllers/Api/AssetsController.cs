@@ -117,11 +117,12 @@ namespace LinkIT.Web.Controllers.Api
 		/// <returns></returns>
 		[Route("api/assets")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(PagedResultModel<AssetReadModel>))]
+		[SwaggerResponse(HttpStatusCode.OK, 
+			Type = typeof(PagedResultModel<AssetReadModel>), 
+			Description = Consts.SWAGGER_PAGING_RESPONSE_DESCRIPTION)]
 		[SwaggerResponse(HttpStatusCode.NoContent)]
 		[SwaggerResponse(HttpStatusCode.BadRequest)]
 		[SwaggerResponse(HttpStatusCode.Unauthorized)]
-		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult Get(
 			[FromUri] AssetFilterModel filter,
 			[FromUri] PageInfoModel pageInfo)
@@ -158,7 +159,6 @@ namespace LinkIT.Web.Controllers.Api
 		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(AssetReadModel))]
 		[SwaggerResponse(HttpStatusCode.NotFound)]
 		[SwaggerResponse(HttpStatusCode.Unauthorized)]
-		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult GetAssetById(long id)
 		{
 			if (!_assetRepo.Exists(id))
@@ -172,6 +172,7 @@ namespace LinkIT.Web.Controllers.Api
 
 		/// <summary>
 		/// Gets all the assets for a comma separated list of owners.
+		/// No paging is applied.
 		/// </summary>
 		/// <param name="owners">A comma separated list of owners. Maximum 25 owners can be specified.</param>
 		/// <returns></returns>
@@ -181,12 +182,9 @@ namespace LinkIT.Web.Controllers.Api
 		[SwaggerResponse(HttpStatusCode.NoContent)]
 		[SwaggerResponse(HttpStatusCode.BadRequest)]
 		[SwaggerResponse(HttpStatusCode.Unauthorized)]
-		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult GetForOwners(string owners)
 		{
-			if (string.IsNullOrWhiteSpace(owners))
-				throw new ArgumentNullException(nameof(owners));
-
+			// Webapi will make sure that owners is not null or whitespace.
 			var splitted = owners.SplitCommaSeparated();
 			if (splitted.Length > MAX_NUMBER_OWNERS_ALLOWED)
 				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
@@ -210,7 +208,6 @@ namespace LinkIT.Web.Controllers.Api
 		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(ProductReadModel))]
 		[SwaggerResponse(HttpStatusCode.NotFound)]
 		[SwaggerResponse(HttpStatusCode.Unauthorized)]
-		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult GetProductFor(long id)
 		{
 			if (!_assetRepo.Exists(id))
@@ -232,7 +229,6 @@ namespace LinkIT.Web.Controllers.Api
 		[SwaggerResponse(HttpStatusCode.Created, Type = typeof(AssetReadModel))]
 		[SwaggerResponse(HttpStatusCode.BadRequest)]
 		[SwaggerResponse(HttpStatusCode.Unauthorized)]
-		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult Post(AssetWriteModel model)
 		{
 			if (model == null)
@@ -263,7 +259,6 @@ namespace LinkIT.Web.Controllers.Api
 		[SwaggerResponse(HttpStatusCode.BadRequest)]
 		[SwaggerResponse(HttpStatusCode.NotFound)]
 		[SwaggerResponse(HttpStatusCode.Unauthorized)]
-		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult Put(long id, AssetWriteModel model)
 		{
 			if (model == null)
@@ -296,7 +291,6 @@ namespace LinkIT.Web.Controllers.Api
 		[SwaggerResponse(HttpStatusCode.NoContent)]
 		[SwaggerResponse(HttpStatusCode.NotFound)]
 		[SwaggerResponse(HttpStatusCode.Unauthorized)]
-		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult Delete(long id)
 		{
 			if (!_assetRepo.Exists(id))

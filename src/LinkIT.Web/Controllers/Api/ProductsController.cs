@@ -8,6 +8,7 @@ using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
 using log4net;
+using Swashbuckle.Swagger.Annotations;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -89,21 +90,21 @@ namespace LinkIT.Web.Controllers.Api
 				Group = input.Group
 			};
 
-		[Route("api/products/{id:long:min(1)}", Name = "GetProductById")]
-		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		public IHttpActionResult GetProductById(long id)
-		{
-			if (!_repo.Exists(id))
-				return NotFound();
-
-			var dto = _repo.GetById(id);
-			var readModel = MapToModel(dto);
-
-			return Ok(readModel);
-		}
-
+		/// <summary>
+		/// Returns the products that match the filter criteria in a paging fashion.
+		/// Filter criteria are optional.
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <param name="pageInfo"></param>
+		/// <returns></returns>
 		[Route("api/products")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, 
+			Type = typeof(PagedResultModel<ProductReadModel>),
+			Description = Consts.SWAGGER_PAGING_RESPONSE_DESCRIPTION)]
+		[SwaggerResponse(HttpStatusCode.NoContent)]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult Get(
 			[FromUri]ProductFilterModel filter,
 			[FromUri]PageInfoModel pageInfo)
@@ -130,8 +131,37 @@ namespace LinkIT.Web.Controllers.Api
 			return CreateActionResultFor(pagedResult);
 		}
 
+		/// <summary>
+		/// Gets the product with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the product that is to be retrieved.</param>
+		/// <returns></returns>
+		[Route("api/products/{id:long:min(1)}", Name = "GetProductById")]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(ProductReadModel))]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		public IHttpActionResult GetProductById(long id)
+		{
+			if (!_repo.Exists(id))
+				return NotFound();
+
+			var dto = _repo.GetById(id);
+			var readModel = MapToModel(dto);
+
+			return Ok(readModel);
+		}
+
+		/// <summary>
+		/// Creates a new product.
+		/// </summary>
+		/// <param name="model">The new product.</param>
+		/// <returns></returns>
 		[Route("api/products")]
 		[JwtAuthorize(Roles = Constants.Roles.CREATE)]
+		[SwaggerResponse(HttpStatusCode.Created, Type = typeof(ProductReadModel))]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult Post(ProductWriteModel model)
 		{
 			if (model == null)
@@ -150,9 +180,18 @@ namespace LinkIT.Web.Controllers.Api
 			return CreatedAtRoute(nameof(GetProductById), new { id = readModel.Id }, readModel);
 		}
 
-		// Fully updates the product.
+		/// <summary>
+		/// Fully updates the product with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the product that is to be updated.</param>
+		/// <param name="model">The updated product.</param>
+		/// <returns></returns>
 		[Route("api/products/{id:long:min(1)}")]
 		[JwtAuthorize(Roles = Constants.Roles.MODIFY)]
+		[SwaggerResponse(HttpStatusCode.Created, Type = typeof(ProductReadModel))]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
 		public IHttpActionResult Put(long id, ProductWriteModel model)
 		{
 			if (model == null)
