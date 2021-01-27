@@ -13,13 +13,25 @@ namespace LinkIT.Web.Models.Api.Paging
 			OrderBy = new OrderBy("Id", Order.ASCENDING);
 		}
 
+		/// <summary>
+		/// Paging : the current pageNumber. Defaults to 1.
+		/// </summary>
 		[Range(0, int.MaxValue)]
 		public int PageNumber { get; set; }
 
-		[Range(0, int.MaxValue)]
+		/// <summary>
+		/// Paging : the number of rows that are present in one page. Defaults to 25.
+		/// </summary>
+		[Range(0, 1000)]
 		public int RowsPerPage { get; set; }
-		
+
 		// Uses a TypeConverter to convert from a string request parameter to an OrderBy instance.
+		/// <summary>
+		/// Paging : the name of the property on which ordering is applied.
+		/// For ascending ordering, the column name is prefixed with the '+' character.
+		/// For descending ordering, the column name is prefixed with the '-' character.
+		/// Defaults to '+Id'.
+		/// </summary>
 		public OrderBy OrderBy { get; set; }
 	}
 }

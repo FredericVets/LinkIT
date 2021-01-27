@@ -9,7 +9,9 @@ using LinkIT.Web.Models.Api;
 using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
 using log4net;
+using Swashbuckle.Swagger.Annotations;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -18,7 +20,7 @@ namespace LinkIT.Web.Controllers.Api
 {
 	public class AssetsController : ApiController
 	{
-		private const int MAX_NUMBER_OWNERS_ALLOWED = 50;
+		private const int MAX_NUMBER_OWNERS_ALLOWED = 25;
 		private const string UNKNOWN_PRODUCT = "Unknown product.";
 
 		private readonly IAssetRepository _assetRepo;
@@ -106,21 +108,20 @@ namespace LinkIT.Web.Controllers.Api
 			return model;
 		}
 
-		[Route("api/assets/{id:long:min(1)}", Name = "GetAssetById")]
-		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		public IHttpActionResult GetAssetById(long id)
-		{
-			if (!_assetRepo.Exists(id))
-				return NotFound();
-
-			var dto = _assetRepo.GetById(id);
-			var readModel = MapToModel(dto);
-
-			return Ok(readModel);
-		}
-
+		/// <summary>
+		/// Returns the assets that match the filter criteria in a paging fashion.
+		/// Filter criteria are optional.
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <param name="pageInfo"></param>
+		/// <returns></returns>
 		[Route("api/assets")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(PagedResultModel<AssetReadModel>))]
+		[SwaggerResponse(HttpStatusCode.NoContent)]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult Get(
 			[FromUri] AssetFilterModel filter,
 			[FromUri] PageInfoModel pageInfo)
@@ -148,12 +149,39 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		/// <summary>
+		/// Gets the asset with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the asset that is to be retrieved.</param>
+		/// <returns></returns>
+		[Route("api/assets/{id:long:min(1)}", Name = "GetAssetById")]
+		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(AssetReadModel))]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		[SwaggerResponse(HttpStatusCode.InternalServerError)]
+		public IHttpActionResult GetAssetById(long id)
+		{
+			if (!_assetRepo.Exists(id))
+				return NotFound();
+
+			var dto = _assetRepo.GetById(id);
+			var readModel = MapToModel(dto);
+
+			return Ok(readModel);
+		}
+
+		/// <summary>
 		/// Gets all the assets for a comma separated list of owners.
 		/// </summary>
-		/// <param name="owners">A comma separated list of owners.</param>
+		/// <param name="owners">A comma separated list of owners. Maximum 25 owners can be specified.</param>
 		/// <returns></returns>
-		[Route("api/assets")]
+		[Route("api/assets/of-owners")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(IEnumerable<AssetReadModel>))]
+		[SwaggerResponse(HttpStatusCode.NoContent)]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult GetForOwners(string owners)
 		{
 			if (string.IsNullOrWhiteSpace(owners))
@@ -172,8 +200,17 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(readModels);
 		}
 
+		/// <summary>
+		/// Gets the product for the asset with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the asset that is to be retrieved.</param>
+		/// <returns></returns>
 		[Route("api/assets/{id:long:min(1)}/product")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
+		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(ProductReadModel))]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult GetProductFor(long id)
 		{
 			if (!_assetRepo.Exists(id))
@@ -185,8 +222,17 @@ namespace LinkIT.Web.Controllers.Api
 			return Ok(readModel);
 		}
 
+		/// <summary>
+		/// Creates a new asset.
+		/// </summary>
+		/// <param name="model">The new asset.</param>
+		/// <returns></returns>
 		[Route("api/assets")]
 		[JwtAuthorize(Roles = Constants.Roles.CREATE)]
+		[SwaggerResponse(HttpStatusCode.Created, Type = typeof(AssetReadModel))]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult Post(AssetWriteModel model)
 		{
 			if (model == null)
@@ -205,9 +251,19 @@ namespace LinkIT.Web.Controllers.Api
 			return CreatedAtRoute(nameof(GetAssetById), new { id = readModel.Id }, readModel);
 		}
 
-		// Fully updates the asset.
+		/// <summary>
+		/// Fully updates the asset with the specified id.
+		/// </summary>
+		/// <param name="id">The id of the asset that is to be updated.</param>
+		/// <param name="model">The updated asset.</param>
+		/// <returns></returns>
 		[Route("api/assets/{id:long:min(1)}")]
 		[JwtAuthorize(Roles = Constants.Roles.MODIFY)]
+		[SwaggerResponse(HttpStatusCode.Created, Type = typeof(AssetReadModel))]
+		[SwaggerResponse(HttpStatusCode.BadRequest)]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult Put(long id, AssetWriteModel model)
 		{
 			if (model == null)
@@ -229,9 +285,18 @@ namespace LinkIT.Web.Controllers.Api
 
 			return Ok(readModel);
 		}
-
+		/// <summary>
+		/// Deletes the asset with the specified id.
+		/// Performs a soft-delete : sets the Deleted column to 1.
+		/// </summary>
+		/// <param name="id">The id of the asset that is to be deleted.</param>
+		/// <returns></returns>
 		[Route("api/assets/{id:long:min(1)}")]
 		[JwtAuthorize(Roles = Constants.Roles.DELETE)]
+		[SwaggerResponse(HttpStatusCode.NoContent)]
+		[SwaggerResponse(HttpStatusCode.NotFound)]
+		[SwaggerResponse(HttpStatusCode.Unauthorized)]
+		[SwaggerResponse(HttpStatusCode.InternalServerError)]
 		public IHttpActionResult Delete(long id)
 		{
 			if (!_assetRepo.Exists(id))

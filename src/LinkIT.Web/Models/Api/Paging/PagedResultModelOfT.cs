@@ -18,6 +18,9 @@ namespace LinkIT.Web.Models.Api.Paging
 
 		public PageInfoModel PageInfo { get; }
 
+		/// <summary>
+		/// The total number of records. This does not take paging into account.
+		/// </summary>
 		public long TotalCount { get; }
 	}
 }

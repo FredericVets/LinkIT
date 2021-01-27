@@ -52,8 +52,6 @@ namespace LinkIT.Web
 			// Use caml casing when formatting json.
 			var jsonFormatter = formatters.JsonFormatter;
 			jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-
-			formatters.Add(new BsonMediaTypeFormatter());
 		}
 
 		private static void RegisterGlobalFilters(HttpConfiguration config) =>
