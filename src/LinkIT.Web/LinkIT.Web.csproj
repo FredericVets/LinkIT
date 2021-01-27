@@ -150,6 +150,7 @@
     <Compile Include="Controllers\Api\UsersController.cs" />
     <Compile Include="Filters\Api\JwtAuthorizeAttribute.cs" />
     <Compile Include="Filters\Api\ValidateModelAttribute.cs" />
+    <Compile Include="Filters\Swagger\QueryStringParameterFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
