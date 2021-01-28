@@ -21,7 +21,7 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		/// <summary>
-		/// Gets information about the currently authenticated in user.
+		/// Gets information about the currently authenticated user.
 		/// </summary>
 		/// <returns></returns>
 		[Route("api/users/current")]
