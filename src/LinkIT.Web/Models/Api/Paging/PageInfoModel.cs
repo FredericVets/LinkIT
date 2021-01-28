@@ -22,7 +22,7 @@ namespace LinkIT.Web.Models.Api.Paging
 		/// <summary>
 		/// Paging : the number of rows that are present on one page. Defaults to 25.
 		/// </summary>
-		[Range(0, 1000)]
+		[Range(0, 500)]
 		public int RowsPerPage { get; set; }
 
 		// Uses a TypeConverter to convert from a string request parameter to an OrderBy instance.
