@@ -1,5 +1,6 @@
 ﻿using LinkIT.Data.DTO;
 using LinkIT.Data.IntegrationTests.RepositoryTests.Helpers;
+using LinkIT.Data.Paging;
 using LinkIT.Data.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -102,15 +103,26 @@ namespace LinkIT.Data.IntegrationTests.RepositoryTests.AssetRepo
 		[TestMethod]
 		public void ThenTheResultIsAsExpected()
 		{
-			var owners = new[] { "user1", "user2", "user3", "user4" };
-			var actual = _sut.ForOwners(owners).ToList();
+			var owners = new[] { "user1", "user2", "user3", "user4", "user5" };
+			var pageInfo = new PageInfo(
+				2,
+				2,
+				new OrderBy(AssetRepository.OWNER_COLUMN, Order.DESCENDING));
+			var actual = _sut.ForOwners(pageInfo, owners);
 
-			var expected = _assets.Where(x => owners.Contains(x.Owner)).ToList();
+			var expected = _assets
+				.Where(x => owners.Contains(x.Owner))
+				.OrderByDescending(x => x.Owner)
+				.Skip(2)
+				.Take(2)
+				.ToList();
 
-			Assert.AreEqual(4, actual.Count);
+			Assert.AreEqual(pageInfo, actual.PageInfo);
+			Assert.AreEqual(5, actual.TotalCount);
+			Assert.AreEqual(2, actual.Result.Count());
 			foreach (var expectedDto in expected)
 			{
-				var actualDto = actual.Single(x => x.Id == expectedDto.Id);
+				var actualDto = actual.Result.Single(x => x.Id == expectedDto.Id);
 				Assert.AreEqual(expectedDto, actualDto);
 			}
 		}

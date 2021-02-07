@@ -10,8 +10,6 @@ using LinkIT.Web.Models.Api.Filters;
 using LinkIT.Web.Models.Api.Paging;
 using log4net;
 using Swashbuckle.Swagger.Annotations;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -20,7 +18,7 @@ namespace LinkIT.Web.Controllers.Api
 {
 	public class AssetsController : ApiController
 	{
-		private const int MAX_NUMBER_OWNERS_ALLOWED = 25;
+		private const int MAX_NUMBER_OWNERS_ALLOWED = 50;
 		private const string UNKNOWN_PRODUCT = "Unknown product.";
 
 		private readonly IAssetRepository _assetRepo;
@@ -171,31 +169,36 @@ namespace LinkIT.Web.Controllers.Api
 		}
 
 		/// <summary>
-		/// Gets all the assets for a comma separated list of owners.
-		/// No paging is applied.
+		/// Gets all the assets for a comma separated list of owners in a paging fashion.
 		/// </summary>
-		/// <param name="owners">A comma separated list of owners. Maximum 25 owners can be specified.</param>
+		/// <param name="owners">A comma separated list of owners. Maximum 50 owners can be specified.</param>
+		/// <param name="pageInfo"></param>
 		/// <returns></returns>
 		[Route("api/assets/of-owners")]
 		[JwtAuthorize(Roles = Constants.Roles.READ)]
-		[SwaggerResponse(HttpStatusCode.OK, Type = typeof(IEnumerable<AssetReadModel>))]
+		[SwaggerResponse(HttpStatusCode.OK,
+			Type = typeof(PagedResultModel<AssetReadModel>),
+			Description = Consts.SWAGGER_PAGING_RESPONSE_DESCRIPTION)]
 		[SwaggerResponse(HttpStatusCode.NoContent)]
 		[SwaggerResponse(HttpStatusCode.BadRequest)]
 		[SwaggerResponse(HttpStatusCode.Unauthorized)]
-		public IHttpActionResult GetForOwners(string owners)
+		public IHttpActionResult GetForOwners(string owners, [FromUri] PageInfoModel pageInfo)
 		{
-			// Webapi will make sure that owners is not null or whitespace.
+			if (string.IsNullOrWhiteSpace(owners))
+				return BadRequest("No owners specified.");
+
 			var splitted = owners.SplitCommaSeparated();
 			if (splitted.Length > MAX_NUMBER_OWNERS_ALLOWED)
 				return BadRequest($"Maximum {MAX_NUMBER_OWNERS_ALLOWED} owners can be specified.");
 
-			var dtos = _assetRepo.ForOwners(splitted);
-			if (!dtos.Any())
-				return StatusCode(HttpStatusCode.NoContent);
+			pageInfo = pageInfo ?? new PageInfoModel();
+			var paging = MappingHelper.MapToPageInfo(pageInfo);
+			if (!paging.OrderBy.IsValidFor(_assetRepo.Columns))
+				return BadRequest($"Unknown field : {paging.OrderBy.Name}.");
 
-			var readModels = dtos.Select(MapToModel);
+			var pagedResult = _assetRepo.ForOwners(paging, splitted);
 
-			return Ok(readModels);
+			return CreateActionResultFor(pagedResult);
 		}
 
 		/// <summary>

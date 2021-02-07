@@ -227,20 +227,33 @@ namespace LinkIT.Data.Repositories
 			base.Update(items);
 		}
 
-		public IEnumerable<AssetDto> ForOwners(IEnumerable<string> owners)
+		public PagedResult<AssetDto> ForOwners(PageInfo pageInfo, IEnumerable<string> owners)
 		{
+			if (pageInfo == null)
+				throw new ArgumentNullException(nameof(pageInfo));
+
 			if (owners == null || !owners.Any())
 				throw new ArgumentNullException(nameof(owners));
 
 			IList<AssetDto> assets;
+			long totalCount;
 			using (var con = new SqlConnection(ConnectionString.Value))
 			{
 				con.Open();
 				using (var tx = con.BeginTransaction())
 				{
 					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
+						.ForSelect(CreateSelectCountStatement())
+						.ForWhereIn(OWNER_COLUMN, owners, SqlDbType.VarChar)
+						.Build())
+					{
+						totalCount = Convert.ToInt64(cmd.ExecuteScalar());
+					}
+
+					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)
 						.ForSelect(CreateSelectStatement())
 						.ForWhereIn(OWNER_COLUMN, owners, SqlDbType.VarChar)
+						.ForPaging(pageInfo)
 						.Build())
 					using (var reader = cmd.ExecuteReader())
 					{
@@ -253,7 +266,7 @@ namespace LinkIT.Data.Repositories
 
 			LinkProductsTo(assets);
 
-			return assets;
+			return new PagedResult<AssetDto>(assets, pageInfo, totalCount);
 		}
 	}
 }

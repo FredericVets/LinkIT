@@ -170,9 +170,11 @@ namespace LinkIT.Data.Repositories
 			{
 				con.Open();
 
-				// Protect against phantom reads when data gets inserted inbetween the select statements.
+				// If you want to protect against phantom reads when data gets inserted inbetween the select statements,
+				// the isolation level of the transaction should be set to 'IsolationLevel.Serializable'.
+				// See link for more info :
 				// https://stackoverflow.com/questions/3467613/isolation-level-serializable-when-should-i-use-this
-				using (var tx = con.BeginTransaction(IsolationLevel.Serializable))
+				using (var tx = con.BeginTransaction())
 				{
 					long totalCount;
 					using (var cmd = new SelectCommandBuilder(con, tx, HasSoftDelete)

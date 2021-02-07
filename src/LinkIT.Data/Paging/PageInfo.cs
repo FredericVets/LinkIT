@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LinkIT.Data.Paging
+﻿namespace LinkIT.Data.Paging
 {
 	public class PageInfo
 	{
