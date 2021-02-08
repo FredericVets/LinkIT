@@ -25,18 +25,10 @@ namespace LinkIT.Data.Extensions
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		public static IDictionary<string, string> SplitKeyValuePairs(this string input)
-		{
-			var result = new Dictionary<string, string>();
-
-			var pairs = input.SplitCommaSeparated();
-			foreach (var pair in pairs)
-			{
-				var splitted = pair.SplitForSeparator(':');
-				result.Add(splitted[0], splitted[1]);
-			}
-
-			return result;
-		}
+		public static IDictionary<string, string> SplitKeyValuePairs(this string input) =>
+			input.SplitCommaSeparated()
+				.ToDictionary(
+					x => x.SplitForSeparator(':')[0],
+					x => x.SplitForSeparator(':')[1]);
 	}
 }
