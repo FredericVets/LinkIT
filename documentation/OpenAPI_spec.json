@@ -1,0 +1,1825 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "LinkIT.Web"
+  },
+  "host": "lioo-hardware.icts.kuleuven.be",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/api/asset-histories": {
+      "get": {
+        "tags": [
+          "AssetHistories"
+        ],
+        "summary": "Gets the asset-histories that match the filter criteria in a paging fashion.\r\nFilter criteria are optional.",
+        "operationId": "AssetHistories_Get",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "assetId",
+            "in": "query",
+            "description": "Filter by 'AssetId'.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "Filter by 'Tag'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Paging : the current pageNumber. Defaults to 1.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 2147483647,
+            "minimum": 1
+          },
+          {
+            "name": "rowsPerPage",
+            "in": "query",
+            "description": "Paging : the number of rows that are present on one page. Maximum 250, defaults to 25.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 250,
+            "minimum": 1
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Paging : the name of the property on which ordering is applied.\r\nFor ascending ordering, the column name is prefixed with the '+' character.\r\nFor descending ordering, the column name is prefixed with the '-' character.\r\nDefaults to '+Id'.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The pageInfo shows the information about the applied paging.\nThe totalCount shows the total number of records, this does not take paging into account.",
+            "schema": {
+              "$ref": "#/definitions/PagedResultModel[AssetHistoryReadModel]"
+            }
+          },
+          "204": {
+            "description": "NoContent"
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/asset-histories/{id}": {
+      "get": {
+        "tags": [
+          "AssetHistories"
+        ],
+        "summary": "Gets the asset-history with the specified id.",
+        "operationId": "AssetHistories_GetAssetHistoryById",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the asset-history that is to be retrieved.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AssetHistoryReadModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      }
+    },
+    "/api/asset-histories/{id}/asset": {
+      "get": {
+        "tags": [
+          "AssetHistories"
+        ],
+        "summary": "Gets the asset referenced by the asset-history with the specified id.",
+        "operationId": "AssetHistories_GetAssetFor",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the asset-history that is to be retrieved.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AssetReadModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      }
+    },
+    "/api/asset-histories/{id}/product": {
+      "get": {
+        "tags": [
+          "AssetHistories"
+        ],
+        "summary": "Gets the product referenced by the asset-history with the specified id.",
+        "operationId": "AssetHistories_GetProductFor",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the asset-history that is to be retrieved.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProductReadModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      }
+    },
+    "/api/assets": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Gets the assets that match the filter criteria in a paging fashion.\r\nFilter criteria are optional.",
+        "operationId": "Assets_Get",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "createdBy",
+            "in": "query",
+            "description": "Filter by 'CreatedBy'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "modifiedBy",
+            "in": "query",
+            "description": "Filter by 'ModifiedBy'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "ictsReference",
+            "in": "query",
+            "description": "Filter by 'IctsReference'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "Filter by 'Tag'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "serial",
+            "in": "query",
+            "description": "Filter by 'Serial'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "productId",
+            "in": "query",
+            "description": "Filter by 'ProductId'.",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "Filter by 'Description'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "invoiceDate",
+            "in": "query",
+            "description": "Filter by 'InvoiceDate'.",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "invoiceNumber",
+            "in": "query",
+            "description": "Filter by 'InvoiceNumber'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "description": "Filter by 'Price'.",
+            "required": false,
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "name": "paidBy",
+            "in": "query",
+            "description": "Filter by 'PaidBy'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "description": "Filter by 'Owner'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "installDate",
+            "in": "query",
+            "description": "Filter by 'InstallDate'.",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "installedBy",
+            "in": "query",
+            "description": "Filter by 'InstalledBy'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "remark",
+            "in": "query",
+            "description": "Filter by 'Remark'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "teamAsset",
+            "in": "query",
+            "description": "Filter by 'TeamAsset'.",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Paging : the current pageNumber. Defaults to 1.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 2147483647,
+            "minimum": 1
+          },
+          {
+            "name": "rowsPerPage",
+            "in": "query",
+            "description": "Paging : the number of rows that are present on one page. Maximum 250, defaults to 25.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 250,
+            "minimum": 1
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Paging : the name of the property on which ordering is applied.\r\nFor ascending ordering, the column name is prefixed with the '+' character.\r\nFor descending ordering, the column name is prefixed with the '-' character.\r\nDefaults to '+Id'.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The pageInfo shows the information about the applied paging.\nThe totalCount shows the total number of records, this does not take paging into account.",
+            "schema": {
+              "$ref": "#/definitions/PagedResultModel[AssetReadModel]"
+            }
+          },
+          "204": {
+            "description": "NoContent"
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Creates a new asset.",
+        "operationId": "Assets_Post",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "model",
+            "in": "body",
+            "description": "The new asset.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AssetWriteModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/AssetReadModel"
+            }
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/assets/{id}": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Gets the asset with the specified id.",
+        "operationId": "Assets_GetAssetById",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the asset that is to be retrieved.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AssetReadModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Fully updates the asset with the specified id.",
+        "operationId": "Assets_Put",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the asset that is to be updated.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "model",
+            "in": "body",
+            "description": "The updated asset.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AssetWriteModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/AssetReadModel"
+            }
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Deletes the asset with the specified id.\r\nPerforms a soft-delete : sets the Deleted column to 1.",
+        "operationId": "Assets_Delete",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the asset that is to be deleted.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "204": {
+            "description": "NoContent"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      }
+    },
+    "/api/assets/of-owners": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Gets all the assets for a comma separated list of owners in a paging fashion.",
+        "operationId": "Assets_GetForOwners",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "owners",
+            "in": "query",
+            "description": "A comma separated list of owners. Maximum 50 owners can be specified.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Paging : the current pageNumber. Defaults to 1.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 2147483647,
+            "minimum": 1
+          },
+          {
+            "name": "rowsPerPage",
+            "in": "query",
+            "description": "Paging : the number of rows that are present on one page. Maximum 250, defaults to 25.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 250,
+            "minimum": 1
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Paging : the name of the property on which ordering is applied.\r\nFor ascending ordering, the column name is prefixed with the '+' character.\r\nFor descending ordering, the column name is prefixed with the '-' character.\r\nDefaults to '+Id'.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The pageInfo shows the information about the applied paging.\nThe totalCount shows the total number of records, this does not take paging into account.",
+            "schema": {
+              "$ref": "#/definitions/PagedResultModel[AssetReadModel]"
+            }
+          },
+          "204": {
+            "description": "NoContent"
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/assets/{id}/product": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Gets the product referenced by the asset with the specified id.",
+        "operationId": "Assets_GetProductFor",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the asset that is to be retrieved.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProductReadModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Gets the products that match the filter criteria in a paging fashion.\r\nFilter criteria are optional.",
+        "operationId": "Products_Get",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "createdBy",
+            "in": "query",
+            "description": "Filter by 'CreatedBy'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "modifiedBy",
+            "in": "query",
+            "description": "Filter by 'ModifiedBy'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "brand",
+            "in": "query",
+            "description": "Filter by 'Brand'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Filter by 'Type'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "group",
+            "in": "query",
+            "description": "Filter by 'Group'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Paging : the current pageNumber. Defaults to 1.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 2147483647,
+            "minimum": 1
+          },
+          {
+            "name": "rowsPerPage",
+            "in": "query",
+            "description": "Paging : the number of rows that are present on one page. Maximum 250, defaults to 25.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 250,
+            "minimum": 1
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Paging : the name of the property on which ordering is applied.\r\nFor ascending ordering, the column name is prefixed with the '+' character.\r\nFor descending ordering, the column name is prefixed with the '-' character.\r\nDefaults to '+Id'.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The pageInfo shows the information about the applied paging.\nThe totalCount shows the total number of records, this does not take paging into account.",
+            "schema": {
+              "$ref": "#/definitions/PagedResultModel[ProductReadModel]"
+            }
+          },
+          "204": {
+            "description": "NoContent"
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Creates a new product.",
+        "operationId": "Products_Post",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "model",
+            "in": "body",
+            "description": "The new product.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProductWriteModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/ProductReadModel"
+            }
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Gets the product with the specified id.",
+        "operationId": "Products_GetProductById",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the product that is to be retrieved.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProductReadModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Fully updates the product with the specified id.",
+        "operationId": "Products_Put",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the product that is to be updated.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "model",
+            "in": "body",
+            "description": "The updated product.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProductWriteModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/ProductReadModel"
+            }
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      }
+    },
+    "/api/special-owners": {
+      "get": {
+        "tags": [
+          "SpecialOwners"
+        ],
+        "summary": "Gets the special-owners that match the filter criteria in a paging fashion.\r\nFilter criteria are optional.",
+        "operationId": "SpecialOwners_Get",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "createdBy",
+            "in": "query",
+            "description": "Filter by 'CreatedBy'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "modifiedBy",
+            "in": "query",
+            "description": "Filter by 'ModifiedBy'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by 'Name'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "remark",
+            "in": "query",
+            "description": "Filter by 'Remark'.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Paging : the current pageNumber. Defaults to 1.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 2147483647,
+            "minimum": 1
+          },
+          {
+            "name": "rowsPerPage",
+            "in": "query",
+            "description": "Paging : the number of rows that are present on one page. Maximum 250, defaults to 25.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 250,
+            "minimum": 1
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Paging : the name of the property on which ordering is applied.\r\nFor ascending ordering, the column name is prefixed with the '+' character.\r\nFor descending ordering, the column name is prefixed with the '-' character.\r\nDefaults to '+Id'.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The pageInfo shows the information about the applied paging.\nThe totalCount shows the total number of records, this does not take paging into account.",
+            "schema": {
+              "$ref": "#/definitions/PagedResultModel[SpecialOwnerReadModel]"
+            }
+          },
+          "204": {
+            "description": "NoContent"
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SpecialOwners"
+        ],
+        "summary": "Creates a new special-owner.",
+        "operationId": "SpecialOwners_Post",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "model",
+            "in": "body",
+            "description": "The new special-owner.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SpecialOwnerWriteModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/SpecialOwnerReadModel"
+            }
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/special-owners/{id}": {
+      "get": {
+        "tags": [
+          "SpecialOwners"
+        ],
+        "summary": "Gets the special-owner with the specified id.",
+        "operationId": "SpecialOwners_GetSpecialOwnerById",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the special-owner that is to be retrieved.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/SpecialOwnerReadModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SpecialOwners"
+        ],
+        "summary": "Fully updates the special-owner with the specified id.",
+        "operationId": "SpecialOwners_Put",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the special-owner that is to be updated.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "model",
+            "in": "body",
+            "description": "The updated special-owner.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SpecialOwnerWriteModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/SpecialOwnerReadModel"
+            }
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SpecialOwners"
+        ],
+        "summary": "Deletes the special-owner with the specified id.\r\nThis is a hard-delete : the record will be physically deleted.",
+        "operationId": "SpecialOwners_Delete",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the special-owner that is to be deleted.",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "204": {
+            "description": "NoContent"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "NotFound"
+          }
+        }
+      }
+    },
+    "/api/users/current": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Gets information about the currently authenticated user.",
+        "operationId": "Users_GetCurrentUser",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UserReadModel"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AssetHistoryFilterModel": {
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "format": "int64",
+          "description": "Filter by 'AssetId'.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "tag": {
+          "description": "Filter by 'Tag'.",
+          "type": "string"
+        }
+      }
+    },
+    "PageInfoModel": {
+      "type": "object",
+      "properties": {
+        "pageNumber": {
+          "format": "int32",
+          "description": "Paging : the current pageNumber. Defaults to 1.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "rowsPerPage": {
+          "format": "int32",
+          "description": "Paging : the number of rows that are present on one page. Maximum 250, defaults to 25.",
+          "maximum": 250,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "orderBy": {
+          "description": "Paging : the name of the property on which ordering is applied.\r\nFor ascending ordering, the column name is prefixed with the '+' character.\r\nFor descending ordering, the column name is prefixed with the '-' character.\r\nDefaults to '+Id'.",
+          "type": "string"
+        }
+      }
+    },
+    "PagedResultModel[AssetHistoryReadModel]": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AssetHistoryReadModel"
+          },
+          "readOnly": true
+        },
+        "pageInfo": {
+          "$ref": "#/definitions/PageInfoModel",
+          "readOnly": true
+        },
+        "totalCount": {
+          "format": "int64",
+          "description": "The total number of records. This does not take paging into account.",
+          "type": "integer",
+          "readOnly": true
+        }
+      }
+    },
+    "AssetHistoryReadModel": {
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "productId": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "id": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "creationDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "modificationDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "modifiedBy": {
+          "type": "string"
+        },
+        "ictsReference": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "serial": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "invoiceDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "invoiceNumber": {
+          "type": "string"
+        },
+        "price": {
+          "format": "double",
+          "type": "number"
+        },
+        "paidBy": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "installDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "installedBy": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        },
+        "teamAsset": {
+          "type": "boolean"
+        }
+      }
+    },
+    "AssetReadModel": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "$ref": "#/definitions/ProductReadModel"
+        },
+        "id": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "creationDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "modificationDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "modifiedBy": {
+          "type": "string"
+        },
+        "ictsReference": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "serial": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "invoiceDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "invoiceNumber": {
+          "type": "string"
+        },
+        "price": {
+          "format": "double",
+          "type": "number"
+        },
+        "paidBy": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "installDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "installedBy": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        },
+        "teamAsset": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ProductReadModel": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "creationDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "modificationDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "modifiedBy": {
+          "type": "string"
+        },
+        "brand": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        }
+      }
+    },
+    "AssetFilterModel": {
+      "type": "object",
+      "properties": {
+        "createdBy": {
+          "description": "Filter by 'CreatedBy'.",
+          "type": "string"
+        },
+        "modifiedBy": {
+          "description": "Filter by 'ModifiedBy'.",
+          "type": "string"
+        },
+        "ictsReference": {
+          "description": "Filter by 'IctsReference'.",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Filter by 'Tag'.",
+          "type": "string"
+        },
+        "serial": {
+          "description": "Filter by 'Serial'.",
+          "type": "string"
+        },
+        "productId": {
+          "format": "int64",
+          "description": "Filter by 'ProductId'.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "description": {
+          "description": "Filter by 'Description'.",
+          "type": "string"
+        },
+        "invoiceDate": {
+          "format": "date-time",
+          "description": "Filter by 'InvoiceDate'.",
+          "type": "string"
+        },
+        "invoiceNumber": {
+          "description": "Filter by 'InvoiceNumber'.",
+          "type": "string"
+        },
+        "price": {
+          "format": "double",
+          "description": "Filter by 'Price'.",
+          "type": "number"
+        },
+        "paidBy": {
+          "description": "Filter by 'PaidBy'.",
+          "type": "string"
+        },
+        "owner": {
+          "description": "Filter by 'Owner'.",
+          "type": "string"
+        },
+        "installDate": {
+          "format": "date-time",
+          "description": "Filter by 'InstallDate'.",
+          "type": "string"
+        },
+        "installedBy": {
+          "description": "Filter by 'InstalledBy'.",
+          "type": "string"
+        },
+        "remark": {
+          "description": "Filter by 'Remark'.",
+          "type": "string"
+        },
+        "teamAsset": {
+          "description": "Filter by 'TeamAsset'.",
+          "type": "boolean"
+        }
+      }
+    },
+    "PagedResultModel[AssetReadModel]": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AssetReadModel"
+          },
+          "readOnly": true
+        },
+        "pageInfo": {
+          "$ref": "#/definitions/PageInfoModel",
+          "readOnly": true
+        },
+        "totalCount": {
+          "format": "int64",
+          "description": "The total number of records. This does not take paging into account.",
+          "type": "integer",
+          "readOnly": true
+        }
+      }
+    },
+    "AssetWriteModel": {
+      "required": [
+        "tag",
+        "productId",
+        "paidBy",
+        "owner",
+        "teamAsset"
+      ],
+      "type": "object",
+      "properties": {
+        "ictsReference": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "serial": {
+          "type": "string"
+        },
+        "productId": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "invoiceDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "invoiceNumber": {
+          "type": "string"
+        },
+        "price": {
+          "format": "double",
+          "type": "number"
+        },
+        "paidBy": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "installDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "installedBy": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        },
+        "teamAsset": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ProductFilterModel": {
+      "type": "object",
+      "properties": {
+        "createdBy": {
+          "description": "Filter by 'CreatedBy'.",
+          "type": "string"
+        },
+        "modifiedBy": {
+          "description": "Filter by 'ModifiedBy'.",
+          "type": "string"
+        },
+        "brand": {
+          "description": "Filter by 'Brand'.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Filter by 'Type'.",
+          "type": "string"
+        },
+        "group": {
+          "description": "Filter by 'Group'.",
+          "type": "string"
+        }
+      }
+    },
+    "PagedResultModel[ProductReadModel]": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProductReadModel"
+          },
+          "readOnly": true
+        },
+        "pageInfo": {
+          "$ref": "#/definitions/PageInfoModel",
+          "readOnly": true
+        },
+        "totalCount": {
+          "format": "int64",
+          "description": "The total number of records. This does not take paging into account.",
+          "type": "integer",
+          "readOnly": true
+        }
+      }
+    },
+    "ProductWriteModel": {
+      "required": [
+        "brand",
+        "type",
+        "group"
+      ],
+      "type": "object",
+      "properties": {
+        "brand": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        }
+      }
+    },
+    "SpecialOwnerFilterModel": {
+      "type": "object",
+      "properties": {
+        "createdBy": {
+          "description": "Filter by 'CreatedBy'.",
+          "type": "string"
+        },
+        "modifiedBy": {
+          "description": "Filter by 'ModifiedBy'.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Filter by 'Name'.",
+          "type": "string"
+        },
+        "remark": {
+          "description": "Filter by 'Remark'.",
+          "type": "string"
+        }
+      }
+    },
+    "PagedResultModel[SpecialOwnerReadModel]": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SpecialOwnerReadModel"
+          },
+          "readOnly": true
+        },
+        "pageInfo": {
+          "$ref": "#/definitions/PageInfoModel",
+          "readOnly": true
+        },
+        "totalCount": {
+          "format": "int64",
+          "description": "The total number of records. This does not take paging into account.",
+          "type": "integer",
+          "readOnly": true
+        }
+      }
+    },
+    "SpecialOwnerReadModel": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "creationDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "modificationDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "modifiedBy": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        }
+      }
+    },
+    "SpecialOwnerWriteModel": {
+      "required": [
+        "name"
+      ],
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        }
+      }
+    },
+    "UserReadModel": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "givenName": {
+          "type": "string"
+        },
+        "familyName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
