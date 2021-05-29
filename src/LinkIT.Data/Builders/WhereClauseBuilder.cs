@@ -92,6 +92,7 @@ namespace LinkIT.Data.Builders
 				return this;
 
 			HandleFirstParameter();
+			_builder.Append("(");
 
 			if (range.StartDate.HasValue)
 			{
@@ -110,6 +111,7 @@ namespace LinkIT.Data.Builders
 				_command.AddSqlParameter(paramName, range.EndDate.Value.Date.AddDays(1), sqlType);
 			}
 
+			_builder.Append(")");
 			_builder.AppendLine();
 
 			return this;

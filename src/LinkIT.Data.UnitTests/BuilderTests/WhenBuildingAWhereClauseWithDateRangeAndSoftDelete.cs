@@ -37,11 +37,11 @@ namespace LinkIT.Data.UnitTests.BuilderTests
 			expected += $"AND{Environment.NewLine}";
 			expected += $"[Age] = @Age{Environment.NewLine}";
 			expected += $"AND{Environment.NewLine}";
-			expected += $"[CreationDate] >= @CreationDateStart{Environment.NewLine}";
+			expected += $"([CreationDate] >= @CreationDateStart){Environment.NewLine}";
 			expected += $"AND{Environment.NewLine}";
-			expected += $"[ModificationDate] >= @ModificationDateStart AND [ModificationDate] < @ModificationDateEnd{Environment.NewLine}";
+			expected += $"([ModificationDate] >= @ModificationDateStart AND [ModificationDate] < @ModificationDateEnd){Environment.NewLine}";
 			expected += $"AND{Environment.NewLine}";
-			expected += $"[InstallDate] < @InstallDateEnd{Environment.NewLine}";
+			expected += $"([InstallDate] < @InstallDateEnd){Environment.NewLine}";
 			expected += $"){Environment.NewLine}";
 			expected += $"AND{Environment.NewLine}";
 			expected += $"[Deleted] = 0{Environment.NewLine}";
