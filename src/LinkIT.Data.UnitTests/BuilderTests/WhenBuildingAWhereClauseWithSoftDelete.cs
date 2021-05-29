@@ -29,6 +29,7 @@ namespace LinkIT.Data.UnitTests.BuilderTests
 			_sut.ForParameter("John Doe", "Name", SqlDbType.VarChar)
 				.ForParameter(35, "Age", SqlDbType.Int)
 				.ForParameter("Leuven", "Location", SqlDbType.VarChar)
+				.ForParameter(new DateTime(2021, 05, 29), "BirthDate", SqlDbType.DateTime2)
 				.ForParameter((string)null, "ShouldBeOmitted", SqlDbType.VarChar);
 
 			string expected = $"WHERE ({Environment.NewLine}";
@@ -37,6 +38,8 @@ namespace LinkIT.Data.UnitTests.BuilderTests
 			expected += $"[Age] = @Age{Environment.NewLine}";
 			expected += $"OR{Environment.NewLine}";
 			expected += $"[Location] like @Location{Environment.NewLine}";
+			expected += $"OR{Environment.NewLine}";
+			expected += $"DATEDIFF(day, [BirthDate], @BirthDate) = 0{Environment.NewLine}";
 			expected += $"){Environment.NewLine}";
 			expected += $"AND{Environment.NewLine}";
 			expected += $"[Deleted] = 0{Environment.NewLine}";
