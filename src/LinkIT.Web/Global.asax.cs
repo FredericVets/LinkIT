@@ -43,7 +43,11 @@ namespace LinkIT.Web
 
 			var log = LogManager.GetLogger(GetType());
 			log.Fatal("An unhandled exception occurred.", ex);
+		}
 
+		protected void Application_BeginRequest(object sender, EventArgs e)
+		{
+			log4net.ThreadContext.Properties["clientAddr"] = Request.UserHostAddress;
 		}
 	}
 }

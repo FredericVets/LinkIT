@@ -1,5 +1,7 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Specialized;
+using System.Configuration;
 using System.Web;
 
 namespace LinkIT.Web.Infrastructure.Auth
@@ -10,9 +12,23 @@ namespace LinkIT.Web.Infrastructure.Auth
 		public const string BEARER = "Bearer";
 
 		private readonly NameValueCollection _headers;
+		private readonly ILog _log;
 
-		public HttpHeadersWrapper(NameValueCollection headers) =>
+		public HttpHeadersWrapper(NameValueCollection headers)
+		{
 			_headers = headers ?? throw new ArgumentNullException(nameof(headers));
+			_log = LogManager.GetLogger(GetType());
+		}
+
+		private static bool ShouldLogAuthorizationHeader
+		{
+			get
+			{
+				string value = ConfigurationManager.AppSettings["jwt.debug.log_authorization_header"];
+
+				return string.Equals(value, "true", StringComparison.InvariantCultureIgnoreCase);
+			}
+		}
 
 		private static string ExtractJwtFrom(string authorizationHeader)
 		{
@@ -32,6 +48,9 @@ namespace LinkIT.Web.Infrastructure.Auth
 			string authHeader = _headers[AUTHORIZATION_HEADER];
 			if (string.IsNullOrWhiteSpace(authHeader))
 				throw new InvalidOperationException("No Authorization header present.");
+
+			if (ShouldLogAuthorizationHeader)
+				_log.Debug($"HTTP Authorization header : '{authHeader}'.");
 
 			return authHeader;
 		}
